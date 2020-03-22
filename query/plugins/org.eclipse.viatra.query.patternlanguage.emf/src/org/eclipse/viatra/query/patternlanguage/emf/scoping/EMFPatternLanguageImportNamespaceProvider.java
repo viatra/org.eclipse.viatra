@@ -9,19 +9,27 @@
 package org.eclipse.viatra.query.patternlanguage.emf.scoping;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternImport;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VQLImportSection;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
+import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
+import org.eclipse.xtext.resource.ISelectable;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.impl.ImportNormalizer;
+import org.eclipse.xtext.scoping.impl.ScopeBasedSelectable;
 import org.eclipse.xtext.xbase.scoping.XImportSectionNamespaceScopeProvider;
 import org.eclipse.xtext.xtype.XImportSection;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 /**
  * @author Zoltan Ujhelyi
@@ -31,6 +39,39 @@ import com.google.common.collect.Lists;
 public class EMFPatternLanguageImportNamespaceProvider extends XImportSectionNamespaceScopeProvider {
 
     private static final QualifiedName VIATRA_AGGREGATORS = QualifiedName.create("org","eclipse","viatra","query","runtime","matchers","aggregators");
+    
+    @Inject
+    IQualifiedNameConverter nameConverter;
+    
+    /**
+     * @since 2.4
+     */
+    protected IScope getResourceScope(IScope globalScope, Resource res, EReference reference) {
+        IScope result = globalScope;
+        ISelectable globalScopeSelectable = new ScopeBasedSelectable(result);
+        
+        // implicit imports (i.e. java.lang.*)
+        List<ImportNormalizer> normalizers = getImplicitImports(isIgnoreCase(reference));
+        
+        // Also add an import normalizer for the current package declaration for pattern references
+        if (reference == PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF) {
+            res.getContents().stream()
+                .filter(PatternModel.class::isInstance)
+                .map(PatternModel.class::cast)
+                .map(PatternModel::getPackageName)
+                .filter(Objects::nonNull)
+                .map(nameConverter::toQualifiedName)
+                .findFirst()
+                .map(packageName -> doCreateImportNormalizer(packageName, true, false))
+                .ifPresent(normalizers::add);
+        }
+        
+        if (!normalizers.isEmpty()) {
+            result = createImportScope(result, normalizers, globalScopeSelectable, reference.getEReferenceType(), isIgnoreCase(reference));
+        }
+        
+        return result;
+    }
     
     /**
      * @since 1.4

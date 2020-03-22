@@ -259,4 +259,103 @@ class PatternParserTest {
         assertEquals(1, results.patterns.get(0).eResource.contents.filter(JvmGenericType).size)
         assertTrue(results.allDiagnostics.filter[diag | diag.severity === Severity.ERROR].isEmpty)
     }
+    
+    /**
+     * Test case for bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=561344
+     */
+    @Test()
+    def void privateCallerTest() {
+        val String pattern = '''
+            
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            private pattern caller(class : EClass) {
+                neg find callee(class);
+            }
+            private pattern callee(class : EClass) {
+                EClass.name(class, "Block");
+            }
+        '''
+        val parser = new PatternParserBuilder()
+            .withInjector(new EMFPatternLanguageStandaloneSetup().createStandaloneInjector)
+            .build
+        val results = parser.parse(pattern)
+        results.allDiagnostics.forEach[println]
+        assertTrue(results.allDiagnostics.filter[diag | diag.severity === Severity.ERROR].isEmpty)
+    }
+    
+    /**
+     * Test case for bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=561344
+     */
+    @Test()
+    def void publicCallerTest() {
+        val String pattern = '''
+            package test;
+            
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            pattern caller(class : EClass) {
+                neg find callee(class);
+            }
+            private pattern callee(class : EClass) {
+                EClass.name(class, "Block");
+            }
+        '''
+        val parser = new PatternParserBuilder()
+            .withInjector(new EMFPatternLanguageStandaloneSetup().createStandaloneInjector)
+            .build
+        val results = parser.parse(pattern)
+        results.allDiagnostics.forEach[println]
+        assertTrue(results.allDiagnostics.filter[diag | diag.severity === Severity.ERROR].isEmpty)
+    }
+    
+    /**
+     * Test case for bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=561344
+     */
+    @Test()
+    def void publicCalleeTest() {
+        val String pattern = '''
+            package test;
+            
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            private pattern caller(class : EClass) {
+                neg find callee(class);
+            }
+            pattern callee(class : EClass) {
+                EClass.name(class, "Block");
+            }
+        '''
+        val parser = new PatternParserBuilder()
+            .withInjector(new EMFPatternLanguageStandaloneSetup().createStandaloneInjector)
+            .build
+        val results = parser.parse(pattern)
+        results.allDiagnostics.forEach[println]
+        assertTrue(results.allDiagnostics.filter[diag | diag.severity === Severity.ERROR].isEmpty)
+    }
+    
+    /**
+     * Test case for bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=561344
+     */
+    @Test()
+    def void privateCallerTestWithPackageDeclaration() {
+        val String pattern = '''
+            package test;
+            
+            import "http://www.eclipse.org/emf/2002/Ecore";
+            
+            private pattern caller(class : EClass) {
+                neg find callee(class);
+            }
+            private pattern callee(class : EClass) {
+                EClass.name(class, "Block");
+            }
+        '''
+        val parser = new PatternParserBuilder()
+            .withInjector(new EMFPatternLanguageStandaloneSetup().createStandaloneInjector)
+            .build
+        val results = parser.parse(pattern)
+        results.allDiagnostics.forEach[println]
+        assertTrue(results.allDiagnostics.filter[diag | diag.severity === Severity.ERROR].isEmpty)
+    }
 }
