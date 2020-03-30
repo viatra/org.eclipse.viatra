@@ -46,6 +46,7 @@ public class EMFPatternLanguageImportNamespaceProvider extends XImportSectionNam
     /**
      * @since 2.4
      */
+    @Override
     protected IScope getResourceScope(IScope globalScope, Resource res, EReference reference) {
         IScope result = globalScope;
         ISelectable globalScopeSelectable = new ScopeBasedSelectable(result);
