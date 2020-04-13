@@ -11,6 +11,10 @@
     <packaging>maven-plugin</packaging>
     <name>VIATRA Maven Plug-in</name>
     
+    <properties>
+        <maven.version>3.6.0</maven.version>
+    </properties>
+    
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -24,6 +28,12 @@
             <version>${maven.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency> 
 
         <dependency>
             <groupId>org.eclipse.emf</groupId>
@@ -100,7 +110,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.5</version>
+                <version>${maven.version}</version>
             </plugin>
         </plugins>
     </build>

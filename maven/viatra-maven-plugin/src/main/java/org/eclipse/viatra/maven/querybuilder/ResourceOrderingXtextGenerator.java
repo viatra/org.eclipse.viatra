@@ -9,16 +9,18 @@
 package org.eclipse.viatra.maven.querybuilder;
 
 import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.eclipse.viatra.maven.querybuilder.ResourceOrderingStandaloneBuilder;
 import org.eclipse.xtext.builder.standalone.LanguageAccess;
 import org.eclipse.xtext.builder.standalone.LanguageAccessFactory;
 import org.eclipse.xtext.builder.standalone.StandaloneBuilder;
@@ -37,50 +39,41 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * {@link XtextGenerator} 2.9.0.beta3 implementation
+ * {@link XtextGenerator} 2.20.0 implementation
  * adapted to use {@link ResourceOrderingStandaloneBuilder} instead of {@link StandaloneBuilder} in {@link #internalExecute()}.
  */
 public class ResourceOrderingXtextGenerator extends AbstractMojo {
 
     /**
      * Location of the generated source files.
-     * 
-     * @parameter expression="${project.build.directory}/xtext-temp"
      */
+    @Parameter(defaultValue = "${project.build.directory}/xtext-temp")
     private String tmpClassDirectory;
 
     /**
      * File encoding argument for the generator.
-     * 
-     * @parameter expression="${xtext.encoding}"
-     *            default-value="${project.build.sourceEncoding}"
      */
+    @Parameter(property = "xtext.encoding", defaultValue = "${project.build.sourceEncoding}")
     protected String encoding;
 
     /**
      * The project itself. This parameter is set by maven.
-     * 
-     * @parameter expression="${project}"
-     * @readonly
-     * @required
      */
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
 
     /**
      * Project classpath.
-     * 
-     * @parameter expression="${project.compileClasspathElements}"
-     * @readonly
-     * @required
      */
+    @Parameter(defaultValue = "${project.compileClasspathElements}", readonly = true, required = true)
     private List<String> classpathElements;
 
     /**
      * Project source roots. List of folders, where the source models are located.<br>
      * The default value is a reference to the project's ${project.compileSourceRoots}.<br>
      * When adding a new entry the default value will be overwritten not extended. 
-     * @parameter
      */
+    @Parameter
     private List<String> sourceRoots;
     
     /**
@@ -88,49 +81,35 @@ public class ResourceOrderingXtextGenerator extends AbstractMojo {
      * The default value is a reference to the project's ${project.compileSourceRoots}.<br>
      * When adding a new entry the default value will be overwritten not extended.<br>
      * Used when your language needs java.
-     * 
-     * @parameter
      */
+    @Parameter
     private List<String> javaSourceRoots;
 
-    /**
-     * @parameter
-     * @required
-     */
+    @Parameter(required = true)
     private List<Language> languages;
 
-    /**
-     * @parameter expression="${xtext.generator.skip}" default-value="false"
-     */
+    @Parameter(property = "xtext.generator.skip", defaultValue = "false")
     private Boolean skip;
 
-    /**
-     * @parameter default-value="true"
-     */
+    @Parameter(defaultValue = "true")
     private Boolean failOnValidationError;
 
-    /**
-     * @parameter expression="${maven.compiler.source}" default-value="1.6"
-     */
+    @Parameter(property = "maven.compiler.source", defaultValue = "1.8")
     private String compilerSourceLevel;
 
-    /**
-     * @parameter expression="${maven.compiler.target}" default-value="1.6"
-     */
+    @Parameter(property = "maven.compiler.source", defaultValue = "1.8")
     private String compilerTargetLevel;
 
     /**
      * RegEx expression to filter class path during model files look up
-     * 
-     * @parameter
      */
+    @Parameter
     private String classPathLookupFilter;
 
     /**
      * Clustering configuration to avoid OOME
-     *
-     * @parameter
      */
+    @Parameter
     private ClusteringConfig clusteringConfig;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -195,8 +174,13 @@ public class ResourceOrderingXtextGenerator extends AbstractMojo {
         return tmpDir;
     }
 
-    public List<String> getClasspathElements() {
-        return classpathElements;
+    public Set<String> getClasspathElements() {
+        Set<String> classpathElements = newLinkedHashSet();
+        classpathElements.addAll(this.classpathElements);
+        classpathElements.remove(project.getBuild().getOutputDirectory());
+        classpathElements.remove(project.getBuild().getTestOutputDirectory());
+        Set<String> nonEmptyElements = newLinkedHashSet(filter(classpathElements, input -> !Strings.isEmpty(input.trim())));
+        return nonEmptyElements;
     }
 
     public List<Language> getLanguages() {
