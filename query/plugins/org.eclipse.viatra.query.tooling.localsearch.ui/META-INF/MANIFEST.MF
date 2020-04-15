@@ -19,9 +19,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.expressions,
  org.eclipse.viatra.integration.zest;bundle-version="[2.4.0,2.5.0)",
  org.eclipse.gef.layout;bundle-version="5.0.0",
- org.eclipse.gef.zest.fx;bundle-version="5.0.0",
- org.eclipse.gef.zest.fx.jface;bundle-version="5.0.0",
- org.eclipse.gef.mvc.fx;bundle-version="5.0.0",
+ org.eclipse.gef.zest.fx;bundle-version="5.1.1",
+ org.eclipse.gef.zest.fx.jface;bundle-version="5.1.1",
+ org.eclipse.gef.mvc.fx;bundle-version="5.2.0",
  com.google.inject;bundle-version="3.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Activator: org.eclipse.viatra.query.tooling.localsearch.ui.LocalSearchToolingActivator
