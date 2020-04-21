@@ -258,14 +258,22 @@ public class ReteEngine implements IQueryBackend {
         });
     }
 
-    private void constructionWrapper(final Callable<Void> payload) {
+    /**
+     * @since 2.4
+     */
+    public <T> T constructionWrapper(final Callable<T> payload) {
+        T result = null;
 //		context.modelReadLock();
 //		    try {
                 if (parallelExecutionEnabled)
                     reteNet.getStructuralChangeLock().lock();
                 try {
                     try {
-                        runtimeContext.coalesceTraversals(() -> { payload.call(); this.executeDelayedCommands(); return null;});
+                        result = runtimeContext.coalesceTraversals(() -> { 
+                            T innerResult = payload.call(); 
+                            this.executeDelayedCommands(); 
+                            return innerResult;
+                        });
                     } catch (InvocationTargetException ex) {
                         final Throwable cause = ex.getCause();
                         if (cause instanceof RetePatternBuildException)
@@ -282,6 +290,7 @@ public class ReteEngine implements IQueryBackend {
 //		    } finally {
 //		        context.modelReadUnLock();
 //		    }
+            return result;
     }
 
     // /**
@@ -351,22 +360,10 @@ public class ReteEngine implements IQueryBackend {
         NodeProvisioner nodeProvisioner = reteNet.getHeadContainer().getProvisioner();
         Indexer result = nodeProvisioner.peekProjectionIndexer(production, mask);
         if (result == null) {
-//            context.modelReadLock();
-//            try {
-                if (parallelExecutionEnabled)
-                    reteNet.getStructuralChangeLock().lock();
-                try {
-                    result = nodeProvisioner.accessProjectionIndexerOnetime(production, mask);
-                } finally {
-                    if (parallelExecutionEnabled)
-                        reteNet.getStructuralChangeLock().unlock();
-                }
-//            } finally {
-//                context.modelReadUnLock();
-//            }
+            result = constructionWrapper(() -> 
+                nodeProvisioner.accessProjectionIndexerOnetime(production, mask)
+            );
         }
-        
-        executeDelayedCommands();
 
         return result;
     }

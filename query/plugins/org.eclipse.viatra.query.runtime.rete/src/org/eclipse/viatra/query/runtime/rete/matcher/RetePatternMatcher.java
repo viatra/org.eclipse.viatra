@@ -243,6 +243,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
             this.signature = signature;
         }
 
+        @Override
         public void run() {
             fetch(indexer.get(signature));
         }
@@ -365,6 +366,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
             this.indexer = indexer;
         }
 
+        @Override
         public void run() {
             size = indexer.getBucketCount();
         }
@@ -437,13 +439,21 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
 
     @Override
     public void addUpdateListener(final IUpdateable listener, final Object listenerTag, boolean fireNow) {
-        final CallbackNode callbackNode = new CallbackNode(this.reteContainer, listener);
-        connect(callbackNode, listenerTag, fireNow);
+        // As a listener is added as a delayed command, they should be executed to make sure everything is consistent on
+        // return, see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=562369
+        engine.constructionWrapper(() -> {
+            final CallbackNode callbackNode = new CallbackNode(this.reteContainer, listener);
+            connect(callbackNode, listenerTag, fireNow);
+            return null;
+        });
     }
 
     @Override
     public void removeUpdateListener(Object listenerTag) {
-        disconnectByTag(listenerTag);
+        engine.constructionWrapper(() -> {
+            disconnectByTag(listenerTag);
+            return null;
+        });
     }
 
 }
