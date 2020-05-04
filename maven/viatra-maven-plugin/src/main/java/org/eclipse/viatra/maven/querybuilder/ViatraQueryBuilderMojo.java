@@ -23,6 +23,10 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage;
@@ -51,131 +55,102 @@ import com.google.common.collect.Maps;
 
 /**
  * Goal which generates Java code from patterns of the VIATRA Query Language.
- * 
- * @goal generate
- * @phase generate-sources
- * @requiresDependencyResolution compile
  */
+@Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true)
 public class ViatraQueryBuilderMojo extends AbstractMojo {
 
-    /**
-     * @parameter
-     * @required
-     */
+    @Parameter(required = true)
     private List<Metamodel> metamodels;
 
     /**
      * the project relative path to the output directory
-     * 
-     * @parameter
-     * @required
      */
+    @Parameter(required = true)
     private String outputDirectory;
 
     /**
      * whether the output directory should be created if t doesn't already exist.
-     * 
-     * @property
      */
+    @Parameter(required = false)
     private boolean createOutputDirectory = true;
 
     /**
      * whether existing resources should be overridden.
-     * 
-     * @property
      */
+    @Parameter(required = false)
     private boolean overrideExistingResources = true;
 
     /**
      * The project itself. This parameter is set by maven.
-     * 
-     * @parameter property="project"
-     * @readonly
-     * @required
      */
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
 
     /**
      * The plugin descriptor
-     * 
-     * @parameter default-value="${plugin}"
-     * @readonly
-     * @required
      */
+    @Parameter(defaultValue = "${plugin}", readonly = true, required = true)
     protected PluginDescriptor descriptor;
     
     /**
      * Project classpath.
-     * 
-     * @parameter default-value="${project.compileClasspathElements}"
-     * @readonly
-     * @required
      */
+    @Parameter(defaultValue = "${project.compileClasspathElements}", readonly = true, required = true)
     private List<String> classpathElements;
 
     /**
      * Location of the generated source files.
-     * 
-     * @parameter default-value="${project.build.directory}/xtext-temp"
-     * @readonly
      */
+    @Parameter(defaultValue = "${project.build.directory}/xtext-temp")
     private String tmpClassDirectory;
 
     /**
      * File encoding argument for the generator.
-     * 
-     * @parameter property="xtext.encoding" default-value="${project.build.sourceEncoding}"
      */
+    @Parameter(property = "xtext.encoding", defaultValue = "${project.build.sourceEncoding}")
     protected String encoding;
 
-    /**
-     * @parameter property="maven.compiler.source" default-value="1.7"
-     */
+    @Parameter(property="maven.compiler.source", defaultValue="1.8")
     private String compilerSourceLevel;
 
-    /**
-     * @parameter property="maven.compiler.target" default-value="1.7"
-     */
+    @Parameter(property="maven.compiler.target", defaultValue="1.8")
     private String compilerTargetLevel;
     
     /**
      * whether the dependencies of the project should be added to the classpath of the plugin.
-     * 
-     * @parameter
      */
-    private boolean useProjectDependencies = false;
+    @Parameter(defaultValue = "false")
+    private boolean useProjectDependencies;
     
     /**
-     * @parameter default-value="true"
      * @since 1.7
      */
-    private boolean useEclipseGeneratorPreferences = true;
+    @Parameter(defaultValue = "true")
+    private boolean useEclipseGeneratorPreferences;
     
     /**
-     * @parameter default-value="NESTED_CLASS"
      * @since 1.7
      */
+    @Parameter(defaultValue = "NESTED_CLASS")
     private MatcherGenerationStrategy matcherGeneration;
     
     /**
      * @parameter
      * @since 1.7
      */
-    private boolean generateMatchProcessors = false;
+    @Parameter(defaultValue = "false")
+    private boolean generateMatchProcessors;
     
     /**
      * Location of the VIATRA Compiler settings file.
-     * 
-     * @parameter default-value="${basedir}/.settings/org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage.prefs"
-     * @readonly
      */
+    @Parameter(defaultValue="${basedir}/.settings/org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage.prefs", readonly = true)
     private String propertiesFileLocation;
     
     /**
      * URI mappings to add to the global URI mapping registry.
-     * 
-     * @parameter
      */
+    @Parameter
     private List<UriMapping> uriMappings;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
