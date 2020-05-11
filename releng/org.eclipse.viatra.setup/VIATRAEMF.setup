@@ -207,6 +207,28 @@
         <repository
             url="http://download.eclipse.org/efxclipse/updates-released/3.6.0/site"/>
       </repositoryList>
+      <repositoryList
+          name="2020-03">
+        <repository
+            url="http://download.eclipse.org/releases/2020-03"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        <repository
+            url="http://download.eclipse.org/efxclipse/updates-released/3.6.0/site"/>
+      </repositoryList>
+      <repositoryList
+          name="2020-06">
+        <repository
+            url="http://download.eclipse.org/releases/2020-06"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        <repository
+            url="http://download.eclipse.org/efxclipse/updates-released/3.6.0/site"/>
+      </repositoryList>
     </targlet>
     <targlet
         name="CPS metamodels"
@@ -338,6 +360,81 @@
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-03">
+          <repository
+              url="http://download.eclipse.org/releases/2020-03"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-06">
+          <repository
+              url="http://download.eclipse.org/releases/2020-06"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
+        </repositoryList>
+      </targlet>
+      <targlet
+          name="Sirius"
+          activeRepositoryList="${eclipse.target.platform}">
+        <requirement
+            name="org.eclipse.sirius.runtime.ide.ui.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.runtime.aql.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.properties.feature.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.specifier.properties.feature.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.runtime.ide.eef.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.runtime.ide.xtext.source.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.diagram.elk.feature.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.specifier.ide.ui.feature.group"/>
+        <requirement
+            name="org.eclipse.sirius.specifier.ide.ui.aql.feature.group"/>
+        <repositoryList
+            name="2019-06">
+          <repository
+              url="http://download.eclipse.org/releases/2019-06"/>
+          <repository
+              url="http://download.eclipse.org/sirius/updates/releases/6.1.0/photon"/>
+        </repositoryList>
+        <repositoryList
+            name="2019-09">
+          <repository
+              url="http://download.eclipse.org/releases/2019-09"/>
+          <repository
+              url="http://download.eclipse.org/sirius/updates/releases/6.2.3/2019-06"/>
+        </repositoryList>
+        <repositoryList
+            name="2019-12">
+          <repository
+              url="http://download.eclipse.org/releases/2019-12"/>
+          <repository
+              url="http://download.eclipse.org/sirius/updates/releases/6.2.3/2019-06"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-03">
+          <repository
+              url="http://download.eclipse.org/releases/2020-03"/>
+          <repository
+              url="http://download.eclipse.org/sirius/updates/releases/6.2.3/2019-06"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-06">
+          <repository
+              url="http://download.eclipse.org/releases/2020-06"/>
+          <repository
+              url="http://download.eclipse.org/sirius/updates/releases/6.2.3/2019-06"/>
         </repositoryList>
       </targlet>
     </setupTask>
@@ -582,52 +679,6 @@
           name="org.eclipse.sirius.specifier.ide.ui.aql.feature.group"/>
       <repository
           url="http://download.eclipse.org/sirius/updates/releases/6.0.1/photon"/>
-    </setupTask>
-    <setupTask
-        xsi:type="setup.targlets:TargletTask">
-      <targlet
-          name="Sirius"
-          activeRepositoryList="${eclipse.target.platform}">
-        <requirement
-            name="org.eclipse.sirius.runtime.ide.ui.source.feature.group"/>
-        <requirement
-            name="org.eclipse.sirius.runtime.aql.source.feature.group"/>
-        <requirement
-            name="org.eclipse.sirius.properties.feature.source.feature.group"/>
-        <requirement
-            name="org.eclipse.sirius.specifier.properties.feature.source.feature.group"/>
-        <requirement
-            name="org.eclipse.sirius.runtime.ide.eef.source.feature.group"/>
-        <requirement
-            name="org.eclipse.sirius.runtime.ide.xtext.source.feature.group"/>
-        <requirement
-            name="org.eclipse.sirius.diagram.elk.feature.feature.group"/>
-        <requirement
-            name="org.eclipse.sirius.specifier.ide.ui.feature.group"/>
-        <requirement
-            name="org.eclipse.sirius.specifier.ide.ui.aql.feature.group"/>
-        <repositoryList
-            name="2019-06">
-          <repository
-              url="http://download.eclipse.org/releases/2019-06"/>
-          <repository
-              url="http://download.eclipse.org/sirius/updates/releases/6.1.0/photon"/>
-        </repositoryList>
-        <repositoryList
-            name="2019-09">
-          <repository
-              url="http://download.eclipse.org/releases/2019-09"/>
-          <repository
-              url="http://download.eclipse.org/sirius/updates/releases/6.2.3/2019-06"/>
-        </repositoryList>
-        <repositoryList
-            name="2019-12">
-          <repository
-              url="http://download.eclipse.org/releases/2019-12"/>
-          <repository
-              url="http://download.eclipse.org/sirius/updates/releases/6.2.3/2019-06"/>
-        </repositoryList>
-      </targlet>
     </setupTask>
     <stream
         name="master"/>
@@ -899,6 +950,8 @@
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
           <repository
               url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.20.0"/>
+          <repository
+              url="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.11.2"/>
         </repositoryList>
         <repositoryList
             name="2019-09">
@@ -908,11 +961,27 @@
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
           <repository
               url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.20.0"/>
+          <repository
+              url="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.11.2"/>
         </repositoryList>
         <repositoryList
             name="2019-12">
           <repository
               url="http://download.eclipse.org/releases/2019-12"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-03">
+          <repository
+              url="http://download.eclipse.org/releases/2020-03"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-06">
+          <repository
+              url="http://download.eclipse.org/releases/2020-06"/>
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
         </repositoryList>
