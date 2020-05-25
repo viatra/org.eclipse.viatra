@@ -10,4 +10,13 @@ More information:: https://projects.eclipse.org/projects/modeling.viatra/release
 
 == New and Noteworthy
 
+In addition to bugfixes, VIATRA 2.7 introduces a new language feature: now it is possible to reference Java constants, more precisely, public static final fields of Java classes from pattern specifications.
+
+[source,vql]
+----
+pattern maxInteger(value : java Integer) {
+  value == java Integer::MAX_VALUE;
+}
+----
+
 == Migrating to VIATRA 2.7

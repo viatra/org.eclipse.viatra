@@ -22,8 +22,11 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaConstantValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
+import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.conversion.ValueConverterException;
 import org.eclipse.xtext.linking.impl.DefaultLinkingService;
@@ -49,6 +52,9 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
         } else if (Objects.equals(ref, PatternLanguagePackage.eINSTANCE.getEnumValue_Literal()) && context instanceof EnumValue
                 && node instanceof ILeafNode) {
             return getEnumLiteral((EnumValue) context, node);
+        } else if (Objects.equals(ref, PatternLanguagePackage.eINSTANCE.getJavaConstantValue_FieldRef()) && context instanceof JavaConstantValue
+                && node instanceof ILeafNode) {
+            return getJavaConstant((JavaConstantValue) context, node);
         }
         return super.getLinkedObjects(context, ref, node);
     }
@@ -80,6 +86,18 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
         } else {
             return Collections.emptyList();
         }
+    }
+    
+    private List<EObject> getJavaConstant(JavaConstantValue context, INode text) {
+        final JvmDeclaredType classRef = context.getClassRef();
+        if (classRef == null)
+            return Collections.emptyList();
+
+        for (JvmField field : classRef.getDeclaredFields()) {
+            if (field.getSimpleName().equals(text.getText()))
+                return Collections.<EObject> singletonList(field);
+        }
+        return Collections.emptyList();
     }
 
     private List<EObject> getPackage(PackageImport context, ILeafNode text) {

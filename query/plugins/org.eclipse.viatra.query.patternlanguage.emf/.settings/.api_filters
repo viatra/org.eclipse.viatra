@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.patternlanguage.emf" version="2">
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/parser/antlr/internal/InternalEMFPatternLanguageParser.java" type="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageParser">
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="entryRuleJavaConstantValue()"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="ruleJavaConstantValue()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/serializer/AbstractEMFPatternLanguageSemanticSequencer.java" type="org.eclipse.viatra.query.patternlanguage.emf.serializer.AbstractEMFPatternLanguageSemanticSequencer">
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="sequence_JavaConstantValue(ISerializationContext, JavaConstantValue)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/services/EMFPatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess">
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="getJavaConstantValueAccess()"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="getJavaConstantValueRule()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/services/EMFPatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess$JavaConstantValueElements">
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="JavaConstantValueElements"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/services/EMFPatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess$LiteralValueReferenceElements">
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="getJavaConstantValueParserRuleCall_4()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

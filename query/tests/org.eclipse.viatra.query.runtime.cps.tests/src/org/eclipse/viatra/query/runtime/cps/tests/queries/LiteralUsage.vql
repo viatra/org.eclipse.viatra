@@ -48,3 +48,8 @@ pattern longValueNegativeConstantWithCheck(appT : ApplicationType){
     ApplicationType.exeFileSize(appT, value);
     check(value === -1l);
 }
+
+@Constraint(key = {appI}, message = java TestConstants::ADMINISTRATOR_USER_NAME2, severity = "info")
+pattern applicationWithAdministratorAccess(appI : ApplicationInstance) {
+	ApplicationInstance.dbUser(appI, java TestConstants::ADMINISTRATOR_USER_NAME2 );
+}

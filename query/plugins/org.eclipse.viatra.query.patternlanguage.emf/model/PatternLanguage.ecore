@@ -410,4 +410,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="var" eType="#//VariableReference"
         containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="JavaConstantValue" eSuperTypes="#//ValueReference">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="classRef" eType="ecore:EClass http://www.eclipse.org/xtext/common/JavaVMTypes#//JvmDeclaredType"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fieldRef" eType="ecore:EClass http://www.eclipse.org/xtext/common/JavaVMTypes#//JvmField"/>
+  </eClassifiers>
 </ecore:EPackage>

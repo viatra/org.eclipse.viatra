@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ASCII"?>
 <cps:CyberPhysicalSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:cps="http://org.eclipse.viatra/model/cps" identifier="testModel6504822858552">
   <appTypes identifier="simple.cps.app.FirstAppClass0">
-    <instances identifier="simple.cps.app.FirstAppClass0.inst0" allocatedTo="simple.cps.host.SecondHostClass0.inst1"/>
-    <instances identifier="simple.cps.app.FirstAppClass0.inst1" allocatedTo="simple.cps.host.SecondHostClass0.inst1"/>
+    <instances identifier="simple.cps.app.FirstAppClass0.inst0" dbUser="admin" dbPassword="admin" allocatedTo="simple.cps.host.SecondHostClass0.inst1"/>
+    <instances identifier="simple.cps.app.FirstAppClass0.inst1" dbUser="user" dbPassword="user" allocatedTo="simple.cps.host.SecondHostClass0.inst1"/>
     <behavior identifier="simple.cps.app.FirstAppClass0.sm0" initial="simple.cps.app.FirstAppClass0.sm0.s0">
       <states identifier="simple.cps.app.FirstAppClass0.sm0.s0">
         <outgoingTransitions identifier="simple.cps.app.FirstAppClass0.sm0.s0.t0" targetState="simple.cps.app.FirstAppClass0.sm0.s3" action="waitForSignal(6)"/>

@@ -41,6 +41,7 @@ import java.util.HashSet
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference
 import org.eclipse.viatra.query.patternlanguage.emf.vql.UnaryTypeConstraint
+import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaConstantValue
 
 /**
  * @author Zoltan Ujhelyi
@@ -238,6 +239,14 @@ class PatternLanguageTypeRules {
    
    def dispatch void inferTypes(Expression reference, TypeInformation information) {
        // No type judgement from abstract expression class
+   }
+   
+   /**
+    * @since 2.7
+    */
+   def dispatch void inferTypes(JavaConstantValue reference, TypeInformation information) {
+       val type = new JavaTransitiveInstancesKey(reference.fieldRef.type.type.identifier)
+       information.provideType(new TypeJudgement(reference, type))
    }
    
    def dispatch void inferTypes(FunctionEvaluationValue reference, TypeInformation information) {

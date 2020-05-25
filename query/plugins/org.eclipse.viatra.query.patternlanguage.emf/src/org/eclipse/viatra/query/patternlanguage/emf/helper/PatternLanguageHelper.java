@@ -50,6 +50,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.CompareConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Constraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Expression;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.FunctionEvaluationValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaConstantValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ListValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Modifiers;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue;
@@ -632,6 +633,8 @@ public final class PatternLanguageHelper {
             NumberLiterals literals = new NumberLiterals();
             XNumberLiteral xLiteral = ((NumberValue)ref).getValue();
             value = literals.numberValue(xLiteral, literals.getJavaType(xLiteral));
+        } else if (ref instanceof JavaConstantValue) {
+            return ((JavaConstantValue) ref).getFieldRef();
         } else if (ref instanceof StringValue) {
             value = ((StringValue)ref).getValue();
         } else if (ref instanceof VariableReference) {

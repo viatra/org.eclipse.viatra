@@ -12,13 +12,14 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParser
 import org.eclipse.viatra.query.patternlanguage.emf.util.PatternParserBuilder
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus
+import org.eclipse.xtext.common.types.JvmGenericType
+import org.eclipse.xtext.diagnostics.Severity
 import org.junit.BeforeClass
 import org.junit.Test
 
 import static org.junit.Assert.*
-import org.eclipse.xtext.diagnostics.Severity
-import org.eclipse.xtext.common.types.JvmGenericType
 
 class PatternParserTest {
     
@@ -381,5 +382,30 @@ class PatternParserTest {
         val results = parser.parse(pattern)
         results.allDiagnostics.forEach[println]
         assertTrue(results.allDiagnostics.filter[diag | diag.severity === Severity.ERROR].isEmpty)
+    }
+    
+    @Test()
+    def void javaConstantInAnnotationParameter() {
+        val String pattern = '''
+            package test;
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+            
+            @Param1(p1 = java org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage::eNS_URI)
+            pattern p(a : java Integer){
+                a == 122;
+            }
+        '''
+        val parser = new PatternParserBuilder()
+            .withInjector(new EMFPatternLanguageStandaloneSetup().createStandaloneInjector)
+            .build
+        val results = parser.parse(pattern)
+        results.allDiagnostics.forEach[println]
+        assertTrue(results.allDiagnostics.filter[diag | diag.severity === Severity.ERROR].isEmpty)
+        
+        val querySpecification = results.getQuerySpecification("test.p").get
+        val annotation = querySpecification.getFirstAnnotationByName("Param1").get
+        val value = annotation.getFirstValue("p1", typeof(String)).get
+        assertEquals(PatternLanguagePackage.eNS_URI, value)
     }
 }

@@ -18,9 +18,11 @@ import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericEMFPatternPQuery;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericQuerySpecification;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericSingleConstraintPQuery;
+import org.eclipse.viatra.query.patternlanguage.emf.specification.JvmConstantEvaluator;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.XBaseEvaluator;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CallableRelation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Constraint;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaConstantValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternCall;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
@@ -269,6 +271,12 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
                 throw new IllegalArgumentException("Cannot convert number literal to type" + numberType.getCanonicalName());
         }
         return createConstantVariable(value);
+    }
+    
+    @Override
+    public String createConstantVariable(JavaConstantValue value) {
+        JvmConstantEvaluator constantEvaluator = new JvmConstantEvaluator(value.getFieldRef(), pattern);
+        return pBody.newConstantVariable(constantEvaluator.evaluateConstantExpression()).getName();
     }
 
 }

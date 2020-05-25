@@ -47,6 +47,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.RewriterException;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
+import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.validation.Issue;
 
 import com.google.common.collect.Multimap;
@@ -272,7 +273,12 @@ public final class SpecificationBuilder {
             for (Entry<String, Object> attribute : 
                 PatternLanguageHelper.evaluateAnnotationParametersWithMultiplicity(annotation).entries()) 
             {
-                pAnnotation.addAttribute(attribute.getKey(), attribute.getValue());
+                Object value = attribute.getValue();
+                if (value instanceof JvmField) {
+                    JvmConstantEvaluator constantEvaluator = new JvmConstantEvaluator((JvmField)value, pattern);
+                    value = constantEvaluator.evaluateConstantExpression();
+                }
+                pAnnotation.addAttribute(attribute.getKey(), value);
             }
             query.addAnnotation(pAnnotation);
         }

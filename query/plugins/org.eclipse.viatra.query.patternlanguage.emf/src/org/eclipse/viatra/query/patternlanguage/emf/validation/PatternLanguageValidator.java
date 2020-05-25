@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -47,6 +48,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.ClosureType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CompareConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CompareFeature;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.FunctionEvaluationValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaConstantValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ListValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint;
@@ -68,6 +70,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IAggregatorFactory;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
+import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
@@ -524,22 +527,37 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
                         PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME, IssueCodes.DEPRECATION);
             }
             Class<? extends ValueReference> expectedParameterType = validator.getExpectedParameterType(parameter);
-            if (expectedParameterType != null && parameter.getValue() != null
-                    && !expectedParameterType.isAssignableFrom(parameter.getValue().getClass())) {
-                error(String.format(ANNOTATION_PARAMETER_TYPE_ERROR, getTypeName(parameter.getValue().getClass()),
+            final ValueReference parameterValue = parameter.getValue();
+            
+            if (expectedParameterType == null && parameterValue == null) {
+                return;
+            }
+            if (parameterValue instanceof JavaConstantValue) {
+                Optional.ofNullable(((JavaConstantValue) parameterValue).getFieldRef())
+                    .map(JvmField::getType)
+                    .map(JvmTypeReference::getType)
+                    .ifPresent(actualType -> {
+                        if (!typeReferences.is(actualType, getTypeClass(expectedParameterType))) {
+                            error(String.format(ANNOTATION_PARAMETER_TYPE_ERROR, actualType.getSimpleName(), getTypeName(expectedParameterType)), parameter,
+                                    PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME,
+                                    annotation.getParameters().indexOf(parameter), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+                        }
+                    });
+            } else if (!expectedParameterType.isAssignableFrom(parameterValue.getClass())) {
+                error(String.format(ANNOTATION_PARAMETER_TYPE_ERROR, getTypeName(parameterValue.getClass()),
                         getTypeName(expectedParameterType)), parameter,
                         PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME,
                         annotation.getParameters().indexOf(parameter), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
-            } else if (parameter.getValue() instanceof VariableReference) {
-                VariableReference reference = (VariableReference) parameter.getValue();
+            } else if (parameterValue instanceof VariableReference) {
+                VariableReference reference = (VariableReference) parameterValue;
                 if (reference.getVariable() == null) {
                     error(String.format("Unknown variable %s", reference.getVar()), parameter,
                             PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__VALUE,
                             annotation.getParameters().indexOf(parameter),
                             IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
                 }
-            } else if (parameter.getValue() instanceof ListValue) {
-                ListValue listValue = (ListValue) (parameter.getValue());
+            } else if (parameterValue instanceof ListValue) {
+                ListValue listValue = (ListValue) parameterValue;
                 for (VariableReference reference : Iterables.filter(listValue.getValues(), VariableReference.class)) {
                     if (reference.getVariable() == null) {
                         error(String.format("Unknown variable %s", reference.getVar()), listValue,
@@ -760,8 +778,23 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
             return "List";
         } else if (VariableReference.class.isAssignableFrom(typeClass)) {
             return "Variable";
+        } else if (JavaConstantValue.class.isAssignableFrom(typeClass)) {
+            return "Java Constant";
         }
         return "UNDEFINED";
+    }
+    
+    private Class<?> getTypeClass(Class<? extends ValueReference> typeClass) {
+        if (NumberValue.class.isAssignableFrom(typeClass)) {
+            return Number.class;
+        } else if (BoolValue.class.isAssignableFrom(typeClass)) {
+            return Boolean.class;
+        } else if (StringValue.class.isAssignableFrom(typeClass)) {
+            return String.class;
+        } else if (ListValue.class.isAssignableFrom(typeClass)) {
+            return List.class;
+        }
+        return Object.class;
     }
 
     private String getConstantAsString(ValueReference ref) {

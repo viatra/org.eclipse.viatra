@@ -133,7 +133,10 @@ AnnotationValueReference returns ValueReference:
     ValueReference | ListValue;
 
 LiteralValueReference returns ValueReference:
-    NumberValue | StringValue | BoolValue | EnumValue;
+    NumberValue | StringValue | BoolValue | EnumValue | JavaConstantValue;
+
+JavaConstantValue:
+    'java' classRef=[types::JvmDeclaredType|QualifiedName] '::' fieldRef=[types::JvmField];
 
 StringValue returns LiteralValueReference:
     {StringValue} value=STRING;

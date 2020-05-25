@@ -16,6 +16,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.CallableRelation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Constraint;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaConstantValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -78,6 +79,12 @@ public interface PatternModelAcceptor<Result> {
      * @since 1.7
      */
     String createConstantVariable(boolean negative, XNumberLiteral numberLiteral);
+    
+    /**
+     * Creates an internal virtual variable, a constant constraint which binds it to the given Java constant, and returns its name.
+     * @since 2.6
+     */
+    String createConstantVariable(JavaConstantValue value);
 
     /**
      * Accepts the given parameters as exported parameter constraints.

@@ -59,6 +59,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EntityType
 import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaType
 import java.util.HashSet
+import org.eclipse.xtext.common.types.JvmField
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -487,6 +488,9 @@ class PatternQuerySpecificationClassInferrer {
                         «outputAnnotationParameter(item)»
                     «ENDFOR»
                     })'''
+                }
+                JvmField: {
+                    '''«value.qualifiedName»'''
                 }
                 ParameterReference: {
                     '''new «ParameterReference»("«value.name»")'''

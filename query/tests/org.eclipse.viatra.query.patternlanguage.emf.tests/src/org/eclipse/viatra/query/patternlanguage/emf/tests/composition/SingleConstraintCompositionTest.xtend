@@ -620,7 +620,7 @@ class SingleConstraintCompositionTest extends AbstractValidatorTest {
             }
             '''
         )
-        parsed.assertError(PatternLanguagePackage.Literals.TYPE_CHECK_CONSTRAINT, Diagnostic.SYNTAX_DIAGNOSTIC, "extraneous input")
+        parsed.assertError(PatternLanguagePackage.Literals.PATTERN_BODY, Diagnostic.SYNTAX_DIAGNOSTIC, "no viable alternative at input '+'")
     }
     
     @Test
@@ -637,4 +637,84 @@ class SingleConstraintCompositionTest extends AbstractValidatorTest {
         )
         parsed.assertError(PatternLanguagePackage.Literals.COMPARE_CONSTRAINT, Diagnostic.SYNTAX_DIAGNOSTIC, "'count'")
     }
+    
+    @Test
+    def void javaConstantTest1() {
+        var parsed = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+            
+            pattern p(a : java Integer){
+                a == java Integer::MAX_VALUE;
+            }
+            '''
+        )
+        parsed.assertNoErrors
+        tester.validate(parsed).assertOK
+    }
+    
+    @Test
+    def void javaConstantTest2() {
+        var parsed = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+            
+            pattern p(a : java Integer){
+                a == java Integer::MAXIMUM_VALUE;
+            }
+            '''
+        )
+        parsed.assertError(PatternLanguagePackage.Literals.JAVA_CONSTANT_VALUE, Diagnostic.LINKING_DIAGNOSTIC, "");
+    }
+    
+    @Test
+    def void javaConstantTest3() {
+        var parsed = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+            
+            pattern p(a : java Integer){
+                a == java Integer::TYPE;
+            }
+            '''
+        )
+        parsed.assertError(PatternLanguagePackage.Literals.VARIABLE_REFERENCE, IssueCodes.VARIABLE_TYPE_INVALID_ERROR, "");
+    }
+    
+    @Test
+    def void javaConstantInAnnotationTest1() {
+        var parsed = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+            
+            @Param1(p1 = java org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage::eNS_URI)
+            pattern p(a : java Integer){
+                a == java Integer::MAX_VALUE;
+            }
+            '''
+        )
+        parsed.assertNoIssues
+    }
+    
+    @Test
+    def void javaConstantInAnnotationTest2() {
+        var parsed = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage"
+            
+            @Param1(p1 = java Integer::MAX_VALUE)
+            pattern p(a : java Integer){
+                a == java Integer::MAX_VALUE;
+            }
+            '''
+        )
+        parsed.assertError(PatternLanguagePackage.Literals.ANNOTATION_PARAMETER, IssueCodes.MISTYPED_ANNOTATION_PARAMETER, "");
+    }
+    
+    
 }

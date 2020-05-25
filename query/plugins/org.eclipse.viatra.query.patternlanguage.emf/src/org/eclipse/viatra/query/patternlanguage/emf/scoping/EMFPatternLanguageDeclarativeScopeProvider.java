@@ -30,6 +30,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AnnotationParameter;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaConstantValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PathExpressionConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
@@ -38,6 +39,10 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
+import org.eclipse.xtext.common.types.JvmField;
+import org.eclipse.xtext.common.types.JvmMember;
+import org.eclipse.xtext.common.types.JvmVisibility;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.scoping.IScope;
@@ -109,6 +114,11 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
                 EnumValue containingValue = EcoreUtil2.getContainerOfType(ctx, EnumValue.class);
                 if (containingValue != null) {
                     return scope_EEnumLiteral(containingValue);
+                }
+            } else if (ref.equals(PatternLanguagePackage.Literals.JAVA_CONSTANT_VALUE__FIELD_REF)) {
+                JavaConstantValue referredValue = EcoreUtil2.getContainerOfType(ctx, JavaConstantValue.class);
+                if (referredValue != null) {
+                    return scope_JavaConstantValue(referredValue);
                 }
             }
         }
@@ -233,6 +243,18 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends XbaseBatchScopeP
                             .map(EEnum.class::cast)
                             .map(this::calculateEnumLiteralScope)
                             .orElse(IScope.NULLSCOPE);
+    }
+    
+    private IScope scope_JavaConstantValue(JavaConstantValue ctx) {
+        final JvmDeclaredType classRef = ctx.getClassRef();
+        if (classRef == null)
+            return IScope.NULLSCOPE;
+
+        final Iterable<JvmField> fields = Iterables.filter(classRef.getDeclaredFields(),
+                field -> field.getVisibility() == JvmVisibility.PUBLIC && field.isFinal() && field.isStatic());
+
+        return Scopes.scopeFor(fields, field -> qualifiedNameConverter.toQualifiedName(field.getSimpleName()),
+                IScope.NULLSCOPE);
     }
 
     private IScope calculateEnumLiteralScope(EEnum enumeration) {

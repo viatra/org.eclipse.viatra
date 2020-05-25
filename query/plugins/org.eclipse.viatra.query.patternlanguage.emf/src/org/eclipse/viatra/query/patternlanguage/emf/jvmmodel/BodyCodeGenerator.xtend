@@ -54,6 +54,7 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.viatra.query.patternlanguage.emf.helper.PatternLanguageHelper
+import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaConstantValue
 
 /** 
  * {@link PatternModelAcceptor} implementation that generates body code for {@link IQuerySpecification} classes.
@@ -125,6 +126,19 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 target.append('''new ''')
                 target.append(ConstantValue)
                 target.append('''(body, «virtualVariable.escape», «IF negative»-«ENDIF»«numberLiteral.outputConstant»);
+                ''')
+                virtualVariable
+            }
+            
+            override createConstantVariable(JavaConstantValue value) {
+                val virtualVariable = createVirtualVariable
+                target.append('''new ''')
+                target.append(ConstantValue)
+                target.append('''(body, «virtualVariable.escape», ''')
+                target.append(value.classRef)
+                target.append(".")
+                target.append(value.fieldRef.simpleName)
+                target.append(''');
                 ''')
                 virtualVariable
             }

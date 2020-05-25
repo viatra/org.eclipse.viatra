@@ -39,6 +39,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.Constraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EClassifierConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.EnumValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.FunctionEvaluationValue;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaConstantValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.JavaType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.NumberValue;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ParameterRef;
@@ -415,6 +416,9 @@ public class PatternBodyTransformer {
             return acceptor.createConstantVariable(((EnumValue) reference).getLiteral().getInstance());
         } else if (reference instanceof BoolValue) {
             return acceptor.createConstantVariable(PatternLanguageHelper.getValue(reference, Boolean.class));
+        } else if (reference instanceof JavaConstantValue) {
+            final JavaConstantValue javaRef = (JavaConstantValue) reference;
+            return acceptor.createConstantVariable(javaRef);
         } else
             throw new SpecificationBuilderException(
                     "Unsupported value reference of type {1} from EPackage {2} currently unsupported by pattern builder in pattern {3}.",
