@@ -9,11 +9,8 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 == Rete Visualizer
 
 .Installation
-* Install the *Query Visualization* feature group from the VIATRA update site.
-** Before VIATRA 1.6 this feature relied on a pre-release version of GEF4 Zest; the version available from the GEF update sites did not work. Use the version from the VIATRA update sites.
-** Since VIATRA 1.6 GEF 5 is used
-*** JavaFX support is required
-*** e(fx)clipse runtime and GEF5 is required. They are both available from the Oxygen release train.
+* Install the *VIATRA Query and Transformation SDK Extensions* feature from the VIATRA update site.
+*** e(fx)clipse runtime and GEF5 is required. They are both available from the release train.
 
 .Usage
 * Go to *Window* | *Show View* | *Other...* and choose *Rete Visualizer*.
@@ -27,7 +24,8 @@ image:tools/rete_visualizer.png[]
 == Local Search Debugger
 
 .Installation
-* The Local Search Debugger Tooling is available in the Query Visualization feature group.
+* Install the *VIATRA Query and Transformation SDK Extensions* feature from the VIATRA update site.
+*** e(fx)clipse runtime and GEF5 is required. They are both available from the release train.
 
 .Usage
 * Open the Local Search Debugger view in Eclipse
