@@ -1,0 +1,15 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+[[viatra-25]]
+
+= VIATRA 2.5
+
+Release date:: 2020-12-xx (TBD)
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/2.5.0
+
+== New and Noteworthy
+
+
+== Migrating to VIATRA 2.5
+

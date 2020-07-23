@@ -21,4 +21,4 @@ The Eclipse VIATRA framework supports the development of model transformations w
 . link:tutorial.html[Getting Started with VIATRA]
 . link:documentation.html[Reference Documentation]
 . link:releases.html[Release Information]
-. link:cps/Home.html[CPS Demonstrator]
+. link:cps-demonstrator.html[CPS Demonstrator]
