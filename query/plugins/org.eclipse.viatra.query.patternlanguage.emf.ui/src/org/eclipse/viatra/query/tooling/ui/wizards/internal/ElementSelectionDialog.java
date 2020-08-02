@@ -31,14 +31,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.SearchPattern;
 import org.eclipse.ui.dialogs.SelectionStatusDialog;
-import org.eclipse.ui.internal.misc.StringMatcher;
 
 /**
  * @author Tamas Szabo
  * 
  */
-@SuppressWarnings("restriction")
 public class ElementSelectionDialog extends SelectionStatusDialog {
 
     private StyledCellLabelProvider labelProvider;
@@ -57,9 +56,10 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
 
         @Override
         public boolean select(Viewer viewer, Object parentElement, Object element) {
-            StringMatcher matcher = new StringMatcher("*" + filterString + "*", true, false);
+            SearchPattern matcher = new SearchPattern(SearchPattern.RULE_PATTERN_MATCH);
+            matcher.setPattern('*' + filterString + '*');
             String label = element == null ? "" : element.toString();
-            return matcher.match(label);
+            return matcher.matches(label);
         }
 
     }
