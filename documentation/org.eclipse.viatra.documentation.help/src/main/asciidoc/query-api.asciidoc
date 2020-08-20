@@ -454,7 +454,7 @@ NOTE: We plan on providing a simpler way of setting up model statistics in later
 
 * A local search matcher cannot provide change notifications on pattern matches. If asked, an UnsupportedOperationException is thrown.
 * As of version 1.4, it is not possible to combine different pattern matching algorithms for the evaluation of a single pattern. Either the entire search must use Rete or Local search based algorithms.
-* The Local Search engine currently does not able to execute recursive queries. See http://bugs.eclipse.org/458278 for more details.
+* The Local Search engine currently is not able to execute recursive queries. See http://bugs.eclipse.org/458278 for more details.
 
 
 [[sec-query-hints]]
