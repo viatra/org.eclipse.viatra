@@ -52,12 +52,17 @@ This page focuses on the entire syntax of the language. To get familiar with the
 === File Header
 
 1. Enclose pattern definitions in a package: `package my.own.patterns`
-2. Import declarations are required to indicate which EMF packages and Java classes are referenced in the query definitions.
+2. Import declarations are required to indicate which EMF packages, VQL patterns from other files and Java classes are referenced in the query definitions.
  * Use the registered namespace URI for EMF package import declarations. Content assist is available:
  * `import "http://my.own.ePackage.nsUri/1.0"`
  * Use Java import declarations for importing Java classes from the project classpath, in order to be used (a) in expression evaluations, also (b) classes used as type restrictions (as of 1.4), or (c) as aggregators (as of 1.4).
    * `import java ^java.util.regex.Pattern`
    * Note that here and elsewhere, a caret character can be used to escape keywords, such as java.
+   * Note that similar to how Java handles subpackages they also have to be imported with fully qualified names.
+ * Patterns of other files can also be imported by their fully qualified names:
+   * `import my.imported.package.PatternName`
+   * Only public patterns can be imported
+   * Patterns defined in the same package as the current file are automatically imported.
 
 
 === Pattern Structure
@@ -68,6 +73,7 @@ This page focuses on the entire syntax of the language. To get familiar with the
   * `pattern myPattern(a,b : MyClass,c) {...pattern contraints...}`
   * In the language, these parameter types are considered the same as type constraints in the pattern body.
   * Type declarations are optional, but *strongly recommended* to use. In future versions of VIATRA, they might become mandatory. We recommend using EClass types for all EObject parameter variables, and, since version 1.4, Java class types (prefixed with the `java` keyword) for attribute-valued and computed parameters.
+  * It is possible to have a pattern without parameters - these pattern can be used to check whether the model structure described by the pattern body exists in the model or not.
 3. Since version 1.4, parameters can optionally be marked as incoming (`in`) or outgoing (`out`). Incoming parameters *must* be bound when the pattern matcher initializes, while outgoing parameters *must not*. Unmarked parameters are neither incoming nor outgoing: they might be either bound or unbound when called. These declarations are used as only hints; the pattern matcher might ignore them if necessary.
   * `pattern myPattern(in a, out b, c) {...}`
 4. Since version 1.4, the evaluation backend can be specified as local search-only (`search`) or Rete-only (`incremental`), providing hints to the runtime what pattern matcher should be initialized for this pattern. If undefined, the default hints of the engine is used (by default, Rete).
@@ -88,6 +94,8 @@ The most basic pattern constraints are type declarations: use EClasses, ERelatio
 
 [[advanced-constraints]]
 === More Complex Issues
+
+:star: *
 
 1. By default, each variable you define *may be equal* to every other variable in a query. This is especially important to know when using attributes or multiple variables with the same type (or supertype).
   * For example, if you have two variables MyClass(someObj1), MyClass(someObj2), then someObj1 and someObj2 may match to the same EObject.
@@ -111,9 +119,6 @@ The most basic pattern constraints are type declarations: use EClasses, ERelatio
   * Semantically equivalent to `true == eval(aNumberVariable > aStringVariable.length());`
   * The Java types of variables are inferred based on the EMF Ecore specification (using the generated Java classes).
 6. One can also use the transitive closure of binary patterns in a pattern call, such as the transitive closure of pattern friend (note the `+` symbol after the name of the called pattern): `find friend+(myGuy, friendOfAFriendOfAFriend);`
-
-:star: *
-
 7. Starting with VIATRA 2.0, it is also possible to calculate the reflexive transitive closure of a pattern call, e.g. to return all friends and
 (note the `{star}` symbol after the name of the called pattern): `find friend{star}(myGuy, friendOfAFriendOfAFriend);`. This is equivalent with the following construct: `pattern friendOrMySelf(self, other) { other == self; } or { find friend+(self, other);}`
 
@@ -416,7 +421,7 @@ Starting with version 1.4, the Viatra Query ships with the following built-in ag
 
 NOTE: the custom aggregator implementations should be considered an experimental feature. In future releases the API required to define new aggregators might change without notice. However, the syntax and semantics of using the existing aggregators in the language should remain stable.
 
-The first step is to provide a class that implements the Java interface http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/plugins/org.eclipse.viatra.query.runtime.matchers/src/org/eclipse/viatra/query/runtime/matchers/psystem/aggregations/IMultisetAggregationOperator.java[IMultisetAggregationOperator] by subclassing http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/plugins/org.eclipse.viatra.query.runtime.matchers/src/org/eclipse/viatra/query/runtime/matchers/psystem/aggregations/AbstractMultisetAggregationOperator.java[AbstractMultisetAggregationOperator]. An instance of your class would represent a mathematical aggregation operator (independently of any context, such as patterns, variables, etc.) and provide incremental computation of the aggregate results from a changing multiset of values. Please read the Javadoc carefully to ensure that you meet all assumed contracts; you may also want to inspect the provided built-in implementors to gain a better understanding.
+The first step is to provide a class that implements the Java interface http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/plugins/org.eclipse.viatra.query.runtime.matchers/src/org/eclipse/viatra/query/runtime/matchers/psystem/aggregations/IMultisetAggregationOperator.java[IMultisetAggregationOperator]. An instance of your class would represent a mathematical aggregation operator (independently of any context, such as patterns, variables, etc.) and provide incremental computation of the aggregate results from a changing multiset of values. Please read the Javadoc carefully to ensure that you meet all assumed contracts; you may also want to inspect the provided built-in implementors to gain a better understanding.
 
 In order to actually use your aggregator in the query language, the second step is to provide an implementation of http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/plugins/org.eclipse.viatra.query.runtime.matchers/src/org/eclipse/viatra/query/runtime/matchers/psystem/aggregations/IAggregatorFactory.java[IAggregatorFactory] that must be on the classpath of the query project in order to be accessible from queries. It is customary to take exception to Java naming conventions and use a lower-case class name, as the name of this class will be the aggregator operator name in the query language. The role of this class is twofold:
 
