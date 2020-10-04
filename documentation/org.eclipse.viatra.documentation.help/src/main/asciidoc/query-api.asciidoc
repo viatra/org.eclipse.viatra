@@ -651,8 +651,9 @@ engine.delayUpdatePropagation(new Callable<Void>() {
 === Run-once Query Engine
 
 This page describes how VIATRA Query can be used to carry out one-time query evaluation which is useful in the following cases:
+
 * You want less (steady-state) memory consumption instead of incremental evaluation.
-* You have derived features that are not [[VIATRA/Addon/Query_Based_Features#Well-behaving_structural_features|well-behaving]], but you want to include them in queries.
+* You have derived features that are not well-behaving, more precisely do not always send correct notifications when its value changes, but you want to include them in queries.
 * You like the query language of VIATRA Query, but you don't need incremental evaluation and the batch performance is better than the sum of model modification overheads between query usages.
 
 These scenarios are now supported by a "run-once" query engine that will perform the evaluation on a given query and return the match set then dispose of the Rete network and base index to free up memory.
