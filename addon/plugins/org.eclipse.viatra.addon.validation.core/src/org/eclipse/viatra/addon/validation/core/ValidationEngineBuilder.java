@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.viatra.addon.validation.core.api.IValidationEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
  * 
@@ -48,7 +49,7 @@ public class ValidationEngineBuilder {
     public IValidationEngine build() {
         Preconditions.checkState(queryEngine != null, "Must initialize engine before building!");
         if(logger == null){
-            logger = Logger.getLogger(ValidationEngine.class);
+            logger = ViatraQueryLoggingUtil.getLogger(ValidationEngine.class);
         }
         Preconditions.checkState(logger != null, "Must initialize logger before building!");
         return new ValidationEngine(queryEngine, logger);

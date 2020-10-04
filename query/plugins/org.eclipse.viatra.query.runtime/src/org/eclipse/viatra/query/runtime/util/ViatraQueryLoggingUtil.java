@@ -35,7 +35,7 @@ public class ViatraQueryLoggingUtil {
         if (defaultRuntimeLogger == null) {
             Logger parentLogger = externalLogger;
             if (parentLogger == null) {
-                defaultRuntimeLogger = Logger.getLogger(ViatraQueryLoggingUtil.class);
+                defaultRuntimeLogger = Logger.getLogger("org.eclipse.viatra");
             } else {
                 defaultRuntimeLogger = Logger.getLogger(parentLogger.getName() + ".runtime");
             }
@@ -46,12 +46,28 @@ public class ViatraQueryLoggingUtil {
         return defaultRuntimeLogger;
     }
     
+    private static String getLoggerClassname(Class<?> clazz) {
+        return clazz.getName().startsWith(getDefaultLogger().getName()) 
+                ? clazz.getName() 
+                : getDefaultLogger().getName() + "." + clazz.getName();
+    }
+    
     /**
      * Provides a class-specific logger that also stores the global logger settings of the VIATRA Query runtime
      * @param clazz
      */
     public static Logger getLogger(Class<?> clazz) {
-        return Logger.getLogger(getDefaultLogger().getName() + "." + clazz.getName());
+        return Logger.getLogger(getLoggerClassname(clazz));
+    }
+    
+    /**
+     * Provides a named logger that also stores the global logger settings of the VIATRA Query runtime
+     * @param clazz
+     * @param name a non-empty name to append to the class names
+     * @since 2.5
+     */
+    public static Logger getLogger(Class<?> clazz, String name) {
+        return Logger.getLogger(getLoggerClassname(clazz) + '.' + name);
     }
     
     /**

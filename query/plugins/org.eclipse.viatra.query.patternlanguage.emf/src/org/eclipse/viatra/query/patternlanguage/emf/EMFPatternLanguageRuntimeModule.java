@@ -40,6 +40,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguag
 import org.eclipse.viatra.query.patternlanguage.emf.validation.IIssueCallback;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.IPureWhitelistExtensionProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.ServiceLoaderBasedWhitelistExtensionProvider;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageSyntaxErrorMessageProvider;
 import org.eclipse.xtext.formatting.IFormatter;
 import org.eclipse.xtext.linking.ILinkingService;
@@ -70,7 +71,7 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
 
     @Provides
     Logger provideLoggerImplementation() {
-        return Logger.getLogger(EMFPatternLanguageRuntimeModule.class);
+        return ViatraQueryLoggingUtil.getLogger(EMFPatternLanguageRuntimeModule.class);
     }
 
     @Override

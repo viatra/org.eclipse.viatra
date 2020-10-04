@@ -13,3 +13,21 @@ More information:: https://projects.eclipse.org/projects/modeling.viatra/release
 
 == Migrating to VIATRA 2.5
 
+=== Updated logging configuration
+
+In order to simplify log output, the default logging configuration was updated to remove unnecessary duplication and ensure everything uses the same configuration.
+
+Old output:
+```
+0 [main] DEBUG org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil.org.eclipse.viatra.query.runtime.api.ViatraQueryEngine.1361289747  - Scaffold: patternbody build started for org.example.Range
+146 [main] DEBUG org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil.org.eclipse.viatra.transformation.evm.api.Agenda.1525919705  - INACTIVE -- CREATE --> CREATED on org.eclipse.viatra.transformation.evm.api.Activation{atom=Match<org.example.Range>{"start"=0, "end"=30}, state=CREATED}
+```
+
+New output:
+```
+0 [main] DEBUG org.eclipse.viatra.query.runtime.api.ViatraQueryEngine.1361289747  - Scaffold: patternbody build started for org.example.Range
+272 [main] DEBUG org.eclipse.viatra.transformation.evm.api.Agenda@4567f35d  - CREATED -- FIRE --> FIRED on org.eclipse.viatra.transformation.evm.api.Activation{atom=Match<org.example.Range>{"start"=0, "end"=30}, state=FIRED}
+
+```
+
+The new configuration uses `org.eclipse.viatra` as a common prefix, thus it is possible to turn on all debug messages with a single configuration both for the VIATRA query and transformation runtimes, while it is still possible to do it selectively by using a more specific class names in the configuration. For users who use customized log4j configurations should update them to match the new scheme.

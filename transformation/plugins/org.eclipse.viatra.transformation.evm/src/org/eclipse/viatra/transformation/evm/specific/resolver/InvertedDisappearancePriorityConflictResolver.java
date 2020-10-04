@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
@@ -34,7 +35,7 @@ import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEn
 public class InvertedDisappearancePriorityConflictResolver extends FixedPriorityConflictResolver {
 
     private static final String ZERO_PRIORITY_MESSAGE = "Priority 0 is set in inverted disappearance priority conflict resolver";
-    Logger logger = Logger.getLogger(getClass());
+    Logger logger = ViatraQueryLoggingUtil.getLogger(getClass());
     
     /**
      * Initializes the conflict resolver with a default rule priority of 1.

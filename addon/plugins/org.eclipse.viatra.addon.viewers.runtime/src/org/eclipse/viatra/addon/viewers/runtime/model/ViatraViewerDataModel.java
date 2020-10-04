@@ -77,7 +77,7 @@ public class ViatraViewerDataModel extends ViewerDataModel {
         try {
             m = new ViatraViewerDataModel(patterns, engine);
         } catch (ViatraQueryException | ViatraBaseException e) {
-            Logger.getLogger(ViatraViewerDataModel.class).error(e.getMessage());
+            ViatraQueryLoggingUtil.getLogger(ViatraViewerDataModel.class).error(e.getMessage());
             return null;
         }
           ViewerState r = newViewerState(m, filter, features);

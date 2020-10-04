@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
@@ -43,7 +44,7 @@ public class Agenda {
     }
     
     public Agenda(final ConflictResolver conflictResolver) {
-        this.logger = Logger.getLogger(this.toString());
+        this.logger = ViatraQueryLoggingUtil.getLogger(Agenda.class, Integer.toString(System.identityHashCode(this)));
         this.activations = new HashMap<>();
         this.conflictSet = conflictResolver.createConflictSet();
         this.updatingListener = new ConflictSetUpdater(conflictSet);
@@ -51,7 +52,7 @@ public class Agenda {
     }
     
     public Agenda(final ConflictResolver conflictResolver, IActivationNotificationListener activationListener) {
-        this.logger = Logger.getLogger(this.toString());
+        logger = ViatraQueryLoggingUtil.getLogger(Agenda.class, Integer.toString(System.identityHashCode(this)));
         this.setActivationListener(activationListener);
         Preconditions.checkState(this.getActivationListener() != null, "Activation Listener is null!");
         this.activations = new HashMap<>();

@@ -12,7 +12,6 @@ package org.eclipse.viatra.transformation.views.core;
 import java.util.Collection;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -69,9 +68,9 @@ public class ViewModelManager {
             rule.createRuleSpecification(executionSchema);
         }
 
-        Logger.getLogger(getClass()).info("View model manager initialized");
+        ViatraQueryLoggingUtil.getLogger(getClass()).info("View model manager initialized");
         executionSchema.startUnscheduledExecution();
-        Logger.getLogger(getClass()).info("Unscheduled execution started");
+        ViatraQueryLoggingUtil.getLogger(getClass()).info("Unscheduled execution started");
     }
 
     /**
