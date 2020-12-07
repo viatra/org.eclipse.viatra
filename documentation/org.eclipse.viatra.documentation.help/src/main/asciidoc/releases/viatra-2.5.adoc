@@ -5,7 +5,7 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 = VIATRA 2.5
 
-Release date:: 2020-12-xx (TBD)
+Release date:: 2020-12-16
 More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/2.5.0
 
 == New and Noteworthy
