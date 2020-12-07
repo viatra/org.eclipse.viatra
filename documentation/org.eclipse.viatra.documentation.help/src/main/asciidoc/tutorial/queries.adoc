@@ -73,6 +73,16 @@ include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse
 ----
 +
 
+. List all application instances that are running
+* Similar to integer, numeric and boolean literals, you can refer to EMF enumerations as constants. This pattern uses the EEnum literal `AppState::Running` instead of a variable.
++
+[[vql-runningapplication]]
+[source,vql,indent=0]
+----
+include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse/viatra/documentation/example/queries/CPSQueries.vql[tag=runningApplication]
+----
++
+
 . List all `HostInstance`-`HostInstance` pairs that share a common IP address
 * This pattern is more complex, as it has three parameters and three constraints. The first two describe similar type constraints we have seen. The pattern also compares the values of variables `host1` and `host2` with each other using the `!=` (_not equal_) operator (The `==` operator is also available).
 +

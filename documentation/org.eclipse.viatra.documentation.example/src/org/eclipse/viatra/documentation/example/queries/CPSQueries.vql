@@ -27,6 +27,11 @@ pattern emptyIpAddress(host: HostInstance) {
 }
 // end::emptyIpAddress[]
 
+// tag::runningApplication[]
+pattern runningApplication(application : ApplicationInstance) {
+    ApplicationInstance.state(application, AppState::Running);
+}
+// end::runningApplication[]
 
 // tag::sameIpAddress[]
 pattern sameIpAddress(host1 : HostInstance, host2 : HostInstance, commonIp : java String) {
