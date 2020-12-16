@@ -57,7 +57,6 @@
         <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-            <version>${emf.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.birt.runtime</groupId>

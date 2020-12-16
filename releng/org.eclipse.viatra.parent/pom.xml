@@ -253,6 +253,17 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	<dependencyManagement>
+	  <dependencies>
+	  <dependency>
+	    <groupId>org.eclipse.xtext</groupId>
+	    <artifactId>xtext-dev-bom</artifactId>
+	    <version>${xtend.compiler.version}</version>
+	    <type>pom</type>
+	    <scope>import</scope>
+	  </dependency>
+	  </dependencies>
+	</dependencyManagement>
 	<distributionManagement>
 		<repository>
 			<id>repo.eclipse.org</id>
