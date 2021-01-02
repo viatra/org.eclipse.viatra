@@ -38,4 +38,5 @@ pipeline {
             archiveArtifacts artifacts: 'query/tests/org.eclipse.viatra.query.rcptt/org.eclipse.viatra.query.rcptt.tests/target/results/**'
 			junit testResults: '**/tests/**/target/surefire-reports/*.xml'
 		}
+    }
 }
