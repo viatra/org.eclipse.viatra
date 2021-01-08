@@ -149,7 +149,7 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="2019-12"
+      defaultValue="2020-12"
       storageURI="scope://Workspace"/>
   <setupTask
       xsi:type="setup.targlets:TargletTask">
@@ -234,6 +234,28 @@
           name="2020-06">
         <repository
             url="http://download.eclipse.org/releases/2020-06"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        <repository
+            url="http://download.eclipse.org/efxclipse/updates-released/3.6.0/site"/>
+      </repositoryList>
+      <repositoryList
+          name="2020-09">
+        <repository
+            url="http://download.eclipse.org/releases/2020-09"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        <repository
+            url="http://download.eclipse.org/efxclipse/updates-released/3.6.0/site"/>
+      </repositoryList>
+      <repositoryList
+          name="2020-12">
+        <repository
+            url="http://download.eclipse.org/releases/2020-12"/>
         <repository
             url="http://download.eclipse.org/cbi/updates/license"/>
         <repository
@@ -391,6 +413,24 @@
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
         </repositoryList>
+        <repositoryList
+            name="2020-09">
+          <repository
+              url="http://download.eclipse.org/releases/2020-09"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-12">
+          <repository
+              url="http://download.eclipse.org/releases/2020-09"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
+        </repositoryList>
       </targlet>
       <targlet
           name="Sirius"
@@ -446,7 +486,21 @@
           <repository
               url="http://download.eclipse.org/releases/2020-06"/>
           <repository
-              url="http://download.eclipse.org/sirius/updates/releases/6.2.3/2019-06"/>
+              url="http://download.eclipse.org/sirius/updates/releases/6.3.1/2019-12"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-09">
+          <repository
+              url="http://download.eclipse.org/releases/2020-09"/>
+          <repository
+              url="http://download.eclipse.org/sirius/updates/releases/6.3.4/2020-09"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-12">
+          <repository
+              url="http://download.eclipse.org/releases/2020-12"/>
+          <repository
+              url="http://download.eclipse.org/sirius/updates/releases/6.4.0/2020-09"/>
         </repositoryList>
       </targlet>
     </setupTask>
@@ -690,7 +744,7 @@
       <requirement
           name="org.eclipse.sirius.specifier.ide.ui.aql.feature.group"/>
       <repository
-          url="http://download.eclipse.org/sirius/updates/releases/6.0.1/photon"/>
+          url="http://download.eclipse.org/sirius/updates/releases/6.3.1/2019-12"/>
     </setupTask>
     <stream
         name="master"/>
@@ -710,7 +764,7 @@
       <repository
           url="https://hudson.eclipse.org/viatra/job/${viatra.hudson.ci.build.job.name}/lastSuccessfulBuild/artifact/releng/org.eclipse.viatra.update/target/repository"/>
       <repository
-          url="http://download.eclipse.org/collections/9.2.0.M1/repository"/>
+          url="http://download.eclipse.org/collections/10.2.0/repository"/>
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask">
@@ -929,9 +983,9 @@
     <setupTask
         xsi:type="pde:APIBaselineTask"
         name="viatraBaseline"
-        version="2.4"
-        location="${installation.location}/api/v2.4/"
-        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.2.4.0.zip"/>
+        version="2.5"
+        location="${installation.location}/api/v2.5/"
+        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.2.5.0.zip"/>
     <setupTask
         xsi:type="setup.p2:P2Task">
       <requirement
@@ -994,6 +1048,20 @@
             name="2020-06">
           <repository
               url="http://download.eclipse.org/releases/2020-06"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-09">
+          <repository
+              url="http://download.eclipse.org/releases/2020-09"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-12">
+          <repository
+              url="http://download.eclipse.org/releases/2020-12"/>
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
         </repositoryList>
