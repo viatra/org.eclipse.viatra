@@ -6,8 +6,7 @@ Element-Type: testcase
 Element-Version: 3.0
 External-Reference: 
 Id: _-a1aIPBHEeWlEbYJ7IoFCQ
-Runtime-Version: 2.3.0.201806262310
-Save-Time: 3/22/19, 8:46 PM
+Save-Time: 1/18/21, 5:38 PM
 Testcase-Type: ecl
 
 ------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
@@ -89,7 +88,7 @@ with [get-editor "test.vql" | get-text-viewer] {
 }
 
 // Verify generated code
-get-button "Save (M1+S)" | click
+get-menu "File/Save" | click
 with [get-view "Project Explorer" | get-tree] {
     get-item "org.eclipse.viatra.examples.cps.testqueries/src-gen/org.eclipse.viatra.examples.cps.testqueries/AllocatedApplicationInstances.java" 
         | get-property caption | equals "AllocatedApplicationInstances.java" | verify-true
