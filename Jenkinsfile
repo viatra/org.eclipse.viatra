@@ -18,7 +18,7 @@ pipeline {
 	
 	tools {
         maven 'apache-maven-latest'
-        jdk 'jdk1.8.0-latest'
+        jdk 'adoptopenjdk-hotspot-jdk8-latest'
     }
 
 	stages {
