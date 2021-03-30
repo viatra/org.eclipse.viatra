@@ -25,7 +25,7 @@
                     <aut>
                         <explicit>${autPath}</explicit>
                         <vmArgs>
-                            <vmArg>${argLine}</vmArg>
+                            <vmArg>-Xmx2GB ${argLine}</vmArg>
                         </vmArgs>
                     </aut>
                     <runner>
