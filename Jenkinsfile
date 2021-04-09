@@ -1,5 +1,10 @@
 pipeline {
-	agent any
+	agent {
+        kubernetes {
+            label 'centos7-6gb'
+        }
+    }
+    
 	parameters {
         choice choices: ['ci', 'integration', 'milestone', 'release'],
             description: 'Sets the build type. CI builds are used for testing reasons only; integration builds are periodic builds; milestones are considered more-or-less stable, while releases are Eclipse.org releases with a corresponding release review.',
