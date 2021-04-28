@@ -20,9 +20,6 @@ pipeline {
 		buildDiscarder(logRotator(numToKeepStr: '5'))
         timeout(120 /*minutes*/) 
 	}
-	environment {
-	   SIGN_BUILD_PARAMETER = params.BUILD_TYPE == 'ci' ? '' : ' -Dsign.build=true '
-	}
 	
 	tools {
         maven 'apache-maven-latest'
@@ -32,13 +29,13 @@ pipeline {
 	stages {
 		stage('Maven Bootstrap') { 
 			steps {
-				sh "mvn -B -f releng/org.eclipse.viatra.parent.core/pom.xml -DBUILD_TYPE=$BUILD_TYPE $SIGN_BUILD_PARAMETER -Dmaven.repo.local=$WORKSPACE/.repository clean install"
+				sh "mvn -B -f releng/org.eclipse.viatra.parent.core/pom.xml -DBUILD_TYPE=$BUILD_TYPE {params.BUILD_TYPE == 'ci' ? '' : ' -Dsign.build=true '} -Dmaven.repo.local=$WORKSPACE/.repository clean install"
 			}
 		}
 		stage('Full build') { 
 			steps {
                 xvnc {
-                    sh "mvn -B -f releng/org.eclipse.viatra.parent.all/pom.xml -DBUILD_TYPE=$BUILD_TYPE $SIGN_BUILD_PARAMETER -Dmaven.repo.local=$WORKSPACE/.repository -Dmaven.test.failure.ignore=true -Dviatra.download.area=/home/data/httpd/download.eclipse.org/viatra -DrunUITests=true -Dlicense.aggregate=false clean install"
+                    sh "mvn -B -f releng/org.eclipse.viatra.parent.all/pom.xml -DBUILD_TYPE=$BUILD_TYPE {params.BUILD_TYPE == 'ci' ? '' : ' -Dsign.build=true '} -Dmaven.repo.local=$WORKSPACE/.repository -Dmaven.test.failure.ignore=true -Dviatra.download.area=/home/data/httpd/download.eclipse.org/viatra -DrunUITests=true -Dlicense.aggregate=false clean install"
                 }
 			}
 		}
