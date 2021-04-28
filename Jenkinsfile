@@ -21,7 +21,7 @@ pipeline {
         timeout(120 /*minutes*/) 
 	}
 	environment {
-	   SIGN_BUILD_PARAMETER = params.BUILD_TYPE != "ci"  ? " -Dsign.build=true " : ""
+	   SIGN_BUILD_PARAMETER = params.BUILD_TYPE == 'ci' ? '' : ' -Dsign.build=true '
 	}
 	
 	tools {
