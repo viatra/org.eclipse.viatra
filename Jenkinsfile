@@ -20,6 +20,9 @@ pipeline {
 		buildDiscarder(logRotator(numToKeepStr: '5'))
         timeout(120 /*minutes*/) 
 	}
+	environment {
+	   SIGN_BUILD_PARAMETER = params.BUILD_TYPE != "ci"  ? " -Dsign.build=true " : ""
+	}
 	
 	tools {
         maven 'apache-maven-latest'
@@ -29,15 +32,41 @@ pipeline {
 	stages {
 		stage('Maven Bootstrap') { 
 			steps {
-				sh "mvn -B -f releng/org.eclipse.viatra.parent.core/pom.xml -DBUILD_TYPE=$BUILD_TYPE -Dmaven.repo.local=$WORKSPACE/.repository clean install"
+				sh "mvn -B -f releng/org.eclipse.viatra.parent.core/pom.xml -DBUILD_TYPE=$BUILD_TYPE $SIGN_BUILD_PARAMETER -Dmaven.repo.local=$WORKSPACE/.repository clean install"
 			}
 		}
 		stage('Full build') { 
 			steps {
                 xvnc {
-                    sh "mvn -B -f releng/org.eclipse.viatra.parent.all/pom.xml -DBUILD_TYPE=$BUILD_TYPE -Dmaven.repo.local=$WORKSPACE/.repository -Dmaven.test.failure.ignore=true -Dviatra.download.area=/home/data/httpd/download.eclipse.org/viatra -DrunUITests=true -Dlicense.aggregate=false clean install"
+                    sh "mvn -B -f releng/org.eclipse.viatra.parent.all/pom.xml -DBUILD_TYPE=$BUILD_TYPE $SIGN_BUILD_PARAMETER -Dmaven.repo.local=$WORKSPACE/.repository -Dmaven.test.failure.ignore=true -Dviatra.download.area=/home/data/httpd/download.eclipse.org/viatra -DrunUITests=true -Dlicense.aggregate=false clean install"
                 }
 			}
+		}
+		stage('download.eclipse.org') {
+		  when {expression { return params.BUILD_TYPE != "ci" }}
+		  steps {
+		      sshagent ( ['projects-storage.eclipse.org-bot-ssh']) {
+		          sh '''
+                        $PROJECT=$WORKSPACE/releng/org.eclipse.viatra.update
+                        $WORK_DIR=$PROJECT/work
+                        
+                        VERSION=$(<$PROJECT/target/classes/version.qualified)
+                        mkdir $WORK_DIR
+                        
+                        # Upload repository to download.eclipse.org
+                        scp -o BatchMode=yes -r $PROJECT/target/repository/* genie.projectname@projects-storage.eclipse.org:/home/data/httpd/download.eclipse.org/viatra/$BUILD_TYPE/$VERSION
+                        
+                        # Download composite artifact contents
+                        scp -o BatchMode=yes genie.projectname@projects-storage.eclipse.org:/home/data/httpd/download.eclipse.org/viatra/$BUILD_TYPE/composite* $WORK_DIR 
+                        
+                        # Add new repository to composite
+                        /shared/common/apache-ant-1.9.6/bin/ant -f /shared/modeling/tools/promotion/manage-composite.xml add -Dchild.repository='../$VERSION'
+                        
+                        # Upload modified composite descriptor
+                        scp -o BatchMode=yes $WORK_DIR/composite* genie.projectname@projects-storage.eclipse.org:/home/data/httpd/download.eclipse.org/viatra/$BUILD_TYPE
+		          '''
+		      }
+		  }
 		}
         stage('Maven Deploy') {
             when {branch "master"} 
