@@ -52,10 +52,11 @@ pipeline {
                         export WORK_DIR=$PROJECT/work
                         export BUILD_DIR=/home/data/httpd/download.eclipse.org/viatra/updates/$BUILD_TYPE
                         
-                        VERSION=$(<$PROJECT/target/classes/version)
+                        export VERSION=$(<$PROJECT/target/classes/version)
                         mkdir $WORK_DIR
                         
                         # Upload repository to download.eclipse.org
+                        ssh -o BatchMode=yes genie.viatra@projects-storage.eclipse.org mkdir $BUILD_DIR/$VERSION
                         scp -o BatchMode=yes -r $PROJECT/target/repository/* genie.viatra@projects-storage.eclipse.org:$BUILD_DIR/$VERSION
                         # Upload latest repository
                         scp -o BatchMode=yes -r $PROJECT/target/classes/latest genie.viatra@projects-storage.eclipse.org:$BUILD_DIR
