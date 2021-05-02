@@ -11,12 +11,18 @@
     </parent>
     <artifactId>org.eclipse.viatra.update</artifactId>
     <packaging>eclipse-repository</packaging>
+    <properties>
+        <repository.version>${qualifiedVersion}</repository.version>
+        <timestamp>${maven.build.timestamp}</timestamp>
+    </properties>
     <build>
+        <!-- This block is used to create a file containing the qualified version of the build for the repository deployment script in the Jenkinsfile -->
         <resources>
             <resource>
                 <directory>resources</directory>
                 <includes>
-                    <include>version.*</include>
+                    <include>version</include>
+                    <include>latest/*</include>
                 </includes>
                 <filtering>true</filtering>
             </resource>

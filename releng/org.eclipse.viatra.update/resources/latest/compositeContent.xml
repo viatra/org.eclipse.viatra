@@ -1,0 +1,10 @@
+<?compositeMetadataRepository version='1.0.0'?>
+<repository name="VIATRA" type="org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepository" version="1.0.0">
+<properties size="1">
+<property name="p2.timestamp" value="${timestamp}"/>
+</properties>
+<children size="2">
+<child location="../${repository.version}/"/>
+<child location="https://download.eclipse.org/collections/10.2.0/repository"/>
+</children>
+</repository>
