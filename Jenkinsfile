@@ -70,16 +70,16 @@ pipeline {
                 script {
                     if (params.RELEASE_VERSION) {
                         sh "mvn -B -f releng/org.eclipse.viatra.parent.all/pom.xml -Dmaven.repo.local=$WORKSPACE/.repository -DnewVersion=$RELEASE_VERSION org.eclipse.tycho:tycho-versions-plugin:set-version"
-                        sh "mvn -B -f releng/org.eclipse.viatra.parent.core/pom.xml -DBUILD_TYPE=$BUILD_TYPE -Dmaven.repo.local=$WORKSPACE/.repository clean install"
+                        sh "mvn -B -f releng/org.eclipse.viatra.parent.core/pom.xml ${SIGN_BUILD_PARAMETER} -Dmaven.repo.local=$WORKSPACE/.repository clean install"
                     }
                     if (params.INCUBATION_VERSION) {
                         sh "mvn -B -f releng/org.eclipse.viatra.parent.incubation.maven/pom.xml -Dmaven.repo.local=$WORKSPACE/.repository -DnewVersion=$INCUBATION_VERSION org.eclipse.tycho:tycho-versions-plugin:set-version"
-                        sh "mvn -B -f releng/org.eclipse.viatra.parent.incubation.maven/pom.xml -DBUILD_TYPE=$BUILD_TYPE -Dmaven.repo.local=$WORKSPACE/.repository clean install"
+                        sh "mvn -B -f releng/org.eclipse.viatra.parent.incubation.maven/pom.xml ${SIGN_BUILD_PARAMETER} -Dmaven.repo.local=$WORKSPACE/.repository clean install"
                     }
                 }
                 
-				sh "mvn -B -f releng/org.eclipse.viatra.parent.core/pom.xml -DBUILD_TYPE=$BUILD_TYPE -Dmaven.repo.local=$WORKSPACE/.repository deploy --fail-never"
-                sh "mvn -B -f releng/org.eclipse.viatra.parent.incubation.maven/pom.xml -DBUILD_TYPE=$BUILD_TYPE -Dmaven.repo.local=$WORKSPACE/.repository deploy --fail-never"
+				sh "mvn -B -f releng/org.eclipse.viatra.parent.core/pom.xml ${SIGN_BUILD_PARAMETER} -Dmaven.repo.local=$WORKSPACE/.repository deploy --fail-never"
+                sh "mvn -B -f releng/org.eclipse.viatra.parent.incubation.maven/pom.xml ${SIGN_BUILD_PARAMETER} -Dmaven.repo.local=$WORKSPACE/.repository deploy --fail-never"
 			}
 		}
 	}
