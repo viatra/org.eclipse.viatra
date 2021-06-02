@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EClass;
@@ -33,14 +34,17 @@ public class IterateOverEClassInstances implements IIteratingSearchOperation {
     
     private class Executor extends AbstractIteratingExtendOperationExecutor<Notifier> {
         
+        final Predicate<Object> instanceFilterPredicate;
+        
         public Executor(int position, EMFScope scope) {
             super(position, scope);
+            final Class<?> ic = clazz.getInstanceClass();
+            instanceFilterPredicate = (ic == null) ? clazz::isInstance : ic::isInstance;
         }
 
         @Override
         public Iterator<? extends Notifier> getIterator(MatchingFrame frame, ISearchContext context) {
-            final Class<?> ic = clazz.getInstanceClass();
-            return getModelContents().filter(ic::isInstance).iterator();
+            return getModelContents().filter(instanceFilterPredicate).iterator();
         }
         
         @Override

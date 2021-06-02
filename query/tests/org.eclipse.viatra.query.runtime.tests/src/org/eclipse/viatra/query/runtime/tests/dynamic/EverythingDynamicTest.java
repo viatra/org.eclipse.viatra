@@ -36,62 +36,90 @@ import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
+import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineOptions;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class EverythingDynamicTest {
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void everythingDynamic() {
-        EMFPatternLanguagePlugin.getInstance().addCompoundInjector(new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration(), EMFPatternLanguagePlugin.TEST_INJECTOR_PRIORITY);
+    // Metamodel fields
+    private EPackage bookStoreEPackage;
+    private EClass bookStoreEClass;
+    private EClass bookEClass;
+    private EAttribute bookName;
+    private EAttribute bookStoreOwner;
+    private EReference bookStore_Books;
+    
+    // Instance model fields
+    private EObject bookStoreObject;
+    
+    private IQuerySpecification<?> querySpecification;
 
-        // Create the dynamic metamodel
+    @BeforeClass
+    public static void registerInjector() {
+        EMFPatternLanguagePlugin.getInstance().addCompoundInjector(new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration(), EMFPatternLanguagePlugin.TEST_INJECTOR_PRIORITY);
+    }
+    
+    @Before
+    public void initializeDynamicInstances() {
+        initializeMetamodel();
+        initializeInstanceModel();
+        initializePatternDefinition();
+    }
+    
+    private void initializeMetamodel() {
         EcoreFactory theCoreFactory = EcoreFactory.eINSTANCE;
         EcorePackage theCorePackage = EcorePackage.eINSTANCE;
 
-        EClass bookStoreEClass = theCoreFactory.createEClass();
+        bookStoreEClass = theCoreFactory.createEClass();
         bookStoreEClass.setName("BookStore");
-        EAttribute bookStoreOwner = theCoreFactory.createEAttribute();
+        bookStoreOwner = theCoreFactory.createEAttribute();
         bookStoreOwner.setName("owner");
         bookStoreOwner.setEType(theCorePackage.getEString());
         bookStoreEClass.getEStructuralFeatures().add(bookStoreOwner);
 
-        EClass bookEClass = theCoreFactory.createEClass();
+        bookEClass = theCoreFactory.createEClass();
         bookEClass.setName("Book");
-        EAttribute bookName = theCoreFactory.createEAttribute();
+        bookName = theCoreFactory.createEAttribute();
         bookName.setName("name");
         bookName.setEType(theCorePackage.getEString());
         bookEClass.getEStructuralFeatures().add(bookName);
 
-        EReference bookStore_Books = theCoreFactory.createEReference();
+        bookStore_Books = theCoreFactory.createEReference();
         bookStore_Books.setName("books");
         bookStore_Books.setEType(bookEClass);
         bookStore_Books.setUpperBound(EStructuralFeature.UNBOUNDED_MULTIPLICITY);
         bookStore_Books.setContainment(true);
         bookStoreEClass.getEStructuralFeatures().add(bookStore_Books);
 
-        EPackage bookStoreEPackage = theCoreFactory.createEPackage();
+        bookStoreEPackage = theCoreFactory.createEPackage();
         bookStoreEPackage.setName("BookStorePackage");
         bookStoreEPackage.setNsPrefix("bookStore");
         bookStoreEPackage.setNsURI("http:///org.example.viatra.bookstore");
         bookStoreEPackage.getEClassifiers().add(bookStoreEClass);
         bookStoreEPackage.getEClassifiers().add(bookEClass);
-
-        // Create the dynamic instance
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void initializeInstanceModel() {
         EFactory bookFactoryInstance = bookStoreEPackage.getEFactoryInstance();
 
         EObject bookObject = bookFactoryInstance.create(bookEClass);
         bookObject.eSet(bookName, "Harry Potter and the Deathly Hallows");
 
-        EObject bookStoreObject = bookFactoryInstance.create(bookStoreEClass);
+        bookStoreObject = bookFactoryInstance.create(bookStoreEClass);
         bookStoreObject.eSet(bookStoreOwner, "Somebody");
         ((List<EObject>) bookStoreObject.eGet(bookStore_Books)).add(bookObject);
-
-        // Create the dynamic pattern
+    }
+    
+    private void initializePatternDefinition() {
         PatternModel patternModel = PatternLanguageFactory.eINSTANCE.createPatternModel();
         patternModel.setPackageName("TestPatternPackage");
         PackageImport packageImport = PatternLanguageFactory.eINSTANCE.createPackageImport();
@@ -126,18 +154,38 @@ public class EverythingDynamicTest {
         patternBody.getConstraints().add(classifierConstraint);
 
         patternModel.getPatterns().add(pattern);
-
-        // Matching
-        Collection<? extends IPatternMatch> matches = null;
-
-        SpecificationBuilder builder = new SpecificationBuilder();
-        ViatraQueryMatcher<? extends IPatternMatch> matcher = ViatraQueryEngine.on(new EMFScope(bookStoreObject)).getMatcher(builder.getOrCreateSpecification(pattern));
-        matches = matcher.getAllMatches();
-
+        
+        querySpecification = new SpecificationBuilder().getOrCreateSpecification(pattern);
+    }
+    
+    private void match(ViatraQueryEngineOptions options) {
+        final ViatraQueryEngine engine = ViatraQueryEngine.on(new EMFScope(bookStoreObject), options);
+        ViatraQueryMatcher<? extends IPatternMatch> matcher = engine.getMatcher(querySpecification);
+        Collection<? extends IPatternMatch> matches = matcher.getAllMatches();
+        
         Assert.assertNotNull(matches);
         Assert.assertSame(1, matches.size());
         IPatternMatch match = matches.iterator().next();
         Assert.assertEquals("\"X\"=Harry Potter and the Deathly Hallows", match.prettyPrint());
+    }
+    
+    @Test
+    public void dynamicRete() {
+        match(ViatraQueryEngineOptions.getDefault());
+    }
+    
+    @Test
+    public void dynamicLS() {
+        final ViatraQueryEngineOptions options = new ViatraQueryEngineOptions.Builder()
+                .withDefaultHint(LocalSearchHints.getDefault().build()).build();
+        match(options);
+    }
+    
+    @Test
+    public void dynamicLSNoBase() {
+        final ViatraQueryEngineOptions options = new ViatraQueryEngineOptions.Builder()
+                .withDefaultHint(LocalSearchHints.getDefaultNoBase().build()).build();
+        match(options);
     }
 
 }
