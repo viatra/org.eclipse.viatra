@@ -30,7 +30,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class DynamicModeTests {
+public class DynamicModeTest {
     
     private EPackage epackage;
     private ResourceSet rs;
