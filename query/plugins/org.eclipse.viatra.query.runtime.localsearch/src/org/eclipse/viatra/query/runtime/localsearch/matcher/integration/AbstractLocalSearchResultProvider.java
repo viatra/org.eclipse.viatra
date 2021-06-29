@@ -168,7 +168,10 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
     public void prepare() {
         try {
             runtimeContext.coalesceTraversals(() -> {
-                indexInitializationBeforePlanning();
+                LocalSearchHints configuration = overrideDefaultHints(query);
+                if (configuration.isUseBase()) {
+                    indexInitializationBeforePlanning();
+                }
                 prepareDirectDependencies();
                 runtimeContext.executeAfterTraversal(AbstractLocalSearchResultProvider.this::preparePlansForExpectedAdornments);
                 return null;
@@ -187,7 +190,9 @@ public abstract class AbstractLocalSearchResultProvider implements IQueryResultP
             IPlanDescriptor plan = getOrCreatePlan(reference, backendContext, compiler, configuration, planProvider);
             // Index keys
             try {
-                indexKeys(plan.getIteratedKeys());
+                if (configuration.isUseBase()) {
+                    indexKeys(plan.getIteratedKeys());
+                }
             } catch (InvocationTargetException e) {
                 throw new QueryProcessingException(e.getMessage(), null, e.getMessage(), query, e);
             }

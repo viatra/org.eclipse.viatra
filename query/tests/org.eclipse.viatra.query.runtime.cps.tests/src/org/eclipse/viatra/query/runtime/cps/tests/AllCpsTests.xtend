@@ -32,6 +32,7 @@ import org.junit.runners.Suite.SuiteClasses
     ModelManipulationAvgAggregatorTest,
     ModelManipulationTrickyJoinTest,
     LocalSearchPlanCostOverflowTest,
+    LocalSearchBaseIndexerSettingsTest,
     LiteralValuesTest,
     DanglingTest,
     NonRecursiveReachabilityTest,

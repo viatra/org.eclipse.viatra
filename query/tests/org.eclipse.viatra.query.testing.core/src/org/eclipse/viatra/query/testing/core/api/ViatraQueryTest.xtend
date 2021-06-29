@@ -37,6 +37,7 @@ import org.eclipse.viatra.query.testing.core.XmiModelUtil
 import org.eclipse.viatra.query.testing.core.internal.AnalyzedPatternBasedMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.internal.DefaultMatchRecordEquivalence
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
+import org.eclipse.viatra.query.testing.core.PatternBasedMatchSetModelProvider
 
 /**
  * This class defines an API to easily construct test cases. The base conception is to provide
@@ -197,8 +198,16 @@ class ViatraQueryTest {
      * Adds a pattern-based match result set evaluated using the given hints.
      */
     def with(QueryEvaluationHint hint) {
-        
         val modelProvider = new AnalyzedPatternBasedMatchSetModelProvider(hint, testCase.snapshotHelper, analyzers);
+        testCase.addMatchSetModelProvider(modelProvider)
+        this
+    }
+    
+    /**
+     * Adds a custom pattern-based match set provider to be evaluated.
+     * @since 2.6
+     */
+    def with(PatternBasedMatchSetModelProvider modelProvider) {
         testCase.addMatchSetModelProvider(modelProvider)
         this
     }

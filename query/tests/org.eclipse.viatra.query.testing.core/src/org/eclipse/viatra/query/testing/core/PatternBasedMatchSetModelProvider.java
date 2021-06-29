@@ -31,6 +31,14 @@ public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider
         this(hint, new SnapshotHelper());
     }
     
+    /**
+     * @since 2.6
+     */
+    public PatternBasedMatchSetModelProvider(AdvancedViatraQueryEngine engine, QueryEvaluationHint hint) {
+        this(hint, new SnapshotHelper());
+        this.engine = engine;
+    }
+    
     /** 
      * @deprecated 
      * Use @link #PatternMatchSetModelProvider(QueryEvaluationHint, SnapshotHelper) instead
