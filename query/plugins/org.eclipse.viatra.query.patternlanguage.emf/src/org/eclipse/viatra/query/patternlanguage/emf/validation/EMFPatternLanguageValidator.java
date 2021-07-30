@@ -11,6 +11,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.validation;
 import static org.eclipse.xtext.xbase.validation.IssueCodes.IMPORT_UNUSED;
 
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -416,6 +417,24 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
         }
     }
 
+    private final Comparator<IInputKey> inputKeyComparator = (o1, o2) -> {
+        if (o1 instanceof EClassTransitiveInstancesKey && !(o2 instanceof EClassTransitiveInstancesKey)) {
+            return +1;
+        } else if (o2 instanceof EClassTransitiveInstancesKey && !(o1 instanceof EClassTransitiveInstancesKey)) {
+            return -1;
+        } else if (o1 instanceof EDataTypeInSlotsKey && !(o2 instanceof EDataTypeInSlotsKey)) {
+            return +1;
+        } else if (o2 instanceof EDataTypeInSlotsKey && !(o1 instanceof EDataTypeInSlotsKey)) {
+            return -1;
+        } else if (typeSystem.isConformant(o1, o2) && !typeSystem.isConformant(o2, o1)){ //Common type group
+            return +1;
+        } else if (typeSystem.isConformant(o2, o1) && !typeSystem.isConformant(o1, o2)) {
+            return -1;
+        }
+        
+        return o1.getStringID().compareTo(o2.getStringID());
+    };
+    
     private void reportMissingParameterTypeDeclaration(Variable parameter, Set<IInputKey> possibleTypes, IInputKey inferredType) {
         if (possibleTypes.isEmpty()) {
             return;
@@ -425,22 +444,7 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
                     PatternLanguagePackage.Literals.VARIABLE__NAME, IssueCodes.MISSING_PARAMETER_TYPE,
                     issueData);
         } else {
-            Set<IInputKey> orderedTypes = ImmutableSortedSet.<IInputKey>orderedBy((o1, o2) -> {
-                if (o1 instanceof EClassTransitiveInstancesKey && !(o2 instanceof EClassTransitiveInstancesKey)) {
-                    return +1;
-                } else if (o2 instanceof EClassTransitiveInstancesKey && !(o1 instanceof EClassTransitiveInstancesKey)) {
-                    return -1;
-                } else if (o1 instanceof EDataTypeInSlotsKey && !(o2 instanceof EDataTypeInSlotsKey)) {
-                    return +1;
-                } else if (o2 instanceof EDataTypeInSlotsKey && !(o1 instanceof EDataTypeInSlotsKey)) {
-                    return +1;
-                } else if (typeSystem.isConformant(o1, o2)){ //Common type group
-                    return +1;
-                } else if (typeSystem.isConformant(o2, o1)) {
-                    return -1;
-                }
-                return 0;
-            }).addAll(possibleTypes).build();
+            Set<IInputKey> orderedTypes = ImmutableSortedSet.orderedBy(inputKeyComparator).addAll(possibleTypes).build();
             Set<String> superClasses = (Iterables.any(possibleTypes, EClassTransitiveInstancesKey.class::isInstance)) 
                     ? ImmutableSet.of("EObject")
                     : ImmutableSet.of(IssueCodes.JAVA_TYPE_PREFIX + "java.lang.Object");

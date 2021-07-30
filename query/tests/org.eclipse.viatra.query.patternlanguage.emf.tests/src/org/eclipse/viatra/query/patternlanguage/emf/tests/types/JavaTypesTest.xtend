@@ -150,5 +150,33 @@ class JavaTypesTest extends AbstractValidatorTest {
         )
     }
 
-    
+    /**
+     * This test case was able to reproduce the strange input key ordering issue
+     * described in https://bugs.eclipse.org/bugs/show_bug.cgi?id=571048 - the concrete issue
+     * greatly depends on the structure of the query, removing either the or bodies or declaring
+     * the parameter types brought forward the original issue.  
+     */
+    @Test
+    def incorrectTypeOrderingTest() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern className(cl : EClass, name) {
+                EClass.name(cl, name);
+            }
+            
+            pattern nonNullClassName(cl : EClass, name) {
+                find className(cl, name);
+            } or {
+                EClass(cl);
+                neg find className(cl, _noname);
+                name == ""; 
+            }
+        ''')
+        tester.validate(model).assertAll(
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
+            getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }    
 }
