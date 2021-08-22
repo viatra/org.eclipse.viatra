@@ -20,7 +20,7 @@ The specification of the CPS-to-Deployment M2M transformation describes what is 
 ### Rules
 
 . **Host mapping:** All host instances in the CPS are transformed into deployment hosts.
-  * The _IP address_ of the host instance is copied to the deployment model.
+* The _IP address_ of the host instance is copied to the deployment model.
   * *Traceability:* A trace is created between each host instance and related deployment host (`1-to-1`).
 . **Application mapping:** All application instances allocated to a host instances in the CPS are transformed into deployment applications.
   * The _identifier_ of the application instance is copied to the deployment model.
@@ -38,12 +38,13 @@ The specification of the CPS-to-Deployment M2M transformation describes what is 
   * *Traceability:* A trace is created for each transition and it refers to all behavior transition mapped from that transition (`1-to-n`).
 . **Action mapping:** The actions of transitions are transformed into _trigger_ references between behavior transitions.
   * A behavior transition `SBT` related to a CPS transition `STr` with action `sendSignal(appTypeId,signalId)` will trigger all behavior transitions `WBT` related to CPS transitions `WTr` with action `waitForSignal(signalId)`, if:
-    * The identifier of the application type that contains the state machine of `WTr` is `appTypeId`.
-    * The application instance related to the deployment application containing `SBT` is allocated to host instance `H1`.
-    * The application instance related to the deployment application containing `WBT` is allocated to host instance `H2`.
-    * `H1` can communicate with `H2` transitively:
-      . `H1` and `H2` may be the same
-      . `H2` is included in the set of values of `communicatesWith` in `H1`
+    ** The identifier of the application type that contains the state machine of `WTr` is `appTypeId`.
+    ** The application instance related to the deployment application containing `SBT` is allocated to host instance `H1`.
+    ** The application instance related to the deployment application containing `WBT` is allocated to host instance `H2`.
+    ** `H1` can communicate with `H2` transitively:
+    *** `H1` and `H2` may be the same
+    *** `H2` is included in the set of values of `communicatesWith` in `H1`
+  * *Traceability*: No trace records are created for the created triggers.
 
 ## Testing
 
