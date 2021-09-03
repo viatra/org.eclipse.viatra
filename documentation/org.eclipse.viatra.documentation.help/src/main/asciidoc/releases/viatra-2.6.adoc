@@ -1,0 +1,13 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+[[viatra-26]]
+
+= VIATRA 2.6
+
+Release date:: 2021-09-15
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/2.6.0
+
+== New and Noteworthy
+
+VIATRA 2.6 is mostly a bugfix and maintenance release, in addition to a few bugfixes most changes were related to the make sure VIATRA is correctly building in the current Eclipse build infrastructure. Furthermore, together with the release, the documentation of the CPS demonstrator application was restructured and a new transformation implementation was added.
