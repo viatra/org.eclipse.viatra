@@ -52,11 +52,11 @@ The event-driven virtual machine allows the central management of executable act
 
 We illustrate the two main usage modes of the EVM with UML models. First, we have to define the preconditions with patterns, then define the rule specifications which can be added to a rule engine or execution schema.
 
-The example project is on the repository: link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/examples/papyrus-uml/org.eclipse.viatra.examples.uml.evm/[UML EVM Example]
+The example project is on the repository: link:https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/query/papyrus-uml/org.eclipse.viatra.examples.uml.evm/[UML EVM Example]
 
 === Precondition pattern definition
 
-The code example below shows the *possibleSuperClass* and *onlyInheritedOperations* patterns of that are based on the UML example, the complete query definition can be found in our repository: link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/examples/papyrus-uml/org.eclipse.viatra.examples.uml.evm/src/org/eclipse/viatra/examples/uml/evm/queries/preconditions.vql[preconditions.vql]
+The code example below shows the *possibleSuperClass* and *onlyInheritedOperations* patterns of that are based on the UML example, the complete query definition can be found in our repository: link:https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/query/papyrus-uml/org.eclipse.viatra.examples.uml.evm/src/org/eclipse/viatra/examples/uml/evm/queries/preconditions.vql[preconditions.vql]
 
 [source,vql]
 ----
@@ -74,7 +74,7 @@ pattern onlyInheritedOperations(cl : Class) {
 
 === Rule specifications
 
-We define two rule specifications, both encapsulated by a method in link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/examples/papyrus-uml/org.eclipse.viatra.examples.uml.evm/src/org/eclipse/viatra/examples/uml/evm/UMLexampleForEVM.java[UMLexampleForEVM.java].
+We define two rule specifications, both encapsulated by a method in link:https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/query/papyrus-uml/org.eclipse.viatra.examples.uml.evm/src/org/eclipse/viatra/examples/uml/evm/UMLexampleForEVM.java[UMLexampleForEVM.java].
 
 The first rule specification uses the  *possibleSuperClass* pattern as a precondition and when executed for a given class pair, it creates a new Generalization element to set the class *sup* as a superclass for *cl*. The life-cycle is the most simple, where neither the updated, nor the disappeared state is used.
 
@@ -374,7 +374,7 @@ public RuleEngine createAdaptableRuleEngine(ViatraQueryEngine queryEngine) {
 </source>
 ----
 
-NOTE: if you are planning to use an adaptable rule base and want to access the full adapter functionality, use an Adaptable Executor to fire activations. See the VIATRA BatchTransformation (link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/transformation/plugins/org.eclipse.viatra.transformation.runtime.emf/src/org/eclipse/viatra/transformation/runtime/emf/transformation/batch/BatchTransformation.java[source]) and BatchTransformationStatements (link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/transformation/plugins/org.eclipse.viatra.transformation.runtime.emf/src/org/eclipse/viatra/transformation/runtime/emf/transformation/batch/BatchTransformationStatements.xtend[source])  classes.
+NOTE: if you are planning to use an adaptable rule base and want to access the full adapter functionality, use an Adaptable Executor to fire activations. See the VIATRA BatchTransformation (link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/transformation/plugins/org.eclipse.viatra.transformation.runtime.emf/src/org/eclipse/viatra/transformation/runtime/emf/transformation/batch/BatchTransformation.java[source]) and BatchTransformationStatements (link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/transformation/plugins/org.eclipse.viatra.transformation.runtime.emf/src/org/eclipse/viatra/transformation/runtime/emf/transformation/batch/BatchTransformationStatements.java[source])  classes.
 
 .Assembling an Adaptable ExecutionSchema
 [source,java]
@@ -440,7 +440,7 @@ Just define a rule specification with the correct life-cycle and jobs and create
 === Roll your own event provider for EVM
 
 The EVM core is independent of EMF and VIATRA Query, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=406558
-You can create your own event realm and use the EVM core concepts to execute event-driven rules. You can see a small example in http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/examples/evm-proto
+You can create your own event realm and use the EVM core concepts to execute event-driven rules. You can see a small example in https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/query/evm-proto
 
 == Design decisions and code style
 
