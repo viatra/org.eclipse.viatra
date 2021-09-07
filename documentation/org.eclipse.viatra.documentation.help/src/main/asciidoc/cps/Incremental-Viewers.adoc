@@ -1,9 +1,9 @@
 # Incremental Viewers
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: ../]
+ifndef::imagesdir[:imagesdir: {rootdir}/images]
 
-The VIATRA link:https://wiki.eclipse.org/index.php?title=VIATRA/Addon/VIATRA_Viewers[Viewers Framework] is applied to create custom views for the CPS demonstrator.
+The VIATRA link:addons.html#viewers[Viewers Framework] is applied to create custom views for the CPS demonstrator.
 
 The views are defined using declarative pattern annotations which specify items and edges in a view. The view may be a graph visualization, but simple UI elements, such as lists or tree views are also supported by the technology. In the CPS demonstrator, we created views using the link:https://www.eclipse.org/gef/zest/[Zest] Graph Visualization framework.
 
@@ -19,7 +19,7 @@ The following patterns define the following:
 * Create items for each deployment application
 * Create edges between items that correspond to the deployment host and application objects
 
-```
+----
 @Format(color = "#FBFE00")
 @Item(item = host, label = "Host $host.ip$")
 pattern deploymentHostItem(host) {
@@ -36,4 +36,4 @@ pattern deploymentApplicationItem(app) {
 pattern deploymentHostApplicationEdge(host, app) {
     DeploymentHost.applications(host, app);
 }
-```
+----

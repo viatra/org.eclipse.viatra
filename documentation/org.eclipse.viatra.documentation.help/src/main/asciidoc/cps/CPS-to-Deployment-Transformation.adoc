@@ -1,21 +1,21 @@
 # CPS-to-Deployment Transformation
 
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: ../]
+ifndef::imagesdir[:imagesdir: {rootdir}/images]
 
 ## Specification
 
-The specification of the CPS-to-Deployment M2M transformation describes what is expected from any <<Alternative-transformation-methods#,implementation variant>>.
+This specification describes what is expected from any <<Transformation Implementations,CPS-to-Deployment implementation variant>>.
 
 ### Input
 
-* <<Domains#cyber-physical-system,Cyber Physical System>> instance model that satisfies the validation rules defined on the <<Live-Validation#,Live Validation>> page.
+* <<Cyber Physical System>> instance model that satisfies the validation rules defined on the <<Live Validation>> page.
 
 ### Output
 
-* <<Domains#deployment,Deployment>> instance model
-* <<Domains#traceability,Traceability>> instance model between the CPS and Deployment instance models
+* <<Deployment>> instance model
+* <<Traceability>> instance model between the CPS and Deployment instance models
 
 ### Rules
 

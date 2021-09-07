@@ -1,11 +1,11 @@
 # Simple Xtend and Query M2M transformation
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: ../]
+ifndef::imagesdir[:imagesdir: {rootdir}/images]
 
 ## Introduction
 
-The idea behind this transformation variant is similar in concept to the <<Simple-and-optimized-Xtend-batch-M2M-transformation#,simple Xtend batch>> variant. Traverse the model and transform the elements according to the specification. The main difference is the usage of VIATRA Query patterns in place of complex queries (e.g. finding send and wait signal pairs), making the transformation faster and more memory efficient.
+The idea behind this transformation variant is similar in concept to the <<Simple and Optimized Xtend Batch M2M Transformation,simple Xtend batch>> variant. Traverse the model and transform the elements according to the specification. The main difference is the usage of VIATRA Query patterns in place of complex queries (e.g. finding send and wait signal pairs), making the transformation faster and more memory efficient.
 
 ## How does it work
 

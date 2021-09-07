@@ -1,17 +1,17 @@
 # Explicit Traceability M2M Transformation
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: ../]
+ifndef::imagesdir[:imagesdir: {rootdir}/images]
 
 This page contains the documentation of the incremental model transformation using Xtend and VIATRA Query with the  explicit traceability model used for identifying unsynchronized changes between the CPS and deployment models.
 
 ## Introduction
 
-This transformation variant uses the link:https://wiki.eclipse.org/VIATRA/Transformation/EventDrivenVM[Event-driven Virtual Machine (EVM)] that is part of VIATRA for specifying and executing a set of independent transformation rules. The rules are developed to monitor the traceability model between a CPS and a deployment model and any element in the CPS model without corresponding traces is transformed to synchronize the CPS and deployment models.
+This transformation variant uses the <<evm#,Event-driven Virtual Machine (EVM)>> that is part of VIATRA for specifying and executing a set of independent transformation rules. The rules are developed to monitor the traceability model between a CPS and a deployment model and any element in the CPS model without corresponding traces is transformed to synchronize the CPS and deployment models.
 
 ## How does it work
 
-For each type in the CPS metamodel, we create several rules for identifying their appearance, disappearance and optionally updates. The preconditions of these rules are defined by VIATRA Query patterns link:https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/cps/transformations/org.eclipse.viatra.examples.cps.xform.m2m.incr.expl/src/org/eclipse/viatra/examples/cps/xform/m2m/incr/expl/queries/cpsXformM2M.vql[cpsXformM2M.eiq] with the following naming convention:
+For each type in the CPS metamodel, we create several rules for identifying their appearance, disappearance and optionally updates. The preconditions of these rules are defined by VIATRA Query patterns link:https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/cps/transformations/org.eclipse.viatra.examples.cps.xform.m2m.incr.expl/src/org/eclipse/viatra/examples/cps/xform/m2m/incr/expl/queries/cpsXformM2M.vql[cpsXformM2M.vql] with the following naming convention:
 
 * **unmappedCPSElement**: match a _CPSElement_ (e.g. host instance) that has no corresponding trace
 * **monitoredCPSElement**: match a _CPSElement_ that has complete trace
@@ -66,4 +66,4 @@ xform.dispose
 
 ## Summary and comparison
 
-The explicit traceability variant implements the CPS-to-Deployment transformation by watching the state of the traceability model and synchronizes any changes incrementally from the CPS model to the Deployment model. After the initial execution (when the traceability and deployment models are empty), the event-driven rules are executed whenever model changes happen and only changed elements are transformed instead of the whole model. Additionally, this variant can be started even if the CPS, deployment and traceability models are already transformed (e.g. by a batch transformation) and it is able to correctly work incrementally from that point. Compared to the <<Queryresult-traceability-M2M-transformation#,Query result bookmarking M2M transformation>>, it behaves correctly even if only the CPS model has been changed after a previous transformation.
+The explicit traceability variant implements the CPS-to-Deployment transformation by watching the state of the traceability model and synchronizes any changes incrementally from the CPS model to the Deployment model. After the initial execution (when the traceability and deployment models are empty), the event-driven rules are executed whenever model changes happen and only changed elements are transformed instead of the whole model. Additionally, this variant can be started even if the CPS, deployment and traceability models are already transformed (e.g. by a batch transformation) and it is able to correctly work incrementally from that point. Compared to the <<Query result traceability M2M transformation,Query result traceability M2M transformation>>, it behaves correctly even if only the CPS model has been changed after a previous transformation.

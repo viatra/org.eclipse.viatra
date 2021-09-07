@@ -1,11 +1,11 @@
 # VIATRA Transformation API-based Batch M2M Transformation
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: ../]
+ifndef::imagesdir[:imagesdir: {rootdir}/images]
 
 ## Introduction
 
-The idea behind this transformation variant is similar in concept to the <<Simple-Xtend-and-Query-M2M-transformation#,Xtend and Query batch>> variant. Traverse the model and transform the elements according to the specification using VIATRA Query patterns. The main difference is the usage of the VIATRA link:http://wiki.eclipse.org/VIATRA/Transformation_API[Batch Transformations and Statements API].
+The idea behind this transformation variant is similar in concept to the <<Simple Xtend and Query M2M transformation#,Xtend and Query batch>> variant. Traverse the model and transform the elements according to the specification using VIATRA Query patterns. The main difference is the usage of the VIATRA <<transformations#,Batch Transformations and Statements API>>.
 
 ## How does it work
 

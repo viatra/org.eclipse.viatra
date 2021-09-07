@@ -1,8 +1,28 @@
+# Model Generator
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 ifndef::rootdir[:rootdir: ./]
 ifndef::imagesdir[{rootdir}/../images]
 
-Since manually creating large instance models requires a lot of effort, we developed a <<Model-Generator#,CPS Model Generator>> that executes a number of generation phases defined in a <<Plan-Executor#,plan>> and based on simple configuration can output **arbitrarily large CPS models**. The model generator is built in Xtend and uses VIATRA Query patterns for gathering elements for complex operations.
+## Example Model Generation
+
+You can generate CPS models with `SampleModelGenerator` class of the `org.eclipse.viatra.query.examples.cps.generator.tests` project.
+
+How to use it:
+
+ * Remove the `@Ignore` annotation from the class
+ * Run the class as JUnit Plug-in Test
+ * Generated files will be in the `models` folder of the test project
+
+Currently generated example models:
+
+ * `DemoCPSConstraints`
+ * `SimpleCPSConstraints`
+
+If you need other models you need to add other test cases to the class.
+
+## Configurable Model Generation
+
+Since manually creating large instance models requires a lot of effort, we developed a CPS Model Generator that executes a number of generation phases defined in a <<Plan Executor,plan>> and based on simple configuration can output **arbitrarily large CPS models**. The model generator is built in Xtend and uses VIATRA Query patterns for gathering elements for complex operations.
 
 The model generator aims to output models that are similar in **fine structure** but have different number of elements (to generate scaled-up models) and allow some **randomization** (e.g. to create state machines with different number of states for different application types).
 
@@ -20,7 +40,7 @@ The fine structure is specified with host and application classes:
 Based on a list of host and application classes as input, the CPS model generator outputs an instance model that satisfies the constraints of the classes. While min-max parameters are always satisfied, percentage and ratio map parameters may not be precisely followed (e.g. allocating 35% of 10 applications may be 3 or 4). However, for larger sizes and in general, the generated model will have the structure specified in the classes.
 
 The model generator component is able to generate `CyberPhysicalSystem` models with the specified properties.
-The generator is built on top of the <<Plan-Executor#,PlanExecutor>> and implements specific plans, phases, operations, initializer and fragment objects. The generation process is based on pseudo-random actions which means the output is deterministic according to the input parameters.
+The generator is built on top of the <<Plan Executor,PlanExecutor>> and implements specific plans, phases, operations, initializer and fragment objects. The generation process is based on pseudo-random actions which means the output is deterministic according to the input parameters.
 
 image:modelgenerator.png[ModelGenerator]
 
@@ -61,7 +81,9 @@ The CPS plan consists of seven phases and eight operations.
 ## Usage example
 
 First, the `ICPSConstraints` interface shall be implemented.
-```xtend
+
+[source,xtend]
+----
 class SimpleCPSConstraints implements ICPSConstraints {
 
     override getName() {
@@ -119,8 +141,10 @@ class SimpleCPSConstraints implements ICPSConstraints {
         ];
     }
 }
-```
+----
 
 This model shall contain least one and maximum three `HostTypes` of _FirstHostClass_ and exactly one of the _OtherHostClass_. Each `HostType` of the _FirstHostClass_ shall be instantiated minimum two and maximum five times and the `HostInstances` shall communicate with one or two other instances. The _OtherHostClass_ is more stringent, it specifies the exact number of types, instances and communication lines (1,2,1). Instances can communicate with other instances from both __HostClass__es with equal possibility. Number of the generated signals shall be in range of 1 to 10. The SimpleCPSConstraints specifies only one _ApplicationClass_, the _FirstAppClass_. Least one and maximum three _ApplicationType_ shall be created for this class. Each types of _FirstAppClass_ shall be instantiated one or two times and the `StateMachine` of the types shall contain minimum two and maximum four `States` with one or two `Transactions`. Every `ApplicationInstance` shall be allocated (PercentageOfAllocatedInstances ). Two times more application instances shall be allocated on the instances of the _OtherHostClass_ than the _FirstHostClass_ (allocationRatios). Transitions contain actions with 95% and the probability of the "sendSignal" is 60%.
 
 Then the `CPSGeneratorBuilder.buildAndGenerateModel(long seed, ICPSConstraints constraints) : CPSFragment` should be called.
+
+include::Plan-Executor.adoc[leveloffset=+2]

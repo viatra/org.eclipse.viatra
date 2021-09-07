@@ -1,7 +1,7 @@
-= Code Generator (Distributed realization, Xtend templates)
+= Code Generator (Distributed realization - Xtend templates)
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: ../]
+ifndef::imagesdir[:imagesdir: {rootdir}/images]
 
 The `org.eclipse.viatra.query.examples.cps.m2t.distributed.generator` project implements a basic model-to-text transformation. It is a basic template based generator written in _Xtend_ .
 
@@ -14,6 +14,7 @@ image::cps/codegenerator.png[Code Generator]
 
 == Code Generator
 The public API of the transformation contains four methods.
+
 [source,xtend]
 ----
 interface ICPSGenerator {
@@ -29,7 +30,8 @@ This implementation of the code generator is stateless. Each separate model elem
 
 === Host
 The host objects keep references to their own applications.
-==== Generated Code
+
+.Generated Code
 [source,java]
 ----
 public class Host152661025 extends BaseHost {
@@ -48,7 +50,8 @@ public class Host152661025 extends BaseHost {
 
 ==== Application
 Applications store their `ApplicationID` and their current state of the behavior (State machine).
-==== Generated Code
+
+.Generated Code
 [source,java]
 ----
 public class AlarmApplication extends BaseApplication<BehaviorAlarmB> {
@@ -72,7 +75,8 @@ public class AlarmApplication extends BaseApplication<BehaviorAlarmB> {
 
 === Behavior
 Behavior represents a statemachine of the application. It stores and manages the possible state transitions. 
-==== Generated Code
+
+.Generated Code
 [source,java]
 ----
 public enum BehaviorAlarmB implements State<BehaviorAlarmB> {

@@ -1,17 +1,17 @@
-# VIATRA transformation API based QRT M2M transformation
+# Query result traceability M2M transformation
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: ../]
+ifndef::imagesdir[:imagesdir: {rootdir}/images]
 
-This gives a short introduction on the QRT transformation variant that uses the VIATRA transformation API to define its transformation rules.
+This gives a short introduction on the incremental query result traceability M2M transformation.
 
 ## Introduction
 
-This transformation variant is closely related to the <<Query-result-traceability-M2M-transformation#,Query Result Tracebility>> variant. The basic concept of the transformation and the transformation rules are identical to those of the aforementioned variant, as the VIATRA transformation API basically provides a simplified, more model transformation oriented interface for the link:https://wiki.eclipse.org/VIATRA/Transformation/EventDrivenVM[Event-driven Virtual Machine (EVM)].
+This transformation variant is closely related to the <<Explicit Traceability M2M Transformation,Explicit Traceability>> variant. The concept of this transformation method is to use VIATRA Query patterns on the CPS model and react to changes in the match results by updating the deployment and traceability models incrementally. 
 
 ## How does it work
 
-On the contrary to its sister variant, this method uses the link:http://wiki.eclipse.org/VIATRA/Transformation_API[VIATRA transformation API] to access the EVM. Similar to the aforementioned QRT method, each transformation step is triggered by an appearing or disappearing VIATRA Query pattern match. The transformation steps are detailed in the listing below.
+This transformation method is heavily based on the <<evm#,Event-driven Virtual Machine (EVM)>> provided by VIATRA. Each transformation step is triggered by an appearing or disappearing VIATRA Query pattern match. The transformation steps are detailed in the listing below.
 
 * **HostInstance**
 ** Related patterns:
@@ -87,7 +87,8 @@ Detecting new trigger pairs is entirely the job of VIATRA Query using the above 
 ## Class of the transformation
 
 The implementation of the transformation can be found in the following class:
-`CPS2DeploymentTransformationViatra.xtend`
+`CPS2DeploymentTransformationQrt.xtend`
 
 ## Summary and comparison
-If compared to the QRT variant, while being simpler and easier to maintain than its counterpart due to the simplified, more transformation oriented VIATRA API, this implementation offers the same functionality and performance as well.
+
+Compared to the Explicit Traceability version, the reduced pattern complexity of this transformation method allows more memory efficient transformation at the price of loosing the ability to start the transformation on an already existing, partially transformed model. The speed of the transformation is comparable to that of the Explicit Traceability, while its memory consumption is more akin to the <<Simple Xtend and Query M2M transformation,Simple Xtend and Query>> variant.

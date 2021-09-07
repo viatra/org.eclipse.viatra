@@ -1,29 +1,25 @@
-# Alternative Transformation Methods
+# Transformation Implementations
 
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: ../]
+ifndef::imagesdir[:imagesdir: {rootdir}/images]
 
-We provide multiple implementations for the <<CPS-to-Deployment-Transformation#,CPS-to-Deployment M2M transformation>>. The variants differ from each other in at least one characteristics to support comparison and evaluation. Characteristics include:
+The VIATRA project has already provided multiple implementations for the demonstrator. These variants differ from each other in at least one characteristics to support comparison and evaluation. Characteristics include:
 
 * execution mode (batch or incremental)
 * used technologies (Xtend, VIATRA, other transformation tools)
 * model traversal vs. event-driven transformation
 * execution on partially transformed model
 
-The detailed description of each variant can be found on their corresponding wiki page.
-
-## Variants
-
 These implementations will be created under the link:https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/cps/transformations[transformations] folder in the repository and under the `org.eclipse.viatra.query.examples.cps.xfrom.m2m.<id>` namespace.
 
-### Batch 
+## Batch 
 
-. Xtend (`id = batch.simple`, <<Simple-and-optimized-Xtend-batch-M2M-transformation#,details>>)
-. Xtend + VIATRA Query (`id = batch.eiq`, <<Simple-Xtend-and-Query-M2M-transformation#,details>>)
-. VIATRA Batch API (`id = batch.viatra`, <<VIATRA-transformation-API-based-batch-M2M-transformation#,details>>)
+. Xtend (`id = batch.simple`, <<Simple and Optimized Xtend Batch M2M Transformation,details>>)
+. Xtend + VIATRA Query (`id = batch.eiq`, <<Simple Xtend and Query M2M transformation,details>>)
+. VIATRA Batch API (`id = batch.viatra`, <<VIATRA Transformation API-based Batch M2M Transformation,details>>)
 
-### Incremental
+## Incremental
 
 For the incremental alternatives, a differentiating factor is the method to identify changes in the source model which must be synchronized to the target ("dirty flag")
 
@@ -31,19 +27,28 @@ For the incremental alternatives, a differentiating factor is the method to iden
   * dirty: EMF adapter/IQBase
 . Explicit traceability (`id = incr.expl`)
   * dirty: traceability model state
-  * Details <<Explicit-traceability-M2M-transformation#,here>>
+  * Details <<Explicit Traceability M2M Transformation,here>>
 . Query result traceability (`id = incr.qrt`)
   * dirty: query result bookmarking, traceability saved in deltamonitor
-  * Details <<Query-result-traceability-M2M-transformation#,here>>
+  * Details <<Query result traceability M2M transformation,here>>
 . Partial batch transformation (`id = incr.aggr`)
   * dirty: consider query results as notifications/events, low level change aggregation (transform bigger parts)
   * advanced: notifications independent of source model, transformation may run in background
-  * Details <<Partial-batch-M2M-transformation#,here>
+  * Details <<Partial batch M2M transformation,here>>
 . Change-driven transformations  (`id = incr.cdt`)
   * dirty: EVM activation life-cycle
-. VIATRA EMF-based link:http://wiki.eclipse.org/VIATRA/Transformation_API[transformation API]  (`id = incr.viatra`)
-  * Details <<VIATRA-transformation-API-based-QRT-MTM-transformation#,here>>
+. VIATRA EMF-based <<transformations#,transformation API>>  (`id = incr.viatra`)
+  * Details <<VIATRA transformation API based QRT M2M transformation,here>>
 
 ## Summary
 
 We currently implemented the above mentioned different variants (if you know VIATRA Query well you may argue that the LS based should be considered as a separate one :-) ) for this transformation and in the future might add some additional ones built on our technology stack. However, we would like to invite variants using other transformation tools. Since the demonstrator is open source, this may involve users of other tools or even submitted as a case to the link:http://www.transformation-tool-contest.eu/[Transformation Tool Contest].
+
+include::Simple-and-optimized-Xtend-batch-M2M-transformation.adoc[leveloffset=+1]
+include::Simple-Xtend-and-Query-M2M-transformation.adoc[leveloffset=+1]
+include::VIATRA-transformation-API-based-batch-M2M-transformation.adoc[leveloffset=+1]
+include::Explicit-traceability-M2M-transformation.adoc[leveloffset=+1]
+include::Query-result-traceability-M2M-transformation.adoc[leveloffset=+1]
+include::Partial-batch-M2M-transformation.adoc[leveloffset=+1]
+include::VIATRA-Transformation-API-based-QRT-MTM-Transformation.adoc[leveloffset=+1]
+include::CPS-to-Deployment-Unit-Tests.adoc[leveloffset=+1]

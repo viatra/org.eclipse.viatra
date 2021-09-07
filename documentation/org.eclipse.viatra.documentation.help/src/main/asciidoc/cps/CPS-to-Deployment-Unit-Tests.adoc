@@ -1,11 +1,11 @@
 # CPS to Deployment Unit Tests
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: ../]
+ifndef::imagesdir[:imagesdir: {rootdir}/images]
 
 The `xform.m2m.tests` project specifies a high number of test cases that are independent of transformation implementations and are created for allowing Test Driven Development of transformations based on the specification.
 
-The tests are grouped together into classes following the rules found in the specification of the <<CPS-to-Deployment-Transformation#,CPS-to-Deployment>> transformation:
+The tests are grouped together into classes following the rules found in the specification of the CPS-to-Deployment transformation:
 
 * HostMappingTest
 * ApplicationMappingTest
@@ -26,16 +26,18 @@ Simply right-click on the `xform.m2m.tests` project and select `Run as... -> JUn
 
 All specification related tests extend the `CPS2DepTest` class, which defines some extension fields:
 
-```xtend
+[source,xtend]
+----
 class CPS2DepTest {
     protected extension Logger logger = Logger.getLogger("cps.xform.CPS2DepTest")
     protected extension CPSTransformationWrapper xform
     protected extension CPSModelBuilderUtil modelBuilder
-```
+----
 
 A simple test case is structured as follows:
 
-```xtend
+[source,xtend]
+----
 @Test
 def hostIncremental() {
  val testId = "hostIncremental"
@@ -59,13 +61,14 @@ def hostIncremental() {
     
  info("END TEST: " + testId)
 }
-```
+----
 
 ### Test with existing input model
 
 If you would like to test the transformation on your own input CPS model, take a look at the `specificInputModel` test case in `InstanceModelTest.xtend` in the `<cps>.xform.m2m.tests.integration` package.
 
-```xtend
+[source,xtend]
+----
 @Ignore
 @Test
 def specificInputModel(){
@@ -81,6 +84,6 @@ def specificInputModel(){
 
   info("END TEST: " + testId)
 }
-```
+----
 
 Just change the resource URI to a full file path, remove or comment out the `@Ignore` and run the tests.

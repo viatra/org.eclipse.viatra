@@ -1,7 +1,7 @@
 # Deployment Change Monitor
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: ../]
+ifndef::imagesdir[:imagesdir: {rootdir}/images]
 
 This component tracks changes in the deployment model and informs the code generator about the changes.
 
@@ -39,14 +39,19 @@ The rules used for monitoring:
 
 ## Usage
 The implementation class for the monitor is the ```org.eclipse.viatra.query.examples.cps.xform.m2t.DeploymentChangeMonitor``` Java class. To use it, an ViatraQueryEngine and a Deployment needed. 
-```
+
+[source,java]
+----
 engine = ViatraQueryEngine.on(deployment);
 monitor = new DeploymentChangeMonitor(deployment,engine);
 monitor.startMonitoring();
-```
+----
+
 To get the change detlas a DeploymentChangeDelta DTO is returned by the getDeltaSinceLastCheckpoint() method of the monitor. This DTO also contains the information about the old names/IDs required for identifying the previously generated files that are to be deleted. This is in a map, that can be queried and used like in the code shown below:
-```
+
+[source,java]
+----
 String oldId = monitor.deltaSinceLastCheckpoint.oldNamesForDeletion.get(deploymentElement);
-```
+----
 
 To create a checkpoint in order to start collecting deltas to new empty collections the createCheckpoint() method can be used. This also returns a DeploymentChangeDelta containing all changes between the last two checkpoints.

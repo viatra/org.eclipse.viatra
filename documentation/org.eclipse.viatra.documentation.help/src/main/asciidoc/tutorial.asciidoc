@@ -24,7 +24,7 @@ toc::[]
 include::tutorial/environment.adoc[leveloffset=+1]
 
 <<<
-include::cps/Domains.asciidoc[leveloffset=+1]
+include::cps/Domains.adoc[leveloffset=+1]
 
 == Query Development
 <<<

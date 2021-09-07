@@ -1,17 +1,17 @@
 # Partial batch M2M transformation
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: ../]
+ifndef::imagesdir[:imagesdir: {rootdir}/images]
 
 This page provides a summary for the partial batch transformation.
 
 ## Introduction
 
-The partial batch transformation performs an initial, complete transformation for the model, which is basically the simple VIATRA Query solution described in <<Simple-Xtend-and-Query-M2M-transformation#,Simple Xtend and Query M2M-transformation>>. Then, the changes of the source CyberPhysicalSystem model are traced and collected using a change monitor. From the collected changes in source cyber physical system model the transformation - when run again - modifies only the corresponding parts of the deployment model, this way dramatically reducing re-transformation time if the source model contains changes.
+The partial batch transformation performs an initial, complete transformation for the model, which is basically the simple VIATRA Query solution described in <<Simple Xtend and Query M2M transformation,Simple Xtend and Query M2M-transformation>>. Then, the changes of the source CyberPhysicalSystem model are traced and collected using a change monitor. From the collected changes in source cyber physical system model the transformation - when run again - modifies only the corresponding parts of the deployment model, this way dramatically reducing re-transformation time if the source model contains changes.
 
 ## How does it work
 
-This transformation uses the link:https://wiki.eclipse.org/VIATRA/Transformation/EventDrivenVM[Event-driven Virtual Machine (EVM)] feature of VIATRA Query. Registrations of changes are triggered by an appearing or disappearing VIATRA Query pattern match. Based on the appearance, disappearance or update of a model element since the last transformation, actions are to be taken when the transformation is initiated again.
+This transformation uses the <<evm#,Event-driven Virtual Machine (EVM)>> feature of VIATRA Query. Registrations of changes are triggered by an appearing or disappearing VIATRA Query pattern match. Based on the appearance, disappearance or update of a model element since the last transformation, actions are to be taken when the transformation is initiated again.
 
 The VIARA Query query definitions used for the transformation of the model elements are detailed below.
 

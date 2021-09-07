@@ -1,11 +1,11 @@
 # Live Validation
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: ../]
+ifndef::imagesdir[:imagesdir: {rootdir}/images]
 
-The VIATRA link:https://wiki.eclipse.org/index.php?title=VIATRA/Addon/Validation[Validation Framework] offers a declarative approach for defining complex constraints on instance models that are evaluated incrementally during model editing.
+The VIATRA <<addons#viatra-validation,Validation Framework>> offers a declarative approach for defining complex constraints on instance models that are evaluated incrementally during model editing.
 
-In the CPS demonstrator we defined a set of constraints for <<Domains#cyber-physical-system,Cyber Physical System>> instance models in the `model/validation/rules.eiq` file in the `cps.queries` project. The constraints include the following examples:
+In the CPS demonstrator we defined a set of constraints for Cyber Physical System instance models in the `model/validation/rules.eiq` file in the `cps.queries` project. The constraints include the following examples:
 
 * Host instances must have unique IP addresses
 * The initial state of a state machine must be among the states of the same state machine
@@ -20,7 +20,7 @@ Each constraint is defined using `@Constraint` annotations on patterns. The anno
 * The **message** is a format string that specifies what will be displayed for each violation
 * The **severity** specifies the type of the created marker (error or warning)
 
-```
+----
 @Constraint(
     location = state,
     message = "Multiple outgoing transitions of $state.id$ define the same action ($action$)",
@@ -37,7 +37,7 @@ pattern multipleTransitionsWithSameAction(state, action) {
 private pattern actionOfTransition(transition, action) {
     Transition.action(transition, action);
 }
-```
+----
 
 The VIATRA Query generator fragment generates the required source code and other artefacts automatically when the builder is invoked by saving the query definition file. The code is placed in the `cps.queries.validation` project.
 

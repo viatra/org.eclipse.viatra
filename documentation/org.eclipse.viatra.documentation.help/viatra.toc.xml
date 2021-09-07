@@ -112,42 +112,42 @@
       <topic href="html/releases.html#viatra-12" label="VIATRA 1.2">
       </topic>
    </topic>
-     <topic href="html/cps/Home.html" label="CPS Demonstrator">
-       <topic href="html/cps/Domains.html" label="Domain Models">
+     <topic href="html/cps-demonstrator.html" label="CPS Demonstrator">
+       <topic href="html/cps-demonstrator.html#_domains" label="Domain Models">
        </topic>
-       <topic href="html/cps/CPS-to-Deployment-Transformation.html" label="CPS-to-Deployment Transformation Specification">
+       <topic href="html/cps-demonstrator.html#_cps_to_deployment_transformation_2" label="CPS-to-Deployment Transformation Specification">
        </topic>
-       <topic href="html/cps/Alternative-transformation-methods.html" label="CPS-to-Deployment Transformation Alternatives">
-           <topic href="html/cps/Simple-and-optimized-Xtend-batch-M2M-transformation.html" label="Simple and Optimized Batch">
+       <topic href="html/cps-demonstrator.html#_transformation_implementations" label="Transformation Implementations">
+           <topic href="html/cps-demonstrator.html#_simple_and_optimized_xtend_batch_m2m_transformation" label="Simple and Optimized Batch">
            </topic>
-           <topic href="html/cps/Simple-Xtend-and-Query-M2M-transformation.html" label="Simple Xtend + Viatra Query">
+           <topic href="html/cps-demonstrator.html#_simple_xtend_and_query_m2m_transformation" label="Simple Xtend + Viatra Query">
            </topic>
-           <topic href="html/cps/VIATRA-transformation-API-based-batch-M2M-transformation.html" label="VIATRA Batch Transformation API">
+           <topic href="html/cps-demonstrator.html#_viatra_transformation_api_based_batch_m2m_transformation" label="VIATRA Batch Transformation API">
            </topic>
-           <topic href="html/cps/Query-result-traceability-M2M-transformation.html" label="Query Result Traceability">
+           <topic href="html/cps-demonstrator.html#_explicit_traceability_m2m_transformation" label="Explicit Traceability">
            </topic>
-           <topic href="html/cps/Partial-batch-M2M-transformation.html" label="Partial Batch">
+           <topic href="html/cps-demonstrator.html#_query_result_traceability_m2m_transformation" label="Query Result Traceability">
            </topic>
-           <topic href="html/cps/VIATRA-Transformation-API-based-QRT-MTM-Transformation.html" label="VIATRA Event-driven API with Query Result Traceability">
+           <topic href="html/cps-demonstrator.html#_partial_batch_m2m_transformation" label="Partial Batch">
            </topic>
-           <topic href="html/cps/CPS-to-Deployment-Unit-Tests.html" label="Unit Tests">
+           <topic href="html/cps-demonstrator.html#_viatra_transformation_api_based_qrt_m2m_transformation" label="VIATRA Event-driven API with Query Result Traceability">
            </topic>
-       </topic>
-       <topic href="html/cps/Code-Generator-Distributed-realization-Xtend-templates.html" label="Code Generation">
-           <topic href="html/cps/Deployment-change-monitor.html" label="Change Monitor for Deployment">
+           <topic href="html/cps-demonstrator.html#_cps_to_deployment_unit_tests" label="Unit Tests">
            </topic>
        </topic>
-       <topic href="html/cps/Model-Generator.html" label="CPS Model Generator">
-           <topic href="html/cps/Plan-Executor.html" label="Plan Executor">
+       <topic href="html/cps-demonstrator.html#_code_generator_distributed_realization_xtend_templates" label="Code Generation">
+           <topic href="html/cps-demonstrator.html#_deployment_change_monitor" label="Change Monitor for Deployment">
            </topic>
        </topic>
-       <topic href="html/cps/Live-Validation.html" label="Validation Example">
+       <topic href="html/cps-demonstrator.html#_model_generator" label="CPS Model Generator">
+           <topic href="html/cps-demonstrator.html#_plan_executor" label="Plan Executor">
+           </topic>
        </topic>
-       <topic href="html/cps/Incremental-Viewers.html" label="Viewers Example">
+       <topic href="html/cps-demonstrator.html#_live_validation" label="Validation Example">
        </topic>
-       <topic href="html/cps/Generate-CPS-models.html" label="CPS Model Generator">
+       <topic href="html/cps-demonstrator.html#_incremental_viewers" label="Viewers Example">
        </topic>
-       <topic href="html/cps/CPS-Application.html" label="CPS Application">
+       <topic href="html/cps-demonstrator.html#_cps_application" label="CPS Application">
        </topic>
    </topic>
    <anchor id="org.eclipse.viatra"/>

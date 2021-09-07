@@ -11,55 +11,60 @@ image::cps/planexecutor.png[PlanExecutor]
 
 ### Fragment
 
-The fragment represents the artefact that the executor is operating on. In the <<CPS-Model-Generator#,CPS model generator>>, the fragment refers to the CPS instance model that is built. The fragment is introduced as a type parameter to ensure that operations can call the methods in a type-safe way on the fragment object.
+The fragment represents the artefact that the executor is operating on. In the CPS model generator, the fragment refers to the CPS instance model that is built. The fragment is introduced as a type parameter to ensure that operations can call the methods in a type-safe way on the fragment object.
 
 ### Initializer
 
 The initializer is responsible for creating an initial fragment object at the start of the execution. This approach allows the creation of the initializer object without performing possible expensive processing for creating the fragment before it is required.
 
-```xtend
+[source,xtend]
+----
 interface Initializer<FragmentType> {
     def FragmentType getInitialFragment();
 }
-```
+----
 
 ### Operation
 
 Operations are defined for a given fragment type and are executed as part of phases. The same operation implementation may be used in multiple phases. The operation receives the fragment object as a parameter when it is executed.
 
-```xtend
+[source,xtend]
+----
 interface IOperation<FragmentType> {
     def boolean execute(FragmentType fragment);
 }
-```
+----
 
 ### Phase
 
 Phases represent standalone execution steps that define a list of operations on the same fragment type. The phase receives the fragment object as a parameter when assembling the operations, which means that the operation list can be dependent of the current state of the fragment.
 
-```xtend
+[source,xtend]
+----
 interface IPhase<FragmentType> {
     def Iterable<IOperation<FragmentType>> getOperations(FragmentType fragment);
 }
-```
+----
 
 ### Plan
 
 The plan is created by adding phases that were already prepared by the same fragment. During the execution, the list of phases are requested by the executor.
 
-```xtend
+[source,xtend]
+----
 interface IPlan<FragmentType> {
     def void addPhase(IPhase<FragmentType> phase);
     def Iterable<IPhase<FragmentType>> getPhases();
 }
-```
+----
 
 ## Technical details
 
 First step is to create custom implementations of `IPlan`, `IPhase`, `IOperation`, `Initializer` interfaces and create the `Fragment` type like in the followings.
 
-**MyFragment**:
-```xtend
+.MyFragment
+[source,xtend]
+----
 class MyFragment {
     SecretStore secretStore = "";
 
@@ -75,9 +80,11 @@ class MyFragment {
         secretStore.print;
     }
 }
-```
-**MyInitializer**:
-```xtend
+----
+
+.MyInitializer
+[source,xtend]
+----
 class MyInitializer implements Initializer<MyFragment> {
     
     override getInitialFragment() {
@@ -85,10 +92,11 @@ class MyInitializer implements Initializer<MyFragment> {
     }
     
 }
-```
+----
 
-**MyPlan**:
-```xtend
+.MyPlan
+[source,xtend]
+----
 class MyPlan implements IPlan<MyFragment> {
     
     List<IPhase<MyFragment>> phases = Lists.newArrayList;
@@ -102,10 +110,11 @@ class MyPlan implements IPlan<MyFragment> {
     }
     
 }
-```
+----
 
-**MyPhase**:
-```xtend
+.MyPhase
+[source,xtend]
+----
 class MyPhase implements IPhase<MyFragment>{
     
     override getOperations(MyFragment fragment) {
@@ -116,10 +125,11 @@ class MyPhase implements IPhase<MyFragment>{
     }
     
 }
-```
+----
 
-**AddSecretOperation**:
-```xtend
+.AddSecretOperation
+[source,xtend]
+----
 class AddSecretOperation implements IOperation<MyFragment> {
     
     override execute(MyFragment fragment) {
@@ -128,10 +138,11 @@ class AddSecretOperation implements IOperation<MyFragment> {
     }
     
 }
-```
+----
 
-**EncryptStoreOperation**:
-```xtend
+.EncryptStoreOperation
+[source,xtend]
+----
 class EncryptStoreOperation implements IOperation<MyFragment> {
     
     override execute(MyFragment fragment) {
@@ -140,13 +151,12 @@ class EncryptStoreOperation implements IOperation<MyFragment> {
     }
     
 }
-```
-
-***
+----
 
 
-Second step is to build plan and the initializer.
-```xtend
+.Second step is to build plan and the initializer.
+[source,xtend]
+----
 class Example {
     def static void main(String[] args) {
         var MyPlan plan = new MyPlan;
@@ -156,12 +166,11 @@ class Example {
         var MyInitializer initializer = new MyInitializer;
     }
 }
-```
+----
 
-***
-
-The last step is to instantiate correct `PlanExecutor` and call the `process` method.
-```xtend
+.The last step is to instantiate correct `PlanExecutor` and call the `process` method.
+[source,xtend]
+----
 class Example {
     def static void main(String[] args) {
         var MyPlan plan = new MyPlan;
@@ -176,4 +185,4 @@ class Example {
         output.print;
     }
 }
-```
+----

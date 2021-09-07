@@ -1,9 +1,7 @@
 # Simple and Optimized Xtend Batch M2M Transformation
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
-
-This is a pure Xtend implementation for the example transformation described in <<CPS-to-Deployment-Transformation#,CPS to Deployment Transformation>>.
+ifndef::rootdir[:rootdir: ../]
+ifndef::imagesdir[:imagesdir: {rootdir}/images]
 
 ## Introduction
 The basic idea for the batch transformations - both for the simple and optimized versions - is to programmatically traverse the model that is to be transformed and apply all the transformation rules where they are applicable. Model traversal is done by using only basic language concepts and without using any advanced technologies or complex frameworks.

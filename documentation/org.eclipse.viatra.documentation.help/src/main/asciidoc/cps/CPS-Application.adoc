@@ -1,13 +1,13 @@
 # CPS Application
-ifndef::rootdir[:rootdir: ./]
-ifndef::imagesdir[{rootdir}/../images]
+ifndef::rootdir[:rootdir: ../]
+ifndef::imagesdir[:imagesdir: {rootdir}/images]
 :icons: font
 
-The CPS Demonstrator application include various features to demonstrate various capabilities of VIATRA using the <<Domains#,CPS domain models>>.
+The CPS Demonstrator application include various features to demonstrate various capabilities of VIATRA using the <<Domains,CPS domain models>>.
 
 ## How to start
 
-Start the CPS Application Eclipse instance (https://hudson.eclipse.org/viatra/job/viatra-examples-cps/lastSuccessfulBuild/artifact/cps/releng/org.eclipse.viatra.examples.cps.application.product/target/products[download from here]).
+Start the CPS Application Eclipse instance (https://download.eclipse.org/viatra/examples/cps/application/[download from here]).
 
 WARNING: Starting multiple instances of this application causes `Java was started but returned exit code=1` error message caused by both applications opening port 1099 for the VIATRA debugger to connect to.  In order to support multiple instances, you have to link:../extra/VIATRA-debugger.html#_setting_up_the_transformation_under_debugging[modify the debug port number] in the corresponding eclipse.ini file.
 
@@ -18,7 +18,7 @@ This project contains an example CPS model __(example.cyberphysicalsystem)__ as 
 
 ## Executing the transformation
 
-The CPS Transformations view allows starting or stopping <<CPS-to-Deployment-Transformation#,CPS-to-Deployment M2M transformations>> using <<Alternative-transformation-methods#,different strategies>> and displays the running transformations. +
+The CPS Transformations view allows starting or stopping <<CPS-to-Deployment Transformation,CPS-to-Deployment M2M transformations>> using <<Transformation Implementations,different strategies>> and displays the running transformations. +
 To open the view press CTRL+3 and type the name of the view.
 
 image::cps/cps_transform_view.png[CPS Transformations view]
@@ -31,7 +31,7 @@ The view shows the details of the currently running transformations:
 Double-click on a transformation to navigate to the model.
 
 **Transformation strategies:** +
-In a drop-down list you can select a <<Alternative-transformation-methods#,strategy>> for the transformation.
+In a drop-down list you can select a <<Transformation implementations,strategy>> for the transformation.
 There are two execution modes batch and incremental.
 
 * The batch mode clears the destination model and transforms the whole source model then stops.
@@ -39,9 +39,9 @@ There are two execution modes batch and incremental.
 
 **Operations:**
 
-* Run Transformation image::cps/load_query_icon.png[] : Open the Traceability model and select a `CPS To Deployment` element. This button starts a new transformation with the selected strategy.
-* Run Transformation with Debugger image::cps/load_xform_w_debugger_icon.png[] : This button starts a new transformation on a `CPS To Deployment` element with the selected strategy. The transformation does not start until a <<debug,VIATRA Transformation Remote Debugging>> is connected.
-* Stop Transformation image::cps/unload_icon.gif[] : Stops a currently running incremental transformation (selected below) and releases its resources.
+* Run Transformation image:cps/load_query_icon.png[] : Open the Traceability model and select a `CPS To Deployment` element. This button starts a new transformation with the selected strategy.
+* Run Transformation with Debugger image:cps/load_xform_w_debugger_icon.png[] : This button starts a new transformation on a `CPS To Deployment` element with the selected strategy. The transformation does not start until a <<debug,VIATRA Transformation Remote Debugging>> is connected.
+* Stop Transformation image:xcps/unload_icon.gif[] : Stops a currently running incremental transformation (selected below) and releases its resources.
 
 ## Advanced
 
@@ -65,7 +65,7 @@ image::cps/cps_debug.png[CPS Debug Configuration]
 
 WARNING: Using the same Eclipse instance for debugging an incremental transformation and changing a model causes the program to freeze. Use a different Eclipse instance or run a new Eclipse Application instance from __Run/Run Configurations__ and run the debugger from it.
 
-Find more details on the debugger link:../extra/VIATRA-debugger.html[here]. 
+Find more details on the debugger <<transformations#transformation-debugger,here>>. 
 
 ### CPS Model Generator wizard
 
