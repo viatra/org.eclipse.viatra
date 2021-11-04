@@ -6,8 +6,7 @@ Element-Type: testcase
 Element-Version: 3.0
 External-Reference: 
 Id: _GrhUEF29EeiRKa-hzcQkPg
-Runtime-Version: 2.3.0.201806262310
-Save-Time: 3/22/19, 8:46 PM
+Save-Time: 11/4/21, 4:51 PM
 Testcase-Type: ecl
 
 ------=_.description-216f885c-d591-38ce-8ea2-e4f8cb4d6ffa
@@ -46,6 +45,8 @@ let [val projectName "project.to.convert"] {
 		
 	get-view "Project Explorer" | get-tree | select $projectName | get-menu 
 	    -path "Configure/Convert to VIATRA Query Project" | click
+	// Originally editor was described as follows, but it caused errors on build server:
+	// with [get-editor $projectName] {
 	with [get-editor $projectName] {
 		get-tab-folder | get-tab-item Dependencies | click //Checking set dependencies
 	    get-section "Required Plug-ins" | get-table | get-property itemCount | equals 5 | verify-true
