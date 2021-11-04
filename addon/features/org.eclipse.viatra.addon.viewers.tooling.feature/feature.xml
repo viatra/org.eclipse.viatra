@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.addon.viewers.tooling.feature"
       label="VIATRA Viewers Tooling"
-      version="2.6.0.qualifier"
+      version="2.7.0.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="2.0.2">
@@ -25,7 +25,7 @@
 
    <includes
          id="org.eclipse.viatra.addon.viewers.runtime.feature"
-         version="2.6.0.qualifier"
+         version="2.7.0.qualifier"
          name="VIATRA Viewers Runtime"/>
 
    <plugin

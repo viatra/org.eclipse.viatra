@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA VQL Graphical Editor
 Bundle-SymbolicName: org.eclipse.viatra.query.patternlanguage.emf.sirius;singleton:=true
-Bundle-Version: 0.26.0.qualifier
+Bundle-Version: 0.27.0.qualifier
 Bundle-Activator: org.eclipse.viatra.query.patternlanguage.emf.sirius.SiriusVQLGraphicalEditorPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
@@ -15,17 +15,17 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.xtext.ui;bundle-version="[2.20.0,3.0.0)",
  org.eclipse.xtext.xbase;bundle-version="[2.20.0,3.0.0)",
  org.eclipse.xtext.xbase.ui;bundle-version="[2.20.0,3.0.0)",
- org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[2.6.0,2.7.0)",
- org.eclipse.viatra.query.patternlanguage.emf.ui;bundle-version="[2.6.0,2.7.0)",
+ org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[2.7.0,2.8.0)",
+ org.eclipse.viatra.query.patternlanguage.emf.ui;bundle-version="[2.7.0,2.8.0)",
  org.eclipse.gef;bundle-version="3.11.0",
  org.eclipse.emf.transaction;bundle-version="1.9.0",
  org.eclipse.gmf.runtime.diagram.ui;bundle-version="1.8.0",
  org.eclipse.gmf.runtime.diagram.ui.resources.editor;bundle-version="1.7.0",
- org.eclipse.viatra.query.runtime;bundle-version="[2.6.0,2.7.0)",
+ org.eclipse.viatra.query.runtime;bundle-version="[2.7.0,2.8.0)",
  org.eclipse.xtext.ui.shared;bundle-version="[2.20.0,3.0.0)",
  org.eclipse.xtext.common.types.ui;bundle-version="[2.20.0,3.0.0)",
- org.eclipse.viatra.query.patternlanguage.metamodel;bundle-version="[0.26.0,0.27.0)",
- org.eclipse.viatra.query.patternlanguage.metamodel.edit;bundle-version="[0.26.0,0.27.0)",
+ org.eclipse.viatra.query.patternlanguage.metamodel;bundle-version="[0.27.0,0.28.0)",
+ org.eclipse.viatra.query.patternlanguage.metamodel.edit;bundle-version="[0.27.0,0.28.0)",
  org.eclipse.swt,
  org.eclipse.xtext.builder;bundle-version="[2.20.0,3.0.0)",
  org.eclipse.viatra.query.tooling.core,
@@ -35,12 +35,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.sirius.properties;bundle-version="[6.0.0,7.0.0)",
  org.eclipse.jdt.ui,
  org.eclipse.jdt.core,
- org.eclipse.viatra.query.patternlanguage.emf.ui;bundle-version="[2.6.0,2.7.0)",
- org.eclipse.viatra.addon.validation.runtime.ui;bundle-version="[2.6.0,2.7.0)",
- org.eclipse.viatra.addon.validation.core;bundle-version="[2.6.0,2.7.0)",
- org.eclipse.viatra.addon.validation.runtime;bundle-version="[2.6.0,2.7.0)",
- org.eclipse.viatra.query.patternlanguage.metamodel.validation;bundle-version="[0.26.0,0.27.0)",
- org.eclipse.viatra.query.runtime.ui;bundle-version="[2.6.0,2.7.0)"
+ org.eclipse.viatra.query.patternlanguage.emf.ui;bundle-version="[2.7.0,2.8.0)",
+ org.eclipse.viatra.addon.validation.runtime.ui;bundle-version="[2.7.0,2.8.0)",
+ org.eclipse.viatra.addon.validation.core;bundle-version="[2.7.0,2.8.0)",
+ org.eclipse.viatra.addon.validation.runtime;bundle-version="[2.7.0,2.8.0)",
+ org.eclipse.viatra.query.patternlanguage.metamodel.validation;bundle-version="[0.27.0,0.28.0)",
+ org.eclipse.viatra.query.runtime.ui;bundle-version="[2.7.0,2.8.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.apache.log4j;version="1.2.15"

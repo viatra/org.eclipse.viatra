@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.addon.querybasedfeatures.runtime.feature"
       label="VIATRA Query Based Feature Runtime"
-      version="2.6.0.qualifier"
+      version="2.7.0.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="2.0.2">
@@ -24,8 +24,8 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.viatra.query.runtime.feature" version="2.6.0" match="equivalent"/>
-      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="2.6.0" match="equivalent"/>
+      <import feature="org.eclipse.viatra.query.runtime.feature" version="2.7.0" match="equivalent"/>
+      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="2.7.0" match="equivalent"/>
    </requires>
 
    <plugin

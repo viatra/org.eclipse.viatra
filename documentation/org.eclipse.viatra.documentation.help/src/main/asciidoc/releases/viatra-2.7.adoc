@@ -1,0 +1,13 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+[[viatra-27]]
+
+= VIATRA 2.7
+
+Release date:: 2022-03-xx
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/2.7.0
+
+== New and Noteworthy
+
+== Migrating to VIATRA 2.7
