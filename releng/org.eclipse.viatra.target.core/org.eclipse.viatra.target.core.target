@@ -4,11 +4,11 @@
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
-      <repository location="http://download.itemis.com/updates/releases/2.1.1/"/>
+      <repository location="https://download.itemis.com/updates/releases/2.1.1/"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.xtext.sdk.feature.group" version="2.20.0.v20191202-1256"/>
-      <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.20.0"/>
+      <repository location="https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.20.0"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="com.google.inject" version="3.0.0.v201605172100"/>
@@ -24,15 +24,15 @@
       <unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="2.11.2.v20200224-0816"/>
       <unit id="org.eclipse.emf.mwe2.launcher.feature.group" version="2.11.2.v20200224-0816"/>
       <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.11.2.v20200224-0816"/>
-    <repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.11.2"/>
+    <repository location="https://download.eclipse.org/modeling/emft/mwe/updates/releases/2.11.2"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.license.feature.group" version="2.0.2.v20181016-2210"/>
-      <repository location="http://download.eclipse.org/cbi/updates/license/2.0.2.v20181016-2210"/>
+      <repository location="https://download.eclipse.org/cbi/updates/license/2.0.2.v20181016-2210"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.collections.feature.feature.group" version="10.1.0.v20200211-1558"/>
-      <repository location="http://download.eclipse.org/collections/10.2.0/repository"/>
+      <repository location="https://download.eclipse.org/collections/10.2.0/repository"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.jdt.feature.group" version="3.18.0.v20190605-1800"/>
