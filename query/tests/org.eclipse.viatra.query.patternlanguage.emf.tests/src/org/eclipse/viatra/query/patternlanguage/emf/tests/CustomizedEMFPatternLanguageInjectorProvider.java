@@ -11,6 +11,8 @@
 package org.eclipse.viatra.query.patternlanguage.emf.tests;
 
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageRuntimeModule;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.ExtensionBasedAnnotationValidatorLoader;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.IAnnotationValidatorLoader;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.EclipseExtensionBasedWhitelistProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist.IPureWhitelistExtensionProvider;
 
@@ -32,7 +34,10 @@ public class CustomizedEMFPatternLanguageInjectorProvider extends EMFPatternLang
                 return EclipseExtensionBasedWhitelistProvider.class;
             }
 			
-			
+            @Override
+            public Class<? extends IAnnotationValidatorLoader> bindAnnotationValidatorLoader() {
+                return ExtensionBasedAnnotationValidatorLoader.class;
+            }
 		};
 	}
 }

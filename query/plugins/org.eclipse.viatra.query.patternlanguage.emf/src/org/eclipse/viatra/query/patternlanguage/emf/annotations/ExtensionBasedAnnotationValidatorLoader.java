@@ -6,7 +6,7 @@
  * 
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.viatra.query.patternlanguage.emf.ui.util;
+package org.eclipse.viatra.query.patternlanguage.emf.annotations;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,8 +15,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.viatra.query.patternlanguage.emf.annotations.IAnnotationValidatorLoader;
-import org.eclipse.viatra.query.patternlanguage.emf.annotations.IPatternAnnotationValidator;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -24,7 +22,7 @@ import com.google.inject.Singleton;
 
 /**
  * @author Zoltan Ujhelyi
- * @since 2.0
+ * @since 2.7
  * 
  */
 @Singleton

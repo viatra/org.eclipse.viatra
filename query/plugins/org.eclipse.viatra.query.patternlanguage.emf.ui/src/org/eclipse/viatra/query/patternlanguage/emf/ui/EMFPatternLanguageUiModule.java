@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.viatra.query.patternlanguage.emf.GenmodelExtensionLoader;
 import org.eclipse.viatra.query.patternlanguage.emf.IGenmodelMappingLoader;
+import org.eclipse.viatra.query.patternlanguage.emf.annotations.ExtensionBasedAnnotationValidatorLoader;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.IAnnotationValidatorLoader;
 import org.eclipse.viatra.query.patternlanguage.emf.ide.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProviderInstance;
@@ -34,7 +35,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.ui.labeling.EMFPatternLangua
 import org.eclipse.viatra.query.patternlanguage.emf.ui.types.EMFPatternLanguageTypeProviderFactory;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.types.EMFPatternLanguageTypeScopeProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.EMFPatternLanguageSourceViewerConfiguration;
-import org.eclipse.viatra.query.patternlanguage.emf.ui.util.ExtensionBasedAnnotationValidatorLoader;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.IWorkspaceUtilities;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectExpectedPackageNameProvider;

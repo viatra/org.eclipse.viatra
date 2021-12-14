@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.patternlanguage.emf.ui" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.patternlanguage.emf.ui.util.ExtensionBasedAnnotationValidatorLoader">
+        <filter comment="Internal API update" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.ui.util.ExtensionBasedAnnotationValidatorLoader"/>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.ui_2.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
