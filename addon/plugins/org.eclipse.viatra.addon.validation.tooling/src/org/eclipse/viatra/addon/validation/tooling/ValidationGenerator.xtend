@@ -218,7 +218,8 @@ class ValidationGenerator implements IGenerationFragment {
             
                 @Override
                 public String getMessageFormat() {
-                    return "«Strings::convertToJavaString(getElementOfConstraintAnnotation(annotation, "message"))»";
+                    return "«getElementOfConstraintAnnotation(annotation, "message").isNullOrEmpty ? "" 
+                        : Strings::convertToJavaString(getElementOfConstraintAnnotation(annotation, "message"))»";
                 }
             
             
