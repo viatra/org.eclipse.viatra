@@ -167,11 +167,11 @@ static def void after(){
 }
 ----
 
-For a complete example, see the link:https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/cps/frameworktests/org.eclipse.viatra.examples.cps.tests/src/org/eclipse/viatra/examples/cps/tests/BasicCpsTest.xtend[CPS Framework tests].
+For a complete example, see the link:https://git.eclipse.org/c/viatra/org.eclipse.viatra.git/tree/query/tests/org.eclipse.viatra.query.runtime.cps.tests/src/org/eclipse/viatra/query/runtime/cps/tests/BasicCpsTest.xtend[CPS Framework tests].
 
 ==== Interpreting the coverage report ====
 
-A coverage report looks like this: link:https://hudson.eclipse.org/viatra/job/viatra-framework-tests/lastSuccessfulBuild/artifact/cps/frameworktests/org.eclipse.viatra.examples.cps.tests/BasicCpsTest_coverage.html[CPS Framework tests coverage report]
+A coverage report looks like this: link:https://ci.eclipse.org/viatra/job/VIATRA/job/master/lastSuccessfulBuild/artifact/query/tests/org.eclipse.viatra.query.runtime.cps.tests/BasicCpsTest_coverage.html[CPS Framework tests coverage report]
 
 An element (pattern, pattern body or a constraint) can be:
 

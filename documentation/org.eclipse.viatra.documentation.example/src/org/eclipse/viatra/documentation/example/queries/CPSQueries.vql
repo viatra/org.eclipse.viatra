@@ -46,7 +46,7 @@ pattern sameIpAddress(host1 : HostInstance, host2 : HostInstance, commonIp : jav
 pattern ipFormatInvalid(host : HostInstance, ip : java String) {
     HostInstance.nodeIp(host,ip);
     check (
-        !ip.matches("^[\\d\\.]+")
+        !com.google.common.net.InetAddresses.isInetAddress(ip)
     );
 }
 // end::ipFormatInvalid[]
@@ -64,9 +64,6 @@ pattern connectedTo(state: State, other: State){
 // tag::badHost[]
 pattern badHost(host : HostInstance, ip : java String) {
     find sameIpAddress(host, _other, ip);
-} or {
-    HostInstance.nodeIp(host, ip);
-    find emptyIpAddress(host);
 } or {
     find ipFormatInvalid(host, ip);
 }
@@ -108,7 +105,7 @@ pattern reachableState(sm :StateMachine, state: State){
 // tag::maximumNumberOfInstances[]
 pattern maximumNumberOfInstances(at : ApplicationType, max : java Integer) {
 	max == max find sumNumberOfInstances(at, #);
-	find sumNumberOfInstances(applicationType, max);
+	find sumNumberOfInstances(at, max);
 }
 
 pattern sumNumberOfInstances(at : ApplicationType, n : java Integer) {
@@ -133,6 +130,6 @@ private pattern totalMemoryRequirements(h : HostInstance, ai : ApplicationInstan
 
 private pattern applicationTypeRequirementRAM(at : ApplicationType, ram : java Integer) {
 	ApplicationType.requirements(at, req);
-	ResourceRequirement.requiredRam(req, ram);	
+	ram == sum ResourceRequirement.requiredRam(req, #);	
 }
 // end::invalidMemoryRequirement[]

@@ -94,8 +94,9 @@ include::../../../../../org.eclipse.viatra.documentation.example/src/org/eclipse
 +
 
 . List all `HostInstance` elements that have non well-formed IPv4 addresses (e.g. not four numbers separated with dots)
-* The well-formedness validation of the IP address strings requires specific validation blocks called `check` expressions where  you can write a wide range of _Xbase_ expressions, behaving similarly to Java and accessing Java classes from the classpath of the project. In this case, the well-formedness of the address values is represented with a regular expression evaluation.
-* It is important to note that check expressions *have to* be side-effect free and can only be called on attribute variables.
+* The well-formedness validation of the IP address strings requires specific validation blocks called `check` expressions where  you can write a wide range of _Xbase_ expressions, behaving similarly to Java and accessing Java classes from the classpath of the project. In this case, the well-formedness of the address values is represented via a utility method provided by Google Guava, but similar results could be expressed using Java regular expressions as well.
+* Note that this method also matches fields where IP addresses are set to empty string.
+* It is important to note that check expressions *have to* be deterministic, side-effect free and can only be called on attribute variables. Given VIATRA cannot decide whether a given Java method is side-effect free, a warning is provided for each unknown method referenced by the expression. If necessary, the environment supports extending the list of known methods, see link:query-language.html#_function_whitelist[the detailed language documentation] for more details.
 +
 [[vql-ipformatinvalid]]
 [source,vql,indent=0]
@@ -202,7 +203,7 @@ This section introduces a set of more complex queries, useful for both introduci
 
 It is possible to find the Application Type that has the most instances defined in the model by combining a _counting_ of the values of the related feature and a _max_ function.  The `sumNumberOfInstances` helper pattern uses a `count` call of the `ApplicationType.instances` feature (note the omission of the `find` keyword there). This feature is available starting with VIATRA 2.0, and allows reducing the number of trivial helper patterns, like the pattern `hostIpAddress` introduced earlier in this tutorial.
 
-After the counts are available in the match set of a pattern, it is possible to calculate the maximum value using the `max find` construct. However, it is important that calculating the maximum does not connect the ApplicationType instances to their maximum, that needs to be done with an additional constraint.
+After the counts are available in the match set of a pattern, it is possible to calculate the maximum value using the `max find` construct. The `#` symbol represents an otherwise unbound parameter of the called pattern that needs is be aggregated, e.g. in case of a `max` aggregator the largest value is selected. It is important to note that calculating the maximum does not connect the ApplicationType instances to their maximum, that needs to be done with an additional constraint.
 
 [[vql-maximumNumberOfInstances]]
 [source,vql,indent=0]
