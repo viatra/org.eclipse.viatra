@@ -56,7 +56,8 @@ public class DuplicationChecker {
     }
 
     public Set<IEObjectDescription> findDuplicates(Pattern pattern) {
-        if (PatternLanguageHelper.getFullyQualifiedName(pattern) == null) {
+        final String qualifiedName = PatternLanguageHelper.getFullyQualifiedName(pattern);
+        if (qualifiedName == null  || qualifiedName.isEmpty()) {
             // If the fqn of the pattern is null, the pattern definition is so broken it makes no sense to check for duplicates 
             return Collections.emptySet();
         }

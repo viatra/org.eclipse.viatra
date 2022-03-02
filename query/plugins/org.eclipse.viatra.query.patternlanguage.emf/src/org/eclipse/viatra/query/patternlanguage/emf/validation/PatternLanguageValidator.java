@@ -456,16 +456,18 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
                     EObject _jvmElement = associator.getPrimaryJvmElement(pattern);
                     if (_jvmElement instanceof JvmDeclaredType) {
                         String qualifiedName = ((JvmDeclaredType) _jvmElement).getQualifiedName();
-                        for (IEObjectDescription shadowingGroupDescription : duplicateChecker.findShadowingClasses(pattern, qualifiedName, PatternLanguagePackage.Literals.PATTERN_MODEL)) {
-                            QualifiedName fullyQualifiedName = nameProvider.getFullyQualifiedName(pattern);
-                            URI otherResourceUri = shadowingGroupDescription.getEObjectURI().trimFragment();
-                            String otherResourcePath = otherResourceUri.toPlatformString(true);
-                            if (otherResourcePath == null) {
-                                otherResourcePath = otherResourceUri.toFileString();
+                        if (qualifiedName != null && !qualifiedName.isEmpty()) {
+                            for (IEObjectDescription shadowingGroupDescription : duplicateChecker.findShadowingClasses(pattern, qualifiedName, PatternLanguagePackage.Literals.PATTERN_MODEL)) {
+                                QualifiedName fullyQualifiedName = nameProvider.getFullyQualifiedName(pattern);
+                                URI otherResourceUri = shadowingGroupDescription.getEObjectURI().trimFragment();
+                                String otherResourcePath = otherResourceUri.toPlatformString(true);
+                                if (otherResourcePath == null) {
+                                    otherResourcePath = otherResourceUri.toFileString();
+                                }
+                                error(String.format(CONFLICTING_SPECIFICATION_NAME_MESSAGE, fullyQualifiedName,
+                                        otherResourcePath), pattern, PatternLanguagePackage.Literals.PATTERN__NAME,
+                                        IssueCodes.DUPLICATE_PATTERN_DEFINITION);
                             }
-                            error(String.format(CONFLICTING_SPECIFICATION_NAME_MESSAGE, fullyQualifiedName,
-                                    otherResourcePath), pattern, PatternLanguagePackage.Literals.PATTERN__NAME,
-                                    IssueCodes.DUPLICATE_PATTERN_DEFINITION);
                         }
                     }
                 }
