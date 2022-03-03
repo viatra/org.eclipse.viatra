@@ -531,7 +531,7 @@ public class PatternLanguageValidator extends AbstractDeclarativeValidator imple
             Class<? extends ValueReference> expectedParameterType = validator.getExpectedParameterType(parameter);
             final ValueReference parameterValue = parameter.getValue();
             
-            if (expectedParameterType == null && parameterValue == null) {
+            if (expectedParameterType == null || parameterValue == null) {
                 return;
             }
             if (parameterValue instanceof JavaConstantValue) {
