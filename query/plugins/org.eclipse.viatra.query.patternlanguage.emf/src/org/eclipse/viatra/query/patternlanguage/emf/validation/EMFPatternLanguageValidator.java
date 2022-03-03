@@ -406,11 +406,11 @@ public class EMFPatternLanguageValidator extends AbstractEMFPatternLanguageValid
                     && typeSystem.isConformant(inferredType, aggregatedType)); 
             Iterator<IInputKey> it = referenceTypes.iterator();
             if (it.hasNext() && allTypesMoreSpecific) {
-                Set<IInputKey> aggregatedTypes = typeSystem.minimizeTypeInformation(Sets.newHashSet(referenceTypes), true);
+                Set<IInputKey> aggregatedTypes = typeSystem.minimizeTypeInformation(typeSystem.getCompatibleSupertypes(Sets.newHashSet(referenceTypes)), true);
                 if (aggregatedTypes.size() == 1 && inferredType != null) {
                     IInputKey aggregatedType = aggregatedTypes.iterator().next();
                     if (!Objects.equals(inferredType, aggregatedType) && Objects.equals(inferredType.getClass(), aggregatedType.getClass()) && typeSystem.isConformant(inferredType, aggregatedType)) {
-                        warning("Declared type " + typeSystem.typeString(inferredType) + " is less specific then the type " + typeSystem.typeString(aggregatedType) + " inferred from bodies", variable, null,
+                        warning("Declared type " + typeSystem.typeString(inferredType) + " is less specific than the type " + typeSystem.typeString(aggregatedType) + " inferred from bodies", variable, null,
                                 IssueCodes.PARAMETER_TYPE_INVALID);                
                     }
                 }

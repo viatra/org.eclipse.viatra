@@ -24,6 +24,7 @@ import org.junit.runner.RunWith
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageValidator
 import org.eclipse.viatra.query.patternlanguage.emf.tests.CustomizedEMFPatternLanguageInjectorProvider
+import org.eclipse.emf.common.util.Diagnostic
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(CustomizedEMFPatternLanguageInjectorProvider))
@@ -190,6 +191,22 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
             getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE),
             getWarningCode(IssueCodes::MISSING_PARAMETER_TYPE)
         )
+    }
+    
+    @Test
+    def ambiguousParameterType5() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+
+            pattern inheritanceWithDisjunction(c : Base) {
+                Common(c);
+            } or {
+                Child1(c);
+            }
+            
+        ''')
+        tester.validate(model).assertDiagnostic(Diagnostic.WARNING, IssueCodes.PARAMETER_TYPE_INVALID, "Common")
     }
     
 }
