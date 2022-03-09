@@ -107,6 +107,7 @@ The most basic pattern constraints are type declarations: use EClasses, ERelatio
 4. In the above constraints, wherever you could reference a variable in a pattern body, you can also use:
   * Constant literals of primitive types, such as `10`, or `"Hello World"`.
   * Constant literals of enumeration types, such as `MyEEnum::MY_LITERAL`
+  * Java constants, more specifically, public static final fields can be represented after the java keyword, such as `java Integer::MAX_VALUE`.
   * Aggregation of multiple matches of a called pattern into a single value, in a syntax analogous to negative pattern calls:
     * The simplest case is match counting: `howManyNeighbors == count find neighborPattern(myEntityVariable, _);` 
     * Since v1.4, we provide additional out-of-the-box aggregators. `sum` computes the sum of numbers. `min`/`max` select the smallest / greatest of a nonempty bag of number, date or string values. Unlike match counting, these aggregators require a marker symbol `#` to indicate which parameter of the called pattern shall be aggregated (e.g. summed).
@@ -114,7 +115,9 @@ The most basic pattern constraints are type declarations: use EClasses, ERelatio
   *  Attribute expression evaluation: the `eval()` construct lets you compute values by Java (actually https://www.eclipse.org/xtend/[Xbase]) expressions referencing variables of EDataTypes and java values.
      * `qualifiedName == eval(parentName + "." + simpleName);`
      * The Java types of variables are inferred based on the EMF Ecore specification (using the generated Java classes)
-     * `eval unwind (...)` lets you compute values for each member of a Set object
+     * `eval unwind (...)` lets you compute values for each member of a Set object (available since version 2.7)
+       * The returned set *should not* contain duplicate values. Adding duplicate values would not cause duplicate results in the match set of the pattern but increases processing time.
+       * As of version 2.7 the functionality was not tested with large sets returned. If such cases result in slow query evaluation, please open a bug report with as much details as possible to help finetuning the responsible algorithms.
 5. Additional attribute constraints using the check() construct, similarly to eval():
   * `check(aNumberVariable > aStringVariable.length());`
   * Semantically equivalent to `true == eval(aNumberVariable > aStringVariable.length());`

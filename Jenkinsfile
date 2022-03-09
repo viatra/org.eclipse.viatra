@@ -90,6 +90,7 @@ pipeline {
             archiveArtifacts artifacts: 'releng/org.eclipse.viatra.update/target/org.eclipse.viatra.update-*.zip'
             archiveArtifacts artifacts: 'query/tests/org.eclipse.viatra.query.rcptt/org.eclipse.viatra.query.rcptt.tests/target/results/**'
             archiveArtifacts artifacts: 'releng/org.eclipse.viatra.docs/target/reference/api/**'
+            archiveArtifacts artifacts: 'query/tests/org.eclipse.viatra.query.runtime.cps.tests/BasicCpsTest_coverage.html'
             javadoc javadocDir: 'releng/org.eclipse.viatra.docs/target/reference/api', keepAll: false
 			junit testResults: '**/tests/**/target/surefire-reports/*.xml'
 		}

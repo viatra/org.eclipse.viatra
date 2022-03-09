@@ -5,12 +5,14 @@ ifndef::imagesdir[:imagesdir: {rootdir}/../images]
 
 = VIATRA 2.7
 
-Release date:: 2022-03-xx
+Release date:: 2022-03-16
 More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/2.7.0
 
 == New and Noteworthy
 
-In addition to bugfixes, VIATRA 2.7 introduces a new language feature: now it is possible to reference Java constants, more precisely, public static final fields of Java classes from pattern specifications.
+In addition to bugfixes, VIATRA 2.7 introduces two new language features: the capability to reference *Java constants*, and the use of *eval unwinding*.
+
+ For the first case, Java constants more precisely, public static final fields of Java classes from pattern specifications everywhere where variables or constant literals can be used.
 
 [source,vql]
 ----
@@ -19,7 +21,7 @@ pattern maxInteger(value : java Integer) {
 }
 ----
 
-Another new language feature in version 2.7 is eval unwinding: it is now possible to return multiple different values from any given attribute value. This feature is useful for extracting data from otherwise unstructured information, e.g. multiple URLs from a specific documentation field.
+Eval unwinding allows the processing of collections inside pattern bodies: by writing a specific eval expression with the marked with the `unwind` keyword, the returned Set is processed one by one (as separate matches). This feature is useful for extracting data from otherwise unstructured information, e.g. multiple URLs from a specific documentation field.
 
 [source,vql]
 ----
