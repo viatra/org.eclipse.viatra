@@ -327,6 +327,17 @@
         <repository
             url="http://download.eclipse.org/efxclipse/updates-released/3.8.0/site"/>
       </repositoryList>
+      <repositoryList
+          name="2022-09">
+        <repository
+            url="http://download.eclipse.org/releases/2022-09"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        <repository
+            url="http://download.eclipse.org/efxclipse/updates-released/3.8.0/site"/>
+      </repositoryList>
     </targlet>
     <targlet
         name="CPS metamodels"
@@ -549,6 +560,15 @@
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
         </repositoryList>
+        <repositoryList
+            name="2022-09">
+          <repository
+              url="http://download.eclipse.org/releases/2022-09"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository/"/>
+        </repositoryList>
       </targlet>
       <targlet
           name="Sirius"
@@ -657,6 +677,13 @@
         </repositoryList>
         <repositoryList
             name="2022-06">
+          <repository
+              url="http://download.eclipse.org/releases/2022-06"/>
+          <repository
+              url="https://download.eclipse.org/sirius/updates/releases/7.0.0/2021-06/"/>
+        </repositoryList>
+        <repositoryList
+            name="2022-09">
           <repository
               url="http://download.eclipse.org/releases/2022-06"/>
           <repository
@@ -1015,7 +1042,7 @@
         name="viatraBaseline"
         version="2.7"
         location="${installation.location}/api/v2.7/"
-        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.2.7.0.zip"/>
+        remoteURI="https://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.2.7.0.zip"/>
     <setupTask
         xsi:type="setup.p2:P2Task">
       <requirement
@@ -1132,6 +1159,13 @@
         </repositoryList>
         <repositoryList
             name="2022-06">
+          <repository
+              url="http://download.eclipse.org/releases/2022-06"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2022-09">
           <repository
               url="http://download.eclipse.org/releases/2022-06"/>
           <repository
