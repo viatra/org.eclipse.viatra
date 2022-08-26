@@ -9,8 +9,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.viatra.addon.validation.core;bundle-version="[2.7.1,2.8.0)",
  org.eclipse.core.resources,
  org.eclipse.viatra.transformation.evm;bundle-version="[2.7.1,2.8.0)",
- org.eclipse.ui,
- com.google.inject;bundle-version="[3.0.0,4.0.0)"
+ org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.viatra.addon.validation.runtime

@@ -8,6 +8,7 @@ Fragment-Host: org.eclipse.viatra.addon.validation.runtime;bundle-version="[2.7.
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.viatra.addon.validation.runtime.annotation
 Import-Package: com.google.common.base;version="27.1.0",
- com.google.common.collect;version="27.1.0"
+ com.google.common.collect;version="27.1.0",
+ com.google.inject
 Require-Bundle: org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[2.7.1,2.8.0)"
 Automatic-Module-Name: org.eclipse.viatra.addon.validation.runtime.validation
