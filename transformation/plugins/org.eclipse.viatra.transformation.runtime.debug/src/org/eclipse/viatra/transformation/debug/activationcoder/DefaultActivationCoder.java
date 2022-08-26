@@ -12,7 +12,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
-import org.eclipse.viatra.transformation.debug.activationcoder.IActivationCoder;
 import org.eclipse.viatra.transformation.debug.transformationtrace.model.ActivationTrace;
 import org.eclipse.viatra.transformation.debug.transformationtrace.model.RuleParameterTrace;
 import org.eclipse.viatra.transformation.evm.api.Activation;

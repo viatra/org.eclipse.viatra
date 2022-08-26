@@ -25,7 +25,6 @@ import org.eclipse.viatra.transformation.evm.api.resolver.ScopedConflictSet;
 import org.eclipse.viatra.transformation.runtime.emf.filters.MatchParameterFilter;
 import org.eclipse.viatra.transformation.runtime.emf.rules.BatchTransformationRuleGroup;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
-import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation;
 
 /**
  * Utility class for simple rule usage

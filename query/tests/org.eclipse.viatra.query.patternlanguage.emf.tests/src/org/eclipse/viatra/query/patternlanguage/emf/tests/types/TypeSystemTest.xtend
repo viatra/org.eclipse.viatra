@@ -19,7 +19,7 @@ import org.eclipse.xtext.testing.XtextRunner
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static org.junit.Assert.assertThat
+import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.CoreMatchers.*
 import org.junit.Ignore
 import org.eclipse.viatra.query.patternlanguage.emf.tests.pltest.PltestPackage

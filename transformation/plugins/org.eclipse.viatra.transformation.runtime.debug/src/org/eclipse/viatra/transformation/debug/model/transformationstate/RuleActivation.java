@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.eclipse.viatra.transformation.debug.model.transformationstate.ActivationParameter;
-import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationState;
 import org.eclipse.viatra.transformation.debug.transformationtrace.model.ActivationTrace;
 
 public class RuleActivation implements Serializable {

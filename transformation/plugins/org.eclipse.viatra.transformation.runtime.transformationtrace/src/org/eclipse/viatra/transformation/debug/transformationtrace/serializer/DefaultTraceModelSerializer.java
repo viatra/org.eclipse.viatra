@@ -10,7 +10,6 @@ package org.eclipse.viatra.transformation.debug.transformationtrace.serializer;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.viatra.transformation.debug.transformationtrace.model.TransformationTrace;
-import org.eclipse.viatra.transformation.debug.transformationtrace.serializer.ITraceModelSerializer;
 
 /**
  * Default trace model serializer implementation.
