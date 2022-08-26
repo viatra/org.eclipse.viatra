@@ -20,7 +20,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.sirius.diagram.business.internal.metamodel.spec.DSemanticDiagramSpec;
+import org.eclipse.sirius.diagram.DSemanticDiagram;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -43,7 +43,7 @@ public class LoadVgqlPatternHandler extends AbstractHandler {
       if ((active && (editorPart instanceof DiagramDocumentEditor))) {
         final DiagramDocumentEditor xtextEditor = ((DiagramDocumentEditor) editorPart);
         final Diagram model = (Diagram) xtextEditor.getDiagramEditPart().getModel();
-        final DSemanticDiagramSpec element = (DSemanticDiagramSpec) model.getElement();
+        final DSemanticDiagram element = (DSemanticDiagram) model.getElement();
         PatternPackage pkg = (PatternPackage) element.getTarget();
         
         final URI uri = pkg.eResource().getURI();

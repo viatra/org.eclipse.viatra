@@ -9,3 +9,4 @@ Require-Bundle: org.eclipse.viatra.query.patternlanguage.metamodel,
  org.eclipse.viatra.addon.validation.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Eclipse VIATRA Project
+Automatic-Module-Name: org.eclipse.viatra.query.patternlanguage.metamodel.validation
