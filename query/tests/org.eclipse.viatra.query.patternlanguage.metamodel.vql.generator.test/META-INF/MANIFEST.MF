@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.eclipse.viatra.query.patternlanguage.metamodel.vql.generator.test
 Bundle-SymbolicName: org.eclipse.viatra.query.patternlanguage.metamodel.vql.generator.test;singleton:=true
-Bundle-Version: 0.27.0.qualifier
+Bundle-Version: 0.27.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.junit,
  org.eclipse.viatra.query.patternlanguage.metamodel;bundle-version="[0.27.0,0.28.0)",

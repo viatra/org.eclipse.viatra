@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.integration.uml.feature"
       label="UML Support for VIATRA (Incubation)"
-      version="2.7.0.qualifier"
+      version="2.7.1.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="2.0.2">

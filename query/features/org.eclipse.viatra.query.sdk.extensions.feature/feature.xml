@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.query.sdk.extensions.feature"
       label="VIATRA Query and Transformation SDK Extensions (Incubation)"
-      version="0.27.0.qualifier"
+      version="0.27.1.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="2.0.2">
@@ -29,7 +29,7 @@
 
    <includes
          id="org.eclipse.viatra.addon.viewers.runtime.zest.feature"
-         version="2.7.0.qualifier"
+         version="2.7.1.qualifier"
          name="VIATRA Viewers Runtime - GEF4 Zest Support"/>
 
    <requires>

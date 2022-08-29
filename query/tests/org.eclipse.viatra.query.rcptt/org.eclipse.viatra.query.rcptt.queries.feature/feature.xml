@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.query.rcptt.queries.feature"
       label="VIATRA GUI Test Queries"
-      version="2.7.0.qualifier"
+      version="2.7.1.qualifier"
       provider-name="Eclipse VIATRA Project">
 
    <description url="http://www.example.com/description">
