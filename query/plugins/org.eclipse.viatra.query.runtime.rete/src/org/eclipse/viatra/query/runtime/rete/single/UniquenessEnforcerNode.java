@@ -11,6 +11,7 @@ package org.eclipse.viatra.query.runtime.rete.single;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IPosetComparator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -119,8 +120,11 @@ public class UniquenessEnforcerNode extends AbstractUniquenessEnforcerNode
         }
     }
     
+    /**
+     * @since 2.8
+     */
     @Override
-    public Collection<Tuple> getTuples() {
+    public Set<Tuple> getTuples() {
         return this.memory.distinctValues();
     }
 

@@ -9,7 +9,6 @@
 package org.eclipse.viatra.query.runtime.rete.network.mailbox.timely;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -107,25 +106,7 @@ public class TimelyMailbox implements Mailbox {
 
             // tupleMap may be empty if we only have lazy folding to do
             if (tupleMap != null) {
-                for (final Entry<Tuple, Integer> entry : tupleMap.entrySet()) {
-                    int count = entry.getValue();
-
-                    Direction direction;
-                    if (count < 0) {
-                        direction = Direction.DELETE;
-                        count = -count;
-                    } else {
-                        direction = Direction.INSERT;
-                    }
-
-                    for (int i = 0; i < count; i++) {
-                        // if (print) {
-                        // System.out
-                        // .println(timestamp + " " + direction + " " + entry.getKey() + " " + this.receiver);
-                        // }
-                        this.receiver.update(direction, entry.getKey(), timestamp);
-                    }
-                }
+                this.receiver.batchUpdate(tupleMap.entrySet(), timestamp);
             }
 
             if (this.container.getTimelyConfiguration()
@@ -140,32 +121,6 @@ public class TimelyMailbox implements Mailbox {
             throw new IllegalArgumentException("Unsupported message selector " + selector);
         }
     }
-
-    // protected void mergeBufferIntoQueue() {
-    // for (final Entry<Timestamp, Map<Tuple, Integer>> outerEntry : this.buffer.entrySet()) {
-    // final Timestamp selector = outerEntry.getKey();
-    // final Map<Tuple, Integer> tupleMap = this.queue.get(selector);
-    // if (tupleMap == null) {
-    // this.queue.put(selector, outerEntry.getValue());
-    // } else {
-    // for (final Entry<Tuple, Integer> innerEntry : outerEntry.getValue().entrySet()) {
-    // final Tuple tuple = innerEntry.getKey();
-    // final Integer queueCount = tupleMap.get(tuple);
-    // final Integer bufferCount = innerEntry.getValue();
-    // if (queueCount == null) {
-    // tupleMap.put(tuple, bufferCount);
-    // } else {
-    // final int sum = bufferCount + queueCount;
-    // if (sum != 0) {
-    // tupleMap.put(tuple, sum);
-    // } else {
-    // tupleMap.remove(tuple);
-    // }
-    // }
-    // }
-    // }
-    // }
-    // }
 
     @Override
     public String toString() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2014, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2022, Tamas Szabo, GitHub
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
  * http://www.eclipse.org/legal/epl-v20.html.
@@ -8,26 +8,19 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
- * A {@link PConstraint} that implements this interface refers to a {@link PQuery}.
+ * A {@link PConstraint} that implements this interface refers to a list of PQueries.
  * 
- * @author Zoltan Ujhelyi
+ * @author Tamas Szabo
+ * @since 2.8
  *
  */
-public interface IQueryReference extends IMultiQueryReference {
+public interface IMultiQueryReference {
 
-    PQuery getReferredQuery();
+    Collection<PQuery> getReferredQueries();
 
-    /**
-     * @since 2.8
-     */
-    @Override
-    default List<PQuery> getReferredQueries() {
-        return Collections.singletonList(getReferredQuery());
-    }
 }

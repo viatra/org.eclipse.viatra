@@ -8,7 +8,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.util;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,8 +24,8 @@ import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timeline;
 import org.eclipse.viatra.query.runtime.matchers.util.timeline.Timelines;
 
 /**
- * A timely memory implementation that incrementally maintains the {@link Timeline}s of tuples. The memory is capable of lazy
- * folding (see {@link Resumable}).
+ * A timely memory implementation that incrementally maintains the {@link Timeline}s of tuples. The memory is capable of
+ * lazy folding (see {@link Resumable}).
  * 
  * @author Tamas Szabo
  * @since 2.3
@@ -409,7 +408,10 @@ public class TimelyMemory<Timestamp extends Comparable<Timestamp>> implements Cl
         }
     }
 
-    public Collection<Tuple> getTuplesAtInfinity() {
+    /**
+     * @since 2.8
+     */
+    public Set<Tuple> getTuplesAtInfinity() {
         return this.presentAtInfinity;
     }
 

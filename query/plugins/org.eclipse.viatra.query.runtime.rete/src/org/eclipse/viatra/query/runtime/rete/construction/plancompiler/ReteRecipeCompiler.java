@@ -53,6 +53,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Expressio
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.RelationEvaluation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryReflexiveTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
@@ -93,6 +94,7 @@ import org.eclipse.viatra.query.runtime.rete.recipes.Mask;
 import org.eclipse.viatra.query.runtime.rete.recipes.MonotonicityInfo;
 import org.eclipse.viatra.query.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.RecipesFactory;
+import org.eclipse.viatra.query.runtime.rete.recipes.RelationEvaluationRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.SingleColumnAggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.TransitiveClosureRecipe;
@@ -836,18 +838,14 @@ public class ReteRecipeCompiler {
     }
 
     private PlanningTrace doEnumerateDispatch(SubPlan plan, EnumerablePConstraint constraint) {
-        if (constraint instanceof BinaryTransitiveClosure) {
+        if (constraint instanceof RelationEvaluation) {
+            return compileEnumerable(plan, (RelationEvaluation) constraint);
+        } else if (constraint instanceof BinaryTransitiveClosure) {
             return compileEnumerable(plan, (BinaryTransitiveClosure) constraint);
         } else if (constraint instanceof BinaryReflexiveTransitiveClosure) {
             return compileEnumerable(plan, (BinaryReflexiveTransitiveClosure) constraint);
         } else if (constraint instanceof ConstantValue) {
             return compileEnumerable(plan, (ConstantValue) constraint);
-            // } else if (constraint instanceof Containment) {
-            // return compileEnumerable(plan, (Containment) constraint);
-            // } else if (constraint instanceof Generalization) {
-            // return compileEnumerable(plan, (Generalization) constraint);
-            // } else if (constraint instanceof Instantiation) {
-            // return compileEnumerable(plan, (Instantiation) constraint);
         } else if (constraint instanceof PositivePatternCall) {
             return compileEnumerable(plan, (PositivePatternCall) constraint);
         } else if (constraint instanceof TypeConstraint) {
@@ -898,6 +896,20 @@ public class ReteRecipeCompiler {
         recipe.setParent(callTrace.getRecipe());
 
         return new PlanningTrace(plan, CompilerHelper.convertVariablesTuple(constraint), recipe, callTrace);
+    }
+    
+    private PlanningTrace compileEnumerable(SubPlan plan, RelationEvaluation constraint) {
+        final List<ReteNodeRecipe> parentRecipes = new ArrayList<ReteNodeRecipe>();
+        final List<RecipeTraceInfo> parentTraceInfos = new ArrayList<RecipeTraceInfo>();
+        for (final PQuery inputQuery : constraint.getReferredQueries()) {
+            final CompiledQuery compiledQuery = getCompiledForm(inputQuery);
+            parentRecipes.add(compiledQuery.getRecipe());
+            parentTraceInfos.add(compiledQuery);
+        }
+        final RelationEvaluationRecipe recipe = FACTORY.createRelationEvaluationRecipe();
+        recipe.getParents().addAll(parentRecipes);
+        recipe.setEvaluator(RecipesHelper.expressionDefinition(constraint.getEvaluator()));
+        return new PlanningTrace(plan, CompilerHelper.convertVariablesTuple(constraint), recipe, parentTraceInfos);
     }
 
     private PlanningTrace compileEnumerable(SubPlan plan, PositivePatternCall constraint) {

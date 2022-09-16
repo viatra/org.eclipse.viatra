@@ -31,7 +31,7 @@
     <genClasses image="false" ecoreClass="recipes.ecore#//ReteNodeRecipe">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ReteNodeRecipe/traceInfo"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ReteNodeRecipe/equivalenceClassIDs"/>
-      <genOperations ecoreOperation="recipes.ecore#//ReteNodeRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//ReteNodeRecipe/getArity" body="throw new &lt;%java.lang.UnsupportedOperationException%>();"/>
     </genClasses>
     <genClasses image="false" ecoreClass="recipes.ecore#//SingleParentNodeRecipe">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference recipes.ecore#//SingleParentNodeRecipe/parent"/>
@@ -39,7 +39,8 @@
     <genClasses image="false" ecoreClass="recipes.ecore#//AlphaRecipe"/>
     <genClasses image="false" ecoreClass="recipes.ecore#//MultiParentNodeRecipe">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference recipes.ecore#//MultiParentNodeRecipe/parents"/>
-      <genOperations ecoreOperation="recipes.ecore#//MultiParentNodeRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//MultiParentNodeRecipe/getArity"
+          body="&lt;%org.eclipse.emf.common.util.EList%>&lt;&lt;%org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe%>> _parents = this.getParents();&#xA;&lt;%org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe%> _get = _parents.get(0);&#xA;return _get.getArity();"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//MonotonicityInfo">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//MonotonicityInfo/coreMask"/>
@@ -51,11 +52,11 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//ProductionRecipe/mappedIndices"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ProductionRecipe/pattern"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ProductionRecipe/patternFQN"/>
-      <genOperations ecoreOperation="recipes.ecore#//ProductionRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//ProductionRecipe/getArity" body="return this.getMappedIndices().size();"/>
     </genClasses>
     <genClasses image="false" ecoreClass="recipes.ecore#//IndexerRecipe">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//IndexerRecipe/mask"/>
-      <genOperations ecoreOperation="recipes.ecore#//IndexerRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//IndexerRecipe/getArity" body="&lt;%org.eclipse.viatra.query.runtime.rete.recipes.Mask%> _mask = this.getMask();&#xA;return _mask.getSourceArity();"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//ProjectionIndexerRecipe"/>
     <genClasses ecoreClass="recipes.ecore#//AggregatorIndexerRecipe"/>
@@ -75,17 +76,18 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputRecipe/inputKey"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputRecipe/keyID"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputRecipe/keyArity"/>
-      <genOperations ecoreOperation="recipes.ecore#//InputRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//InputRecipe/getArity" body="return getKeyArity();"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//ConstantRecipe">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ConstantRecipe/constantValues"/>
-      <genOperations ecoreOperation="recipes.ecore#//ConstantRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//ConstantRecipe/getArity" body="return this.getConstantValues().size();"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//TransitiveClosureRecipe">
-      <genOperations ecoreOperation="recipes.ecore#//TransitiveClosureRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//TransitiveClosureRecipe/getArity"
+          body="return 2;"/>
     </genClasses>
     <genClasses image="false" ecoreClass="recipes.ecore#//FilterRecipe">
-      <genOperations ecoreOperation="recipes.ecore#//FilterRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//FilterRecipe/getArity" body="&lt;%org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe%> _parent = this.getParent();&#xA;return _parent.getArity();"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//InequalityFilterRecipe">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InequalityFilterRecipe/subject"/>
@@ -97,7 +99,7 @@
     <genClasses ecoreClass="recipes.ecore#//TransparentRecipe"/>
     <genClasses ecoreClass="recipes.ecore#//TrimmerRecipe">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//TrimmerRecipe/mask"/>
-      <genOperations ecoreOperation="recipes.ecore#//TrimmerRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//TrimmerRecipe/getArity" body="&lt;%org.eclipse.viatra.query.runtime.rete.recipes.Mask%> _mask = this.getMask();&#xA;&lt;%org.eclipse.emf.common.util.EList%>&lt;&lt;%java.lang.Integer%>> _sourceIndices = _mask.getSourceIndices();&#xA;return _sourceIndices.size();"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//ExpressionDefinition">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ExpressionDefinition/evaluator"/>
@@ -108,23 +110,25 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ExpressionEnforcerRecipe/cacheOutput"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//CheckRecipe">
-      <genOperations ecoreOperation="recipes.ecore#//CheckRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//CheckRecipe/getArity" body="&lt;%org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe%> _parent = this.getParent();&#xA;return _parent.getArity();"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//EvalRecipe">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//EvalRecipe/unwinding"/>
-      <genOperations ecoreOperation="recipes.ecore#//EvalRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//EvalRecipe/getArity" body="&lt;%org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe%> _parent = this.getParent();&#xA;int _arity = _parent.getArity();&#xA;return (1 + _arity);"/>
     </genClasses>
     <genClasses image="false" ecoreClass="recipes.ecore#//IndexerBasedAggregatorRecipe">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//IndexerBasedAggregatorRecipe/parent"/>
-      <genOperations ecoreOperation="recipes.ecore#//IndexerBasedAggregatorRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//IndexerBasedAggregatorRecipe/getArity"
+          body="&lt;%org.eclipse.viatra.query.runtime.rete.recipes.ProjectionIndexerRecipe%> _parent = this.getParent();&#xA;&lt;%org.eclipse.viatra.query.runtime.rete.recipes.Mask%> _mask = _parent.getMask();&#xA;&lt;%org.eclipse.emf.common.util.EList%>&lt;&lt;%java.lang.Integer%>> _sourceIndices = _mask.getSourceIndices();&#xA;int _size = _sourceIndices.size();&#xA;return (1 + _size);"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//CountAggregatorRecipe"/>
     <genClasses ecoreClass="recipes.ecore#//JoinRecipe">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//JoinRecipe/rightParentComplementaryMask"/>
-      <genOperations ecoreOperation="recipes.ecore#//JoinRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//JoinRecipe/getArity" body="&lt;%org.eclipse.viatra.query.runtime.rete.recipes.ProjectionIndexerRecipe%> _leftParent = this.getLeftParent();&#xA;int _arity = _leftParent.getArity();&#xA;&lt;%org.eclipse.viatra.query.runtime.rete.recipes.IndexerRecipe%> _rightParent = this.getRightParent();&#xA;int _arity_1 = _rightParent.getArity();&#xA;int _plus = (_arity + _arity_1);&#xA;&lt;%org.eclipse.viatra.query.runtime.rete.recipes.IndexerRecipe%> _rightParent_1 = this.getRightParent();&#xA;&lt;%org.eclipse.viatra.query.runtime.rete.recipes.Mask%> _mask = _rightParent_1.getMask();&#xA;&lt;%org.eclipse.emf.common.util.EList%>&lt;&lt;%java.lang.Integer%>> _sourceIndices = _mask.getSourceIndices();&#xA;int _size = _sourceIndices.size();&#xA;return (_plus - _size);"/>
     </genClasses>
     <genClasses image="false" ecoreClass="recipes.ecore#//ExistenceJoinRecipe">
-      <genOperations ecoreOperation="recipes.ecore#//ExistenceJoinRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//ExistenceJoinRecipe/getArity"
+          body="&lt;%org.eclipse.viatra.query.runtime.rete.recipes.ProjectionIndexerRecipe%> _leftParent = this.getLeftParent();&#xA;return _leftParent.getArity();"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//SemiJoinRecipe"/>
     <genClasses ecoreClass="recipes.ecore#//AntiJoinRecipe"/>
@@ -137,19 +141,25 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//SingleColumnAggregatorRecipe/multisetAggregationOperator"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//SingleColumnAggregatorRecipe/aggregableIndex"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//SingleColumnAggregatorRecipe/groupByMask"/>
-      <genOperations ecoreOperation="recipes.ecore#//SingleColumnAggregatorRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//SingleColumnAggregatorRecipe/getArity"
+          body="&lt;%org.eclipse.viatra.query.runtime.rete.recipes.MonotonicityInfo%> info = getOptionalMonotonicityInfo();&#xA;if (info == null) {&#xA;&#x9;return 1 + getGroupByMask().getSourceIndices().size();&#xA;} else {&#x9;&#xA;&#x9;return info.getCoreMask().getSourceIndices().size() + info.getPosetMask().getSourceIndices().size();&#xA;}"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//DiscriminatorDispatcherRecipe">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//DiscriminatorDispatcherRecipe/discriminationColumnIndex"/>
-      <genOperations ecoreOperation="recipes.ecore#//DiscriminatorDispatcherRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//DiscriminatorDispatcherRecipe/getArity"
+          body="&lt;%org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe%> _parent = this.getParent();&#xA;return _parent.getArity();"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//DiscriminatorBucketRecipe">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//DiscriminatorBucketRecipe/bucketKey"/>
-      <genOperations ecoreOperation="recipes.ecore#//DiscriminatorBucketRecipe/getArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//DiscriminatorBucketRecipe/getArity"
+          body="&lt;%org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe%> _parent = this.getParent();&#xA;return _parent.getArity();"/>
     </genClasses>
     <genClasses image="false" ecoreClass="recipes.ecore#//RederivableNodeRecipe">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//RederivableNodeRecipe/deleteRederiveEvaluation"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//RederivableNodeRecipe/optionalMonotonicityInfo"/>
+    </genClasses>
+    <genClasses ecoreClass="recipes.ecore#//RelationEvaluationRecipe">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference recipes.ecore#//RelationEvaluationRecipe/evaluator"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

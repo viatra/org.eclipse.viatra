@@ -11,6 +11,7 @@ package org.eclipse.viatra.query.runtime.rete.single;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
@@ -65,9 +66,9 @@ public abstract class AbstractUniquenessEnforcerNode extends StandardNode implem
     }
     
     /**
-     * @since 2.4
+     * @since 2.8
      */
-    public abstract Collection<Tuple> getTuples();
+    public abstract Set<Tuple> getTuples();
 
     /**
      * @since 2.4

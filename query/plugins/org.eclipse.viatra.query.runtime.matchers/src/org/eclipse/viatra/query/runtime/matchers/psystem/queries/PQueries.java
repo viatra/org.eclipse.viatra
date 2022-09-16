@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
-import org.eclipse.viatra.query.runtime.matchers.psystem.IQueryReference;
+import org.eclipse.viatra.query.runtime.matchers.psystem.IMultiQueryReference;
 import org.eclipse.viatra.query.runtime.matchers.psystem.ITypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PTraceable;
@@ -33,7 +33,8 @@ public final class PQueries {
     /**
      * Hidden constructor for utility class
      */
-    private PQueries(){}
+    private PQueries() {
+    }
 
     /**
      * Predicate checking for the status of selected queries
@@ -47,34 +48,39 @@ public final class PQueries {
      * Enumerates referred queries (without duplicates) for the given body
      */
     public static Function<PBody, Stream<PQuery>> directlyReferencedQueriesFunction() {
-        return body -> (body.getConstraintsOfType(IQueryReference.class).stream().map(IQueryReference::getReferredQuery).distinct());
+        return body -> (body.getConstraintsOfType(IMultiQueryReference.class).stream()
+                .flatMap(e -> e.getReferredQueries().stream()).distinct());
     }
-    
+
     /**
      * Enumerates directly referred extensional relations (without duplicates) in the canonical form of the given query
-     * @param enumerablesOnly only enumerable type constraints are considered
+     * 
+     * @param enumerablesOnly
+     *                            only enumerable type constraints are considered
      * @since 2.0
      */
     public static Stream<IInputKey> directlyRequiredTypesOfQuery(PQuery query, boolean enumerablesOnly) {
         return directlyRequiredTypesOfDisjunction(query.getDisjunctBodies(), enumerablesOnly);
     }
-    
+
     /**
      * Enumerates directly referred extensional relations (without duplicates) for the given formulation of a query.
-     * @param enumerablesOnly only enumerable type constraints are considered
+     * 
+     * @param enumerablesOnly
+     *                            only enumerable type constraints are considered
      * @since 2.0
      */
-    public static Stream<IInputKey> directlyRequiredTypesOfDisjunction(PDisjunction disjunctBodies, boolean enumerablesOnly) {
-        Class<? extends ITypeConstraint> filterClass = enumerablesOnly?TypeConstraint.class : ITypeConstraint.class;
-        return disjunctBodies.getBodies().stream().flatMap(
-                body -> body.getConstraintsOfType(filterClass).stream()).map(
-                constraint -> constraint.getEquivalentJudgement().getInputKey()).distinct();
+    public static Stream<IInputKey> directlyRequiredTypesOfDisjunction(PDisjunction disjunctBodies,
+            boolean enumerablesOnly) {
+        Class<? extends ITypeConstraint> filterClass = enumerablesOnly ? TypeConstraint.class : ITypeConstraint.class;
+        return disjunctBodies.getBodies().stream().flatMap(body -> body.getConstraintsOfType(filterClass).stream())
+                .map(constraint -> constraint.getEquivalentJudgement().getInputKey()).distinct();
     }
 
     /**
      * @since 1.4
      */
-    public static Predicate<PParameter> parameterDirectionPredicate(final PParameterDirection direction){
+    public static Predicate<PParameter> parameterDirectionPredicate(final PParameterDirection direction) {
         return input -> input.getDirection() == direction;
     }
 

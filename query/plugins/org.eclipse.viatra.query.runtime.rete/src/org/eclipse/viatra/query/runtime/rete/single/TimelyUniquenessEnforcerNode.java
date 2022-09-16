@@ -11,6 +11,7 @@ package org.eclipse.viatra.query.runtime.rete.single;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
@@ -76,7 +77,7 @@ public class TimelyUniquenessEnforcerNode extends AbstractUniquenessEnforcerNode
     }
 
     @Override
-    public Collection<Tuple> getTuples() {
+    public Set<Tuple> getTuples() {
         return this.memory.getTuplesAtInfinity();
     }
 

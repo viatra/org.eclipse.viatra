@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.aggregation.IndexerBasedAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
+import org.eclipse.viatra.query.runtime.rete.eval.RelationEvaluatorNode;
 import org.eclipse.viatra.query.runtime.rete.index.DualInputNode;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.IterableIndexer;
@@ -28,6 +29,7 @@ import org.eclipse.viatra.query.runtime.rete.recipes.InputRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.MultiParentNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ProjectionIndexerRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.RelationEvaluationRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.SingleColumnAggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.SingleParentNodeRecipe;
@@ -38,33 +40,32 @@ import org.eclipse.viatra.query.runtime.rete.single.TransitiveClosureNode;
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
 
 /**
- * Class responsible for connecting freshly instantiating Rete nodes to their parents. 
+ * Class responsible for connecting freshly instantiating Rete nodes to their parents.
+ * 
  * @author Bergmann Gabor
  *
  */
 class ConnectionFactory {
     ReteContainer reteContainer;
-    
+
     public ConnectionFactory(ReteContainer reteContainer) {
         super();
         this.reteContainer = reteContainer;
     }
+
     // TODO move to node implementation instead?
     private boolean isStateful(ReteNodeRecipe recipe) {
-        return 
-                recipe instanceof ProjectionIndexerRecipe ||
-                recipe instanceof IndexerBasedAggregatorRecipe ||
-                recipe instanceof SingleColumnAggregatorRecipe ||
-                recipe instanceof ExpressionEnforcerRecipe ||
-                recipe instanceof TransitiveClosureRecipe ||
-                recipe instanceof ProductionRecipe ||
-                recipe instanceof UniquenessEnforcerRecipe;
-        
+        return recipe instanceof ProjectionIndexerRecipe || recipe instanceof IndexerBasedAggregatorRecipe
+                || recipe instanceof SingleColumnAggregatorRecipe || recipe instanceof ExpressionEnforcerRecipe
+                || recipe instanceof TransitiveClosureRecipe || recipe instanceof ProductionRecipe
+                || recipe instanceof UniquenessEnforcerRecipe || recipe instanceof RelationEvaluationRecipe;
+
     }
-    
+
     /**
-     * PRE: nodes for parent recipes must already be created and registered <p>
-     * PRE: must not be an input node (for which {@link InputConnector} is responsible) 
+     * PRE: nodes for parent recipes must already be created and registered
+     * <p>
+     * PRE: must not be an input node (for which {@link InputConnector} is responsible)
      */
     public void connectToParents(RecipeTraceInfo recipeTrace, Node freshNode) {
         final ReteNodeRecipe recipe = recipeTrace.getRecipe();
@@ -72,61 +73,72 @@ class ConnectionFactory {
             // NO-OP
         } else if (recipe instanceof InputRecipe) {
             throw new IllegalArgumentException(
-                    ConnectionFactory.class.getSimpleName() + 
-                    " not intended for input connection: " + recipe);
+                    ConnectionFactory.class.getSimpleName() + " not intended for input connection: " + recipe);
         } else if (recipe instanceof SingleParentNodeRecipe) {
             final Receiver receiver = (Receiver) freshNode;
             ReteNodeRecipe parentRecipe = ((SingleParentNodeRecipe) recipe).getParent();
             connectToParent(recipe, receiver, parentRecipe);
-        } else if (recipe instanceof MultiParentNodeRecipe) {
-            final Receiver receiver = (Receiver) freshNode;
+        } else if (recipe instanceof RelationEvaluationRecipe) {
             List<ReteNodeRecipe> parentRecipes = ((MultiParentNodeRecipe) recipe).getParents();
-            for (ReteNodeRecipe parentRecipe : parentRecipes) {
-                connectToParent(recipe, receiver, parentRecipe);				
+            List<Supplier> parentSuppliers = new ArrayList<Supplier>();
+            for (final ReteNodeRecipe parentRecipe : parentRecipes) {
+                parentSuppliers.add(getSupplierForRecipe(parentRecipe));
             }
+            ((RelationEvaluatorNode) freshNode).connectToParents(parentSuppliers);
         } else if (recipe instanceof BetaRecipe) {
             final DualInputNode beta = (DualInputNode) freshNode;
-            final ArrayList<RecipeTraceInfo> parentTraces = 
-                    new ArrayList<RecipeTraceInfo>(recipeTrace.getParentRecipeTraces());		
-//			final BetaRecipe betaRecipe = (BetaRecipe) recipe;
-//	        final IterableIndexer leftParent = (IterableIndexer) resolveIndexer(betaRecipe.getLeftParent());
-//	        final Indexer rightParent = resolveIndexer(betaRecipe.getRightParent());
+            final ArrayList<RecipeTraceInfo> parentTraces = new ArrayList<RecipeTraceInfo>(
+                    recipeTrace.getParentRecipeTraces());
             Slots slots = avoidActiveNodeConflict(parentTraces.get(0), parentTraces.get(1));
             beta.connectToIndexers(slots.primary, slots.secondary);
         } else if (recipe instanceof IndexerBasedAggregatorRecipe) {
             final IndexerBasedAggregatorNode aggregator = (IndexerBasedAggregatorNode) freshNode;
             final IndexerBasedAggregatorRecipe aggregatorRecipe = (IndexerBasedAggregatorRecipe) recipe;
             aggregator.initializeWith((ProjectionIndexer) resolveIndexer(aggregatorRecipe.getParent()));
+        } else if (recipe instanceof MultiParentNodeRecipe) {
+            final Receiver receiver = (Receiver) freshNode;
+            List<ReteNodeRecipe> parentRecipes = ((MultiParentNodeRecipe) recipe).getParents();
+            for (ReteNodeRecipe parentRecipe : parentRecipes) {
+                connectToParent(recipe, receiver, parentRecipe);
+            }
         }
-        // TODO Beta nodes are already connected?
     }
 
     private Indexer resolveIndexer(final IndexerRecipe indexerRecipe) {
         final Address<? extends Node> address = reteContainer.getNetwork().getExistingNodeByRecipe(indexerRecipe);
         return (Indexer) reteContainer.resolveLocal(address);
     }
-    
+
     private void connectToParent(ReteNodeRecipe recipe, Receiver freshNode, ReteNodeRecipe parentRecipe) {
-        final Address<? extends Supplier> parentAddress = (Address<? extends Supplier>) reteContainer.getNetwork().getExistingNodeByRecipe(parentRecipe);
-        final Supplier parentSupplier = reteContainer.getProvisioner().asSupplier(parentAddress);
-        
+        final Supplier parentSupplier = getSupplierForRecipe(parentRecipe);
+
         // special synch
         if (freshNode instanceof TransitiveClosureNode) {
             Collection<Tuple> tuples = new ArrayList<Tuple>();
             parentSupplier.pullInto(tuples, true);
             ((TransitiveClosureNode) freshNode).reinitializeWith(tuples);
-            reteContainer.connect(parentSupplier, freshNode); 
+            reteContainer.connect(parentSupplier, freshNode);
         } else { // default case
-            // stateless nodes do not have to be synced with contents UNLESS they already have children (recursive corner case)
-            if (isStateful(recipe) || ((freshNode instanceof Supplier) && !((Supplier)freshNode).getReceivers().isEmpty())) {
-                reteContainer.connectAndSynchronize(parentSupplier, freshNode); 
+            // stateless nodes do not have to be synced with contents UNLESS they already have children (recursive
+            // corner case)
+            if (isStateful(recipe)
+                    || ((freshNode instanceof Supplier) && !((Supplier) freshNode).getReceivers().isEmpty())) {
+                reteContainer.connectAndSynchronize(parentSupplier, freshNode);
             } else {
                 // stateless node, no synch
-                reteContainer.connect(parentSupplier, freshNode); 
+                reteContainer.connect(parentSupplier, freshNode);
             }
         }
     }
-    
+
+    private Supplier getSupplierForRecipe(ReteNodeRecipe recipe) {
+        @SuppressWarnings("unchecked")
+        final Address<? extends Supplier> parentAddress = (Address<? extends Supplier>) reteContainer.getNetwork()
+                .getExistingNodeByRecipe(recipe);
+        final Supplier supplier = reteContainer.getProvisioner().asSupplier(parentAddress);
+        return supplier;
+    }
+
     /**
      * If two indexers share their active node, joining them via DualInputNode is error-prone. Exception: coincidence of
      * the two indexers is supported.
@@ -147,8 +159,10 @@ class ConnectionFactory {
                 result.primary = (IterableIndexer) resolveActiveIndexer(primarySlot);
         return result;
     }
+
     private Indexer resolveActiveIndexer(final RecipeTraceInfo inactiveIndexerTrace) {
-        final RecipeTraceInfo activeIndexerTrace = reteContainer.getProvisioner().accessActiveIndexer(inactiveIndexerTrace);
+        final RecipeTraceInfo activeIndexerTrace = reteContainer.getProvisioner()
+                .accessActiveIndexer(inactiveIndexerTrace);
         reteContainer.getProvisioner().getOrCreateNodeByRecipe(activeIndexerTrace);
         return resolveIndexer((ProjectionIndexerRecipe) activeIndexerTrace.getRecipe());
     }
@@ -157,7 +171,6 @@ class ConnectionFactory {
         IterableIndexer primary;
         Indexer secondary;
     }
-
 
     /**
      * If two indexers share their active node, joining them via DualInputNode is error-prone. Exception: coincidence of

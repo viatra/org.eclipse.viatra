@@ -118,23 +118,7 @@ public class DefaultMailbox implements AdaptableMailbox {
             // use the buffer during delivering so that there is a clear
             // separation between the stages
             this.delivering = true;
-
-            for (final Entry<Tuple, Integer> entry : this.queue.entrySet()) {
-                int count = entry.getValue();
-
-                Direction direction;
-                if (count < 0) {
-                    direction = Direction.DELETE;
-                    count = -count;
-                } else {
-                    direction = Direction.INSERT;
-                }
-
-                for (int i = 0; i < count; i++) {
-                    this.receiver.update(direction, entry.getKey(), Timestamp.ZERO);
-                }
-            }
-
+            this.receiver.batchUpdate(this.queue.entrySet(), Timestamp.ZERO);
             this.delivering = false;
 
             if (queue.size() > SIZE_TRESHOLD) {

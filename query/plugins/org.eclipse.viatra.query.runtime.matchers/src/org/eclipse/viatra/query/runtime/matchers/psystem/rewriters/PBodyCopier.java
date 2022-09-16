@@ -15,11 +15,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.EnumerablePConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -28,6 +30,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequalit
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternCallBasedDeferred;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.RelationEvaluation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryReflexiveTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
@@ -42,12 +45,12 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 
 /**
- * This class can create a new PBody for a PQuery. The result body contains a copy of given variables and constraints. 
+ * This class can create a new PBody for a PQuery. The result body contains a copy of given variables and constraints.
  * 
  * @author Marton Bur
  * 
  */
-public class PBodyCopier extends AbstractRewriterTraceSource{
+public class PBodyCopier extends AbstractRewriterTraceSource {
 
     /**
      * The created body
@@ -57,11 +60,11 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
      * Mapping between the original and the copied variables
      */
     protected Map<PVariable, PVariable> variableMapping = new HashMap<>();
-    
+
     public Map<PVariable, PVariable> getVariableMapping() {
         return variableMapping;
     }
-    
+
     /**
      * @since 1.6
      */
@@ -72,7 +75,7 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
         // do the actual copying
         mergeBody(body);
     }
-    
+
     /**
      * @since 1.6
      */
@@ -83,9 +86,10 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
     public void mergeBody(PBody sourceBody) {
         mergeBody(sourceBody, new SameName(), new AllowAllFilter());
     }
-    
+
     /**
-     * Merge all variables and constraints from a source body to a target body. If multiple bodies are merged into a single one, use the renamer and filter options to avoid collisions.
+     * Merge all variables and constraints from a source body to a target body. If multiple bodies are merged into a
+     * single one, use the renamer and filter options to avoid collisions.
      */
     public void mergeBody(PBody sourceBody, IVariableRenamer namingTool, IConstraintFilter filter) {
 
@@ -98,8 +102,8 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
         }
 
         // Copy exported parameters
-        this.body.setSymbolicParameters(sourceBody.getSymbolicParameters().stream().map(
-                this::copyExportedParameterConstraint).collect(Collectors.toList()));
+        this.body.setSymbolicParameters(sourceBody.getSymbolicParameters().stream()
+                .map(this::copyExportedParameterConstraint).collect(Collectors.toList()));
 
         // Copy constraints which are not filtered
         Set<PConstraint> constraints = sourceBody.getConstraints();
@@ -108,18 +112,18 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
                 copyConstraint(pConstraint);
             }
         }
-        
+
         // Add trace between original and copied body
         addTrace(sourceBody, body);
     }
-    
+
     protected void copyVariable(PVariable variable, String newName) {
         PVariable newPVariable = body.getOrCreateVariableByName(newName);
         variableMapping.put(variable, newPVariable);
     }
 
     /**
-     * Returns the body with the copied variables and constraints. The returned body is still uninitialized. 
+     * Returns the body with the copied variables and constraints. The returned body is still uninitialized.
      */
     public PBody getCopiedBody() {
         return body;
@@ -144,6 +148,8 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
             copyNegativePatternCallConstraint((NegativePatternCall) constraint);
         } else if (constraint instanceof BinaryTransitiveClosure) {
             copyBinaryTransitiveClosureConstraint((BinaryTransitiveClosure) constraint);
+        } else if (constraint instanceof RelationEvaluation) {
+            copyRelationEvaluationConstraint((RelationEvaluation) constraint);
         } else if (constraint instanceof BinaryReflexiveTransitiveClosure) {
             copyBinaryReflexiveTransitiveClosureConstraint((BinaryReflexiveTransitiveClosure) constraint);
         } else if (constraint instanceof PatternMatchCounter) {
@@ -153,10 +159,10 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
         } else if (constraint instanceof ExpressionEvaluation) {
             copyExpressionEvaluationConstraint((ExpressionEvaluation) constraint);
         } else {
-            throw new QueryProcessingException("Unknown PConstraint {0} encountered while copying PBody", new String[] {constraint.getClass().getName()}, "Unknown PConstraint", body.getPattern());
+            throw new QueryProcessingException("Unknown PConstraint {0} encountered while copying PBody",
+                    new String[] { constraint.getClass().getName() }, "Unknown PConstraint", body.getPattern());
         }
     }
-
 
     protected ExportedParameter copyExportedParameterConstraint(ExportedParameter exportedParameter) {
         PVariable mappedPVariable = variableMapping.get(exportedParameter.getParameterVariable());
@@ -179,77 +185,95 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
         PVariable withWhom = inequality.getWithWhom();
         addTrace(inequality, new Inequality(body, variableMapping.get(who), variableMapping.get(withWhom)));
     }
-    
+
     protected void copyTypeConstraint(TypeConstraint typeConstraint) {
         PVariable[] mappedVariables = extractMappedVariables(typeConstraint);
-        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables); 	
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[]) mappedVariables);
         addTrace(typeConstraint, new TypeConstraint(body, variablesTuple, typeConstraint.getSupplierKey()));
     }
-    
+
     protected void copyTypeFilterConstraint(TypeFilterConstraint typeConstraint) {
         PVariable[] mappedVariables = extractMappedVariables(typeConstraint);
-        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables); 	
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[]) mappedVariables);
         addTrace(typeConstraint, new TypeFilterConstraint(body, variablesTuple, typeConstraint.getInputKey()));
     }
 
     protected void copyConstantValueConstraint(ConstantValue constantValue) {
         PVariable pVariable = (PVariable) constantValue.getVariablesTuple().getElements()[0];
-        addTrace(constantValue, new ConstantValue(body, variableMapping.get(pVariable), constantValue.getSupplierKey()));
+        addTrace(constantValue,
+                new ConstantValue(body, variableMapping.get(pVariable), constantValue.getSupplierKey()));
     }
 
     protected void copyPositivePatternCallConstraint(PositivePatternCall positivePatternCall) {
         PVariable[] mappedVariables = extractMappedVariables(positivePatternCall);
-        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables);
-        addTrace(positivePatternCall, new PositivePatternCall(body, variablesTuple, positivePatternCall.getReferredQuery()));
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[]) mappedVariables);
+        addTrace(positivePatternCall,
+                new PositivePatternCall(body, variablesTuple, positivePatternCall.getReferredQuery()));
     }
-
 
     protected void copyNegativePatternCallConstraint(NegativePatternCall negativePatternCall) {
         PVariable[] mappedVariables = extractMappedVariables(negativePatternCall);
-        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables);
-        addTrace(negativePatternCall, new NegativePatternCall(body, variablesTuple, negativePatternCall.getReferredQuery()));
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[]) mappedVariables);
+        addTrace(negativePatternCall,
+                new NegativePatternCall(body, variablesTuple, negativePatternCall.getReferredQuery()));
     }
 
     protected void copyBinaryTransitiveClosureConstraint(BinaryTransitiveClosure binaryTransitiveClosure) {
         PVariable[] mappedVariables = extractMappedVariables(binaryTransitiveClosure);
-        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables);
-        addTrace(binaryTransitiveClosure, new BinaryTransitiveClosure(body, variablesTuple, binaryTransitiveClosure.getReferredQuery()));
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[]) mappedVariables);
+        addTrace(binaryTransitiveClosure,
+                new BinaryTransitiveClosure(body, variablesTuple, binaryTransitiveClosure.getReferredQuery()));
     }
-    
+
+    /**
+     * @since 2.8
+     */
+    protected void copyRelationEvaluationConstraint(RelationEvaluation relationEvaluation) {
+        PVariable[] mappedVariables = extractMappedVariables(relationEvaluation);
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[]) mappedVariables);
+        addTrace(relationEvaluation, new RelationEvaluation(body, variablesTuple, relationEvaluation.getReferredQueries(),
+                relationEvaluation.getEvaluator()));
+    }
+
     /**
      * @since 2.0
      */
-    protected void copyBinaryReflexiveTransitiveClosureConstraint(BinaryReflexiveTransitiveClosure binaryReflexiveTransitiveClosure) {
+    protected void copyBinaryReflexiveTransitiveClosureConstraint(
+            BinaryReflexiveTransitiveClosure binaryReflexiveTransitiveClosure) {
         PVariable[] mappedVariables = extractMappedVariables(binaryReflexiveTransitiveClosure);
-        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables);
-        addTrace(binaryReflexiveTransitiveClosure, new BinaryReflexiveTransitiveClosure(body, variablesTuple,
-                binaryReflexiveTransitiveClosure.getReferredQuery(), binaryReflexiveTransitiveClosure.getUniverseType()));
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[]) mappedVariables);
+        addTrace(binaryReflexiveTransitiveClosure,
+                new BinaryReflexiveTransitiveClosure(body, variablesTuple,
+                        binaryReflexiveTransitiveClosure.getReferredQuery(),
+                        binaryReflexiveTransitiveClosure.getUniverseType()));
     }
 
     protected void copyPatternMatchCounterConstraint(PatternMatchCounter patternMatchCounter) {
         PVariable[] mappedVariables = extractMappedVariables(patternMatchCounter);
         PVariable mappedResultVariable = variableMapping.get(patternMatchCounter.getResultVariable());
-        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables);
-        addTrace(patternMatchCounter, new PatternMatchCounter(body, variablesTuple, patternMatchCounter.getReferredQuery(), mappedResultVariable));
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[]) mappedVariables);
+        addTrace(patternMatchCounter, new PatternMatchCounter(body, variablesTuple,
+                patternMatchCounter.getReferredQuery(), mappedResultVariable));
     }
-    
+
     /**
      * @since 1.4
      */
     protected void copyAggregatorConstraint(AggregatorConstraint constraint) {
         PVariable[] mappedVariables = extractMappedVariables(constraint);
         PVariable mappedResultVariable = variableMapping.get(constraint.getResultVariable());
-        Tuple variablesTuple = Tuples.flatTupleOf((Object[])mappedVariables);
-        addTrace(constraint, new AggregatorConstraint(constraint.getAggregator(), body, variablesTuple, constraint.getReferredQuery(), mappedResultVariable, constraint.getAggregatedColumn()));
+        Tuple variablesTuple = Tuples.flatTupleOf((Object[]) mappedVariables);
+        addTrace(constraint, new AggregatorConstraint(constraint.getAggregator(), body, variablesTuple,
+                constraint.getReferredQuery(), mappedResultVariable, constraint.getAggregatedColumn()));
     }
-
 
     protected void copyExpressionEvaluationConstraint(ExpressionEvaluation expressionEvaluation) {
         PVariable mappedOutputVariable = variableMapping.get(expressionEvaluation.getOutputVariable());
-        addTrace(expressionEvaluation, new ExpressionEvaluation(body, new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping), mappedOutputVariable, expressionEvaluation.isUnwinding()));
+        addTrace(expressionEvaluation, new ExpressionEvaluation(body,
+                new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping),
+                mappedOutputVariable, expressionEvaluation.isUnwinding()));
     }
-    
-    
+
     /**
      * For positive pattern calls
      * 
@@ -279,7 +303,7 @@ public class PBodyCopier extends AbstractRewriterTraceSource{
         Object[] pVariables = typeFilterConstraint.getVariablesTuple().getElements();
         return mapVariableList(pVariables);
     }
-  
+
     private PVariable[] mapVariableList(Object[] pVariables) {
         List<PVariable> list = new ArrayList<PVariable>();
         for (int i = 0; i < pVariables.length; i++) {

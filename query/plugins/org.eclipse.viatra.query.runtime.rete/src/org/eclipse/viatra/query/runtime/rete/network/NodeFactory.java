@@ -16,21 +16,23 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.viatra.query.runtime.matchers.context.IPosetComparator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
+import org.eclipse.viatra.query.runtime.matchers.psystem.IRelationEvaluator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuples;
 import org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.aggregation.CountNode;
 import org.eclipse.viatra.query.runtime.rete.aggregation.IAggregatorNode;
-import org.eclipse.viatra.query.runtime.rete.aggregation.timely.FirstOnlyParallelTimelyColumnAggregatorNode;
-import org.eclipse.viatra.query.runtime.rete.aggregation.timely.FirstOnlySequentialTimelyColumnAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.aggregation.timely.FaithfulParallelTimelyColumnAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.aggregation.timely.FaithfulSequentialTimelyColumnAggregatorNode;
+import org.eclipse.viatra.query.runtime.rete.aggregation.timely.FirstOnlyParallelTimelyColumnAggregatorNode;
+import org.eclipse.viatra.query.runtime.rete.aggregation.timely.FirstOnlySequentialTimelyColumnAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputEnumeratorNode;
 import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputStatelessFilterNode;
 import org.eclipse.viatra.query.runtime.rete.eval.EvaluatorCore;
 import org.eclipse.viatra.query.runtime.rete.eval.MemorylessEvaluatorNode;
 import org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode;
+import org.eclipse.viatra.query.runtime.rete.eval.RelationEvaluatorNode;
 import org.eclipse.viatra.query.runtime.rete.index.ExistenceNode;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.JoinNode;
@@ -57,6 +59,7 @@ import org.eclipse.viatra.query.runtime.rete.recipes.JoinRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.Mask;
 import org.eclipse.viatra.query.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ProjectionIndexerRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.RelationEvaluationRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.SemiJoinRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.SingleColumnAggregatorRecipe;
@@ -153,6 +156,8 @@ class NodeFactory {
             return instantiateNode(reteContainer, (TrimmerRecipe) recipe);
         if (recipe instanceof TransitiveClosureRecipe)
             return instantiateNode(reteContainer, (TransitiveClosureRecipe) recipe);
+        if (recipe instanceof RelationEvaluationRecipe)
+            return instantiateNode(reteContainer, (RelationEvaluationRecipe) recipe);
         if (recipe instanceof ExpressionEnforcerRecipe)
             return instantiateNode(reteContainer, (ExpressionEnforcerRecipe) recipe);
         if (recipe instanceof CountAggregatorRecipe)
@@ -274,6 +279,10 @@ class NodeFactory {
     private Supplier instantiateNode(ReteContainer reteContainer, TransitiveClosureRecipe recipe) {
         return new TransitiveClosureNode(reteContainer);
     }
+    
+    private Supplier instantiateNode(ReteContainer reteContainer, RelationEvaluationRecipe recipe) {
+        return new RelationEvaluatorNode(reteContainer, toIRelationEvaluator(recipe.getEvaluator()));
+    }
 
     private Supplier instantiateNode(ReteContainer reteContainer, ProductionRecipe recipe) {
         if (reteContainer.isTimelyEvaluation()) {
@@ -354,7 +363,15 @@ class NodeFactory {
         if (evaluator instanceof IExpressionEvaluator) {
             return (IExpressionEvaluator) evaluator;
         }
-        throw new IllegalArgumentException("No runtime support for expression definition: " + evaluator);
+        throw new IllegalArgumentException("No runtime support for expression evaluator: " + evaluator);
+    }
+    
+    private IRelationEvaluator toIRelationEvaluator(ExpressionDefinition expressionDefinition) {
+        final Object evaluator = expressionDefinition.getEvaluator();
+        if (evaluator instanceof IRelationEvaluator) {
+            return (IRelationEvaluator) evaluator;
+        }
+        throw new IllegalArgumentException("No runtime support for relation evaluator: " + evaluator);
     }
 
     private Map<String, Integer> toStringIndexMap(final EMap<String, Integer> mappedIndices) {

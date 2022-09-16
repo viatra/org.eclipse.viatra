@@ -10,6 +10,8 @@
 package org.eclipse.viatra.query.runtime.rete.network;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.Direction;
@@ -25,10 +27,37 @@ import org.eclipse.viatra.query.runtime.rete.network.mailbox.Mailbox;
 public interface Receiver extends Node {
 
     /**
-     * updates the receiver with a newly found or lost partial matching
+     * Updates the receiver with a newly found or lost partial matching.
+     * 
      * @since 2.4
      */
     public void update(final Direction direction, final Tuple updateElement, final Timestamp timestamp);
+
+    /**
+     * Updates the receiver in batch style with a collection of updates. The input collection consists of pairs in the
+     * form (t, c) where t is an update tuple and c is the count. The count can also be negative, and it specifies how
+     * many times the tuple t gets deleted or inserted. The default implementation of this method simply calls
+     * {@link #update(Direction, Tuple, Timestamp)} individually for all updates.
+     * 
+     * @since 2.8
+     */
+    public default void batchUpdate(final Collection<Map.Entry<Tuple, Integer>> updates, final Timestamp timestamp) {
+        for (final Entry<Tuple, Integer> entry : updates) {
+            int count = entry.getValue();
+
+            Direction direction;
+            if (count < 0) {
+                direction = Direction.DELETE;
+                count = -count;
+            } else {
+                direction = Direction.INSERT;
+            }
+
+            for (int i = 0; i < count; i++) {
+                update(direction, entry.getKey(), timestamp);
+            }
+        }
+    }
 
     /**
      * Returns the {@link Mailbox} of this receiver.
@@ -37,7 +66,7 @@ public interface Receiver extends Node {
      * @since 2.0
      */
     public Mailbox getMailbox();
-        
+
     /**
      * appends a parent that will continuously send insert and revoke updates to this supplier
      */
@@ -52,5 +81,5 @@ public interface Receiver extends Node {
      * access active parent
      */
     Collection<Supplier> getParents();
-    
+
 }
