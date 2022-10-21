@@ -10,7 +10,7 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -69,7 +69,8 @@ public class ExpressionEvaluation extends BaseTypeSafeConstraint {
     }
 
     private static Set<PVariable> getPVariablesOfExpression(PBody pBody, IExpressionEvaluator evaluator) {
-        Set<PVariable> result = new HashSet<PVariable>();
+        // use a linked set, so that the variables will come in the order of the parameters
+        Set<PVariable> result = new LinkedHashSet<PVariable>();
         for (String name : evaluator.getInputParameterNames()) {
             PVariable variable = pBody.getOrCreateVariableByName(name);
             result.add(variable);

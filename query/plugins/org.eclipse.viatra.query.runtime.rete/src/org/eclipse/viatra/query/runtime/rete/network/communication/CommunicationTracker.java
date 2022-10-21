@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.runtime.base.itc.graphimpl.Graph;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.aggregation.IAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputEnumeratorNode;
+import org.eclipse.viatra.query.runtime.rete.eval.RelationEvaluatorNode;
 import org.eclipse.viatra.query.runtime.rete.index.DualInputNode;
 import org.eclipse.viatra.query.runtime.rete.index.ExistenceNode;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
@@ -185,7 +186,9 @@ public abstract class CommunicationTracker {
                         // or true trimming in its sole parent
                                 directParents.size() == 1 && trueTrimming(directParents.iterator().next())))) &&
                         // disallow fallthrough: external updates should be stored (if updates are delayed)
-                                (!(node instanceof ExternalInputEnumeratorNode));
+                                (!(node instanceof ExternalInputEnumeratorNode)) && 
+                        // disallow fallthrough: relation evaluation nodes need to be notified in batch-style, and the batching is done by the mailbox
+                                (!(node instanceof RelationEvaluatorNode));
                 // do additional checks
                 if (fallThrough) {
                     // recursive parent groups generate excess updates that should be cancelled after delete&rederive
