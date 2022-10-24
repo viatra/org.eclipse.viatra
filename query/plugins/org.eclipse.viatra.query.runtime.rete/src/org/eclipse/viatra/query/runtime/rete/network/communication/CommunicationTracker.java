@@ -187,8 +187,10 @@ public abstract class CommunicationTracker {
                                 directParents.size() == 1 && trueTrimming(directParents.iterator().next())))) &&
                         // disallow fallthrough: external updates should be stored (if updates are delayed)
                                 (!(node instanceof ExternalInputEnumeratorNode)) && 
-                        // disallow fallthrough: relation evaluation nodes need to be notified in batch-style, and the batching is done by the mailbox
-                                (!(node instanceof RelationEvaluatorNode));
+                        // disallow fallthrough: RelationEvaluatorNode needs to be notified in batch-style, and the batching is done by the mailbox
+                        // however, it is not the RelationEvaluatorNode itself that is interesting here, as that indirectly uses the BatchingReceiver
+                        // so we need to disable fall-through for the BatchingReceiver
+                                (!(node instanceof RelationEvaluatorNode.BatchingReceiver));
                 // do additional checks
                 if (fallThrough) {
                     // recursive parent groups generate excess updates that should be cancelled after delete&rederive

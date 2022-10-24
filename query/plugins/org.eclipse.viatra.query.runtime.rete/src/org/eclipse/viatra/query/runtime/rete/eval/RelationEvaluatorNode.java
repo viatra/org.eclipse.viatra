@@ -153,7 +153,7 @@ public class RelationEvaluatorNode extends StandardNode implements Supplier, Cle
         this.cachedOutputs = newOutputs;
     }
 
-    private class BatchingReceiver extends SimpleReceiver {
+    public class BatchingReceiver extends SimpleReceiver {
         private final ProductionNode source;
 
         private BatchingReceiver(final ProductionNode source, final ReteContainer container) {
