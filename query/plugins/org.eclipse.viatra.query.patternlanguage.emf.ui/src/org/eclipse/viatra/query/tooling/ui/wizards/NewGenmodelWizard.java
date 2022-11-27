@@ -55,7 +55,7 @@ public class NewGenmodelWizard extends Wizard implements INewWizard {
     public void addPages() {
         projectPage = new SelectViatraQueryProjectPage("Select VIATRA Query project", selection, logger);
         addPage(projectPage);
-        genmodelPage = new NewVQGenmodelPage(false);
+        genmodelPage = new NewVQGenmodelPage();
         addPage(genmodelPage);
     }
 

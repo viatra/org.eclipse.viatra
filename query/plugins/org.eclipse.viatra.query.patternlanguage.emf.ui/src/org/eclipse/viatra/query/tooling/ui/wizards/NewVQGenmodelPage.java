@@ -13,9 +13,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.PojoProperties;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
@@ -25,7 +22,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -45,7 +41,6 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -58,19 +53,16 @@ public class NewVQGenmodelPage extends WizardPage {
     private final FormToolkit formToolkit = new FormToolkit(Display.getDefault());
     private Tree referencedGenmodels;
     private TreeViewer genModelViewer;
-    private Button btnInitializeGeneratorModel;
     private Button addGenmodel;
 
     private ResourceSet set;
     private Set<GenModel> selectedGenmodels = Sets.newHashSet();
-    private boolean displayCreateComposite;
 
     /**
      * Create the wizard.
      */
-    public NewVQGenmodelPage(boolean displayCreateComposite) {
+    public NewVQGenmodelPage() {
         super("wizardPage");
-        this.displayCreateComposite = displayCreateComposite;
         setTitle("VIATRA Query Generator model");
         setDescription("Set up a generator model used for code generation.");
         set = new ResourceSetImpl();
@@ -86,27 +78,6 @@ public class NewVQGenmodelPage extends WizardPage {
 
         setControl(container);
         container.setLayout(new GridLayout(1, false));
-
-        if (displayCreateComposite) {
-            Section sctnGenmodel = formToolkit.createSection(container, Section.EXPANDED | Section.TITLE_BAR);
-            sctnGenmodel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-            formToolkit.paintBordersFor(sctnGenmodel);
-            sctnGenmodel.setText("Genmodel");
-
-            Composite composite = formToolkit.createComposite(sctnGenmodel, SWT.NONE);
-            formToolkit.paintBordersFor(composite);
-            sctnGenmodel.setClient(composite);
-            composite.setLayout(new GridLayout(3, false));
-            new Label(composite, SWT.NONE);
-            new Label(composite, SWT.NONE);
-
-            btnInitializeGeneratorModel = formToolkit.createButton(composite, "Initialize Generator Model", SWT.CHECK);
-            new Label(composite, SWT.NONE);
-
-            formToolkit.createLabel(composite, "Filename", SWT.NONE);
-
-            formToolkit.createLabel(composite, "generator.vqgen", SWT.NONE);
-        }
 
         Section sctnReferencedEmfGenerator = formToolkit.createSection(container, Section.EXPANDED | Section.TITLE_BAR);
         sctnReferencedEmfGenerator.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -214,36 +185,11 @@ public class NewVQGenmodelPage extends WizardPage {
                 selectGenmodelFromWorkspace();
             }
         });
-        if (displayCreateComposite) {
-            /* m_bindingContext = */initDataBindings();
-        }
-    }
-
-    protected DataBindingContext initDataBindings() {
-        DataBindingContext bindingContext = new DataBindingContext();
-        //
-        IObservableValue observeSelectionBtnInitializeGeneratorModelObserveWidget = WidgetProperties.selection()
-                .observe(btnInitializeGeneratorModel);
-        IObservableValue enabledReferencedGenmodelsObserveValue = PojoProperties.value("enabled").observe(
-                referencedGenmodels);
-        bindingContext.bindValue(observeSelectionBtnInitializeGeneratorModelObserveWidget,
-                enabledReferencedGenmodelsObserveValue, null, null);
-        //
-        IObservableValue observeEnabledAddGenmodelObserveWidget = WidgetProperties.enabled().observe(addGenmodel);
-        IObservableValue observeSelectionBtnInitializeGeneratorModelObserveWidget_1 = WidgetProperties.selection()
-                .observe(btnInitializeGeneratorModel);
-        bindingContext.bindValue(observeEnabledAddGenmodelObserveWidget,
-                observeSelectionBtnInitializeGeneratorModelObserveWidget_1, null, null);
-        //
-        return bindingContext;
     }
 
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
-            if (displayCreateComposite) {
-                btnInitializeGeneratorModel.setSelection(true);
-            }
             addGenmodel.setEnabled(true);
             referencedGenmodels.setEnabled(true);
         }
@@ -280,7 +226,4 @@ public class NewVQGenmodelPage extends WizardPage {
         return selectedGenmodels;
     }
 
-    public boolean isCreateGenmodelChecked() {
-        return !displayCreateComposite || btnInitializeGeneratorModel.getSelection();
-    }
 }
