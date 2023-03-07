@@ -267,7 +267,7 @@ pattern qualifiedName(node : Node, name) {
     // for a child element, compose from parents qualified name
     find parent(node, parentNode);
     Node.simpleName(node, simpleName);
-    find qualifiedName(parent, parentName); // recursive call
+    find qualifiedName(parentNode, parentName); // recursive call
     name == eval (parentName + "." + simpleName);
   } or { 
     // for a root element, just use the simple name
