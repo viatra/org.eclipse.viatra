@@ -305,9 +305,16 @@ public class QueryResultView extends ViewPart {
      * @since 1.4
      */
     public void loadExistingEngine(AdvancedViatraQueryEngine engine) {
+        this.loadExistingEngine(engine, true);
+    }
+    
+    /**
+     * @since 2.8
+     */
+    public void loadExistingEngine(AdvancedViatraQueryEngine engine, boolean readonly) {
         unloadModel();
 
-        input = QueryResultViewModel.INSTANCE.createInput(engine, true);
+        input = QueryResultViewModel.INSTANCE.createInput(engine, readonly);
         queryResultTreeViewer.setInput(input);
         loadEngineDetails(engine);
         activeEnginePropertyChanged();
