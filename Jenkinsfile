@@ -26,7 +26,7 @@ pipeline {
 	}
 	
 	tools {
-        maven 'apache-maven-latest'
+        maven 'apache-maven-3.8.6'
         jdk 'oracle-jdk8-latest' //AdoptOpenJDK does not work because of JavaFX dependencies
     }
 
