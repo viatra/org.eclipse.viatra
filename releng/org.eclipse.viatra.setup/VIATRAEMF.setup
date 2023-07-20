@@ -13,7 +13,7 @@
     xmlns:setup.p2="http://www.eclipse.org/oomph/setup/p2/1.0"
     xmlns:setup.targlets="http://www.eclipse.org/oomph/setup/targlets/1.0"
     xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
-    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/setup/launching/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Launching.ecore http://www.eclipse.org/oomph/setup/pde/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/PDE.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/projects/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Projects.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore"
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/JDT.ecore http://www.eclipse.org/oomph/setup/launching/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/Launching.ecore http://www.eclipse.org/oomph/setup/pde/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/PDE.ecore http://www.eclipse.org/oomph/predicates/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/projects/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/Projects.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 https://raw.githubusercontent.com/eclipse-oomph/oomph/master/setups/models/SetupWorkingSets.ecore"
     name="viatra"
     label="VIATRA">
   <setupTask
@@ -338,6 +338,50 @@
         <repository
             url="http://download.eclipse.org/efxclipse/updates-released/3.8.0/site"/>
       </repositoryList>
+      <repositoryList
+          name="2022-12">
+        <repository
+            url="http://download.eclipse.org/releases/2022-12"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        <repository
+            url="http://download.eclipse.org/efxclipse/updates-released/3.8.0/site"/>
+      </repositoryList>
+      <repositoryList
+          name="2023-03">
+        <repository
+            url="http://download.eclipse.org/releases/2023-03"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        <repository
+            url="http://download.eclipse.org/efxclipse/updates-released/3.8.0/site"/>
+      </repositoryList>
+      <repositoryList
+          name="2023-06">
+        <repository
+            url="http://download.eclipse.org/releases/2023-06"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        <repository
+            url="http://download.eclipse.org/efxclipse/updates-released/3.8.0/site"/>
+      </repositoryList>
+      <repositoryList
+          name="2022-09">
+        <repository
+            url="http://download.eclipse.org/releases/2023-09"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        <repository
+            url="http://download.eclipse.org/efxclipse/updates-released/3.8.0/site"/>
+      </repositoryList>
     </targlet>
     <targlet
         name="CPS metamodels"
@@ -567,6 +611,34 @@
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
         </repositoryList>
+        <repositoryList
+            name="2022-12">
+          <repository
+              url="http://download.eclipse.org/releases/2022-12"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+        </repositoryList>
+        <repositoryList
+            name="2023-03">
+          <repository
+              url="http://download.eclipse.org/releases/2023-03"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+        </repositoryList>
+        <repositoryList
+            name="2023-06">
+          <repository
+              url="http://download.eclipse.org/releases/2023-06"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+        </repositoryList>
+        <repositoryList
+            name="2023-09">
+          <repository
+              url="http://download.eclipse.org/releases/2023-09"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+        </repositoryList>
       </targlet>
       <targlet
           name="Sirius"
@@ -682,6 +754,34 @@
               url="http://download.eclipse.org/releases/2022-09"/>
           <repository
               url="https://download.eclipse.org/sirius/updates/releases/7.0.4/2021-06/"/>
+        </repositoryList>
+        <repositoryList
+            name="2022-12">
+          <repository
+              url="http://download.eclipse.org/releases/2022-12"/>
+          <repository
+              url="https://download.eclipse.org/sirius/updates/releases/7.0.6/2021-06/"/>
+        </repositoryList>
+        <repositoryList
+            name="2023-03">
+          <repository
+              url="http://download.eclipse.org/releases/2023-03"/>
+          <repository
+              url="https://download.eclipse.org/sirius/updates/releases/7.0.7/2021-06/"/>
+        </repositoryList>
+        <repositoryList
+            name="2023-06">
+          <repository
+              url="http://download.eclipse.org/releases/2023-06"/>
+          <repository
+              url="https://download.eclipse.org/sirius/updates/releases/7.2.0/2023-03/"/>
+        </repositoryList>
+        <repositoryList
+            name="2023-09">
+          <repository
+              url="http://download.eclipse.org/releases/2023-09"/>
+          <repository
+              url="https://download.eclipse.org/sirius/updates/releases/7.2.0/2023-03/"/>
         </repositoryList>
       </targlet>
     </setupTask>
@@ -1162,6 +1262,34 @@
             name="2022-09">
           <repository
               url="http://download.eclipse.org/releases/2022-06"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2022-12">
+          <repository
+              url="http://download.eclipse.org/releases/2022-12"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2023-03">
+          <repository
+              url="http://download.eclipse.org/releases/2022-03"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2023-06">
+          <repository
+              url="http://download.eclipse.org/releases/2022-06"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2023-09">
+          <repository
+              url="http://download.eclipse.org/releases/2023-09"/>
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
         </repositoryList>
