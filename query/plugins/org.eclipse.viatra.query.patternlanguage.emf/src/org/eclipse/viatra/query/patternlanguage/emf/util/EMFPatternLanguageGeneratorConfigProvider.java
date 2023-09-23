@@ -13,7 +13,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.inject.Inject;
+import com.google.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.URI;

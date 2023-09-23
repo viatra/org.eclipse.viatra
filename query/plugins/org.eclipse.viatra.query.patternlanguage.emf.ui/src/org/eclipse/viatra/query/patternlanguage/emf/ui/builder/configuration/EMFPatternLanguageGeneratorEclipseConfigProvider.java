@@ -8,8 +8,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.emf.ecore.EObject;
@@ -19,6 +17,7 @@ import org.eclipse.xtext.util.Pair;
 import org.eclipse.xtext.xbase.compiler.IGeneratorConfigProvider;
 
 import com.google.common.collect.Iterables;
+import com.google.inject.Inject;
 
 /**
  * This class is a modified version of {@link org.eclipse.xtext.xbase.ui.builder.EclipseGeneratorConfigProvider} that

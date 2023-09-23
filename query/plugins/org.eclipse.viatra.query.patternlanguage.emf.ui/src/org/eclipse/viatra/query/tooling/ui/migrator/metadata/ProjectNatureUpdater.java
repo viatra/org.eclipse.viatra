@@ -8,7 +8,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.migrator.metadata;
 
-import javax.inject.Inject;
+import com.google.inject.Inject;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;

@@ -11,7 +11,7 @@ package org.eclipse.viatra.addon.querybasedfeatures.runtime.validation;
 import java.util.Collection;
 import java.util.Optional;
 
-import javax.inject.Inject;
+import com.google.inject.Inject;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
