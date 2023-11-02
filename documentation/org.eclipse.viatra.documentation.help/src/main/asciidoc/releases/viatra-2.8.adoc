@@ -1,0 +1,15 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+[[viatra-28]]
+
+= VIATRA 2.8
+
+Release date:: 2023-10-20
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/2.8.0
+
+== New and Noteworthy
+
+VIATRA 2.8 is mainly a bugfix and maintenance release, the most important fix is an update for the pattern language tools to work with Guice 7.0, and thus compatibility with new dependency versions in SimRel 2023-09.
+
+This version is the last version of the framework to work with Java 8. The next version of VIATRA will require Java 11, and will increase the required minimum versions of its dependencies, such as Eclipse Platform, Xtext accordingly.
