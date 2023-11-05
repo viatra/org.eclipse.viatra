@@ -1,0 +1,13 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: .]
+ifndef::imagesdir[:imagesdir: {rootdir}/../images]
+[[viatra-29]]
+
+= VIATRA 2.9
+
+Release date:: 2024-xx-xx
+More information:: https://projects.eclipse.org/projects/modeling.viatra/releases/2.9.0
+
+== New and Noteworthy
+
+TBD

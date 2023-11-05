@@ -48,14 +48,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/AbstractUniquenessEnforcerNode.java" type="org.eclipse.viatra.query.runtime.rete.single.AbstractUniquenessEnforcerNode">
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.AbstractUniquenessEnforcerNode"/>
-                <message_argument value="getTuples()"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/rete/single/DefaultProductionNode.java" type="org.eclipse.viatra.query.runtime.rete.single.DefaultProductionNode">
         <filter id="576778288">
             <message_arguments>
@@ -69,22 +61,6 @@
             <message_arguments>
                 <message_argument value="TimelyUniquenessEnforcerNode"/>
                 <message_argument value="TimelyProductionNode"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/TimelyUniquenessEnforcerNode.java" type="org.eclipse.viatra.query.runtime.rete.single.TimelyUniquenessEnforcerNode">
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.TimelyUniquenessEnforcerNode"/>
-                <message_argument value="getTuples()"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/rete/single/UniquenessEnforcerNode.java" type="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode">
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode"/>
-                <message_argument value="getTuples()"/>
             </message_arguments>
         </filter>
     </resource>

@@ -17,6 +17,7 @@ This page includes detailed information about the various releases of VIATRA, in
 
 toc::[]
 
+include::releases/viatra-2.9.adoc[leveloffset=+1]
 include::releases/viatra-2.8.adoc[leveloffset=+1]
 include::releases/viatra-2.7.adoc[leveloffset=+1]
 include::releases/viatra-2.6.adoc[leveloffset=+1]

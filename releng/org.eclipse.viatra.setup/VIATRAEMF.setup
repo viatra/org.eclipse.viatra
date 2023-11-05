@@ -652,8 +652,6 @@
         <requirement
             name="org.eclipse.sirius.specifier.properties.feature.source.feature.group"/>
         <requirement
-            name="org.eclipse.sirius.runtime.ide.eef.source.feature.group"/>
-        <requirement
             name="org.eclipse.sirius.runtime.ide.xtext.source.feature.group"/>
         <requirement
             name="org.eclipse.sirius.diagram.elk.feature.feature.group"/>
@@ -781,7 +779,7 @@
           <repository
               url="http://download.eclipse.org/releases/2023-09"/>
           <repository
-              url="https://download.eclipse.org/sirius/updates/releases/7.2.0/2023-03/"/>
+              url="https://download.eclipse.org/sirius/updates/releases/7.2.1/2023-03/"/>
         </repositoryList>
       </targlet>
     </setupTask>
@@ -1134,9 +1132,9 @@
     <setupTask
         xsi:type="pde:APIBaselineTask"
         name="viatraBaseline"
-        version="2.7"
-        location="${installation.location}/api/v2.7/"
-        remoteURI="https://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.2.7.0.zip"/>
+        version="2.8"
+        location="${installation.location}/api/v2.8/"
+        remoteURI="https://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.2.8.0.zip"/>
     <setupTask
         xsi:type="setup.p2:P2Task">
       <requirement
@@ -1296,7 +1294,7 @@
       </targlet>
       <targlet
           name="Eclipse Collections"
-          activeRepositoryList="">
+          activeRepositoryList="10.2.0">
         <requirement
             name="org.eclipse.collections.feature.source.feature.group"
             versionRange="[10.1.0,11.0.0)"/>
