@@ -138,7 +138,8 @@
     <requirement
         name="org.eclipse.emf.sdk.feature.group"/>
     <requirement
-        name="org.eclipse.pde.api.tools.ee.feature.feature.group"/>
+        name="org.eclipse.pde.api.tools.ee.feature.feature.group"
+        optional="true"/>
     <requirement
         name="org.eclipse.fx.ide.pde.feature.feature.group"/>
     <repository
