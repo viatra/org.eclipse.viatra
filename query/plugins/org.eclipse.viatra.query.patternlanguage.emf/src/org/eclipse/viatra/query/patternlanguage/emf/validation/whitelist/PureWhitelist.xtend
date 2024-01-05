@@ -11,9 +11,9 @@ package org.eclipse.viatra.query.patternlanguage.emf.validation.whitelist
 import org.eclipse.xtend.lib.annotations.Data
 import org.eclipse.xtext.common.types.JvmOperation
 import com.google.inject.Singleton
-import javax.inject.Inject
 import org.apache.log4j.Logger
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
+import com.google.inject.Inject
 
 /**
  * A whitelist that contains pure elements.
