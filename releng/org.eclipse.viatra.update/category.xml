@@ -21,6 +21,8 @@
    <feature url="features/org.eclipse.viatra.query.language.vgql.feature_0.28.1.qualifier.jar" id="org.eclipse.viatra.query.language.vgql.feature" version="0.28.1.qualifier">
       <category name="org.eclipse.viatra.core"/>
    </feature>
+   <bundle id="com.google.inject"/>
+   <bundle id="com.google.inject.multibindings"/>
    <category-def name="org.eclipse.viatra.core" label="VIATRA Core"/>
    <category-def name="org.eclipse.viatra.extensions" label="VIATRA Extensions"/>
 </site>
