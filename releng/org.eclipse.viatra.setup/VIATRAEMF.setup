@@ -154,7 +154,7 @@
   <setupTask
       xsi:type="setup.targlets:TargletTask">
     <targlet
-        name="${scope.project.label}"
+        name="Core Dependencies"
         activeRepositoryList="${eclipse.target.platform}">
       <requirement
           name="org.eclipse.license.feature.group"
@@ -178,11 +178,11 @@
       <requirement
           name="org.eclipse.fx.runtime.min.feature.feature.group"/>
       <requirement
-          name="org.eclipse.gef.zest.sdk.feature.group"/>
+          name="org.eclipse.zest.feature.group"/>
       <requirement
-          name="org.eclipse.gef.graph.sdk.feature.group"/>
+          name="org.eclipse.zest.sdk.feature.group"/>
       <requirement
-          name="org.eclipse.gef.layout.sdk.feature.group"/>
+          name="org.eclipse.zest.source.feature.group"/>
       <repositoryList
           name="2019-06">
         <repository
@@ -371,11 +371,35 @@
             url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
         <repository
             url="http://download.eclipse.org/efxclipse/updates-released/3.8.0/site"/>
+        <repository
+            url="https://download.eclipse.org/tools/gef/classic/releases/3.16.0/"/>
       </repositoryList>
       <repositoryList
-          name="2022-09">
+          name="2023-09">
         <repository
             url="http://download.eclipse.org/releases/2023-09"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        <repository
+            url="http://download.eclipse.org/efxclipse/updates-released/3.8.0/site"/>
+      </repositoryList>
+      <repositoryList
+          name="2023-12">
+        <repository
+            url="http://download.eclipse.org/releases/2023-12"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        <repository
+            url="http://download.eclipse.org/efxclipse/updates-released/3.8.0/site"/>
+      </repositoryList>
+      <repositoryList
+          name="2024-03">
+        <repository
+            url="http://download.eclipse.org/releases/2024-03"/>
         <repository
             url="http://download.eclipse.org/cbi/updates/license"/>
         <repository
@@ -640,6 +664,20 @@
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
         </repositoryList>
+        <repositoryList
+            name="2023-12">
+          <repository
+              url="http://download.eclipse.org/releases/2023-12"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+        </repositoryList>
+        <repositoryList
+            name="2024-03">
+          <repository
+              url="http://download.eclipse.org/releases/2024-03"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+        </repositoryList>
       </targlet>
       <targlet
           name="Sirius"
@@ -779,6 +817,20 @@
             name="2023-09">
           <repository
               url="http://download.eclipse.org/releases/2023-09"/>
+          <repository
+              url="https://download.eclipse.org/sirius/updates/releases/7.2.1/2023-03/"/>
+        </repositoryList>
+        <repositoryList
+            name="2023-12">
+          <repository
+              url="http://download.eclipse.org/releases/2023-12"/>
+          <repository
+              url="https://download.eclipse.org/sirius/updates/releases/7.3.0/2023-03/"/>
+        </repositoryList>
+        <repositoryList
+            name="2024-03">
+          <repository
+              url="http://download.eclipse.org/releases/2024-03"/>
           <repository
               url="https://download.eclipse.org/sirius/updates/releases/7.2.1/2023-03/"/>
         </repositoryList>
@@ -1034,6 +1086,8 @@
         name="2.3-maintenance"/>
     <stream
         name="2.4-maintenance"/>
+    <stream
+        name="2.8-maintenance"/>
     <description>Viatra query and transformation framework</description>
   </project>
   <project name="tooling"
@@ -1061,26 +1115,13 @@
       </targlet>
     </setupTask>
     <stream
-        name="master">
-      <setupTask
-          xsi:type="setup:VariableTask"
-          name="viatra.ci.build.job.name"
-          value="https://ci.eclipse.org/viatra/job/VIATRA/job/master"/>
-    </stream>
+        name="master"/>
     <stream
-        name="2.3-maintenance">
-      <setupTask
-          xsi:type="setup:VariableTask"
-          name="viatra.ci.build.job.name"
-          value="https://ci.eclipse.org/viatra/job/viatra-maintenance-2.3/"/>
-    </stream>
+        name="2.3-maintenance"/>
     <stream
-        name="2.4-maintenance">
-      <setupTask
-          xsi:type="setup:VariableTask"
-          name="viatra.ci.build.job.name"
-          value="https://ci.eclipse.org/viatra/job/viatra-maintenance-2.4/"/>
-    </stream>
+        name="2.4-maintenance"/>
+    <stream
+        name="2.8-maintenance"/>
     <description>Installs the development environment of VIATRA into the host instance</description>
   </project>
   <project name="dse"
@@ -1121,9 +1162,11 @@
         name="2.2-maintenance"/>
     <stream
         name="2.3-maintenance"/>
+    <stream
+        name="2.8-maintenance"/>
     <description>Design space exploration for VIATRA</description>
   </project>
-  <project href="https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/plain/cps/releng/org.eclipse.viatra.examples.cps.setup/CPSExample.setup#/"/>
+  <project href="../../../../org.eclipse.viatra.examples.git/plain/cps/releng/org.eclipse.viatra.examples.cps.setup/CPSExample.setup#/"/>
   <stream name="master">
     <setupTask
         xsi:type="setup:EclipseIniTask"
@@ -1289,6 +1332,20 @@
             name="2023-09">
           <repository
               url="http://download.eclipse.org/releases/2023-09"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2023-12">
+          <repository
+              url="http://download.eclipse.org/releases/2023-12"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2024-03">
+          <repository
+              url="http://download.eclipse.org/releases/2024-03"/>
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
         </repositoryList>
@@ -1553,6 +1610,202 @@
         xsi:type="setup:VariableTask"
         name="viatra.git.branch"
         value="2.4-maintenance"/>
+  </stream>
+  <stream name="2.8-maintenance">
+    <setupTask
+        xsi:type="pde:APIBaselineTask"
+        name="viatraBaseline"
+        version="2.8"
+        location="${installation.location}/api/v2.8/"
+        remoteURI="https://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.2.8.0.zip"/>
+    <setupTask
+        xsi:type="setup.p2:P2Task">
+      <requirement
+          name="org.eclipse.xtext.sdk.feature.group"
+          versionRange="[2.16.0,3.0.0)"/>
+      <requirement
+          name="de.itemis.xtext.antlr.feature.feature.group"/>
+      <repository
+          url="http://download.itemis.com/updates/releases"/>
+      <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.targlets:TargletTask"
+        targetName="">
+      <targlet
+          name="Xtext"
+          activeRepositoryList="${eclipse.target.platform}">
+        <requirement
+            name="de.itemis.xtext.antlr.feature.feature.group"/>
+        <requirement
+            name="org.eclipse.xtext.sdk.feature.group"
+            versionRange="[2.20.0,3.0.0)"/>
+        <repositoryList
+            name="2019-06">
+          <repository
+              url="http://download.eclipse.org/releases/2019-06"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.20.0"/>
+          <repository
+              url="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.11.2"/>
+        </repositoryList>
+        <repositoryList
+            name="2019-09">
+          <repository
+              url="http://download.eclipse.org/releases/2019-09"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.20.0"/>
+          <repository
+              url="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.11.2"/>
+        </repositoryList>
+        <repositoryList
+            name="2019-12">
+          <repository
+              url="http://download.eclipse.org/releases/2019-12"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-03">
+          <repository
+              url="http://download.eclipse.org/releases/2020-03"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-06">
+          <repository
+              url="http://download.eclipse.org/releases/2020-06"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-09">
+          <repository
+              url="http://download.eclipse.org/releases/2020-09"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2020-12">
+          <repository
+              url="http://download.eclipse.org/releases/2020-12"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2021-03">
+          <repository
+              url="http://download.eclipse.org/releases/2021-03"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2021-06">
+          <repository
+              url="http://download.eclipse.org/releases/2021-06"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2021-09">
+          <repository
+              url="http://download.eclipse.org/releases/2021-09"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2021-12">
+          <repository
+              url="http://download.eclipse.org/releases/2021-12"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2022-03">
+          <repository
+              url="http://download.eclipse.org/releases/2022-03"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2022-06">
+          <repository
+              url="http://download.eclipse.org/releases/2022-06"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2022-09">
+          <repository
+              url="http://download.eclipse.org/releases/2022-06"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2022-12">
+          <repository
+              url="http://download.eclipse.org/releases/2022-12"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2023-03">
+          <repository
+              url="http://download.eclipse.org/releases/2022-03"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2023-06">
+          <repository
+              url="http://download.eclipse.org/releases/2022-06"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2023-09">
+          <repository
+              url="http://download.eclipse.org/releases/2023-09"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2023-12">
+          <repository
+              url="http://download.eclipse.org/releases/2023-12"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2024-03">
+          <repository
+              url="http://download.eclipse.org/releases/2024-03"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+      </targlet>
+      <targlet
+          name="Eclipse Collections"
+          activeRepositoryList="10.2.0">
+        <requirement
+            name="org.eclipse.collections.feature.source.feature.group"
+            versionRange="[10.1.0,11.0.0)"/>
+        <repositoryList
+            name="10.2.0">
+          <repository
+              url="http://download.eclipse.org/collections/10.2.0/repository"/>
+        </repositoryList>
+      </targlet>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="viatra.git.branch"
+        value="2.8-maintenance"/>
   </stream>
   <logicalProjectContainer
       xsi:type="setup:ProjectCatalog"
