@@ -1068,7 +1068,8 @@
       <requirement
           name="org.eclipse.sirius.specifier.properties.feature.source.feature.group"/>
       <requirement
-          name="org.eclipse.sirius.runtime.ide.eef.source.feature.group"/>
+          name="org.eclipse.sirius.runtime.ide.eef.source.feature.group"
+          optional="true"/>
       <requirement
           name="org.eclipse.sirius.runtime.ide.xtext.source.feature.group"/>
       <requirement
