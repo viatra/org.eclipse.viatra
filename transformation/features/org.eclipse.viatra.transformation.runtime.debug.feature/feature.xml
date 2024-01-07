@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.transformation.runtime.debug.feature"
       label="VIATRA Transformation Debugger Runtime (Incubation)"
-      version="0.28.1.qualifier"
+      version="0.28.2.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="2.0.2">
