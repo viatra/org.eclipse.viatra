@@ -8,7 +8,7 @@
       license-feature-version="2.0.2">
 
    <description>
-      GEF5 Zest support for VIATRA Viewers framework runtime
+      GEF Classic Zest support for VIATRA Viewers framework runtime
    </description>
 
    <copyright>
@@ -25,9 +25,7 @@
 
    <requires>
       <import feature="org.eclipse.viatra.addon.viewers.runtime.feature" version="2.9.0" match="equivalent"/>
-      <import feature="org.eclipse.gef.graph" version="5.0.0" match="compatible"/>
-      <import feature="org.eclipse.gef.layout" version="5.0.0" match="compatible"/>
-      <import feature="org.eclipse.gef.zest.fx.jface" version="5.0.0" match="compatible"/>
+      <import feature="org.eclipse.zest" version="1.7.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

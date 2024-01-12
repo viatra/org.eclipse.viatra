@@ -22,14 +22,13 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.gef.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.viatra.addon.viewers.runtime.extensions.ViewersComponentConfiguration;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViatraViewerDataModel;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.viatra.addon.viewers.runtime.zest.extensions.ViatraViewersZestViewSupport;
 import org.eclipse.viatra.addon.viewers.runtime.zest.sources.ZestContentProvider;
-import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
+import org.eclipse.viatra.integration.zest.viewer.ViatraGraphViewer;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageUIPlugin;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
@@ -50,6 +49,7 @@ import org.eclipse.viatra.query.runtime.rete.recipes.SingleParentNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
 import org.eclipse.viatra.query.tooling.ui.retevis.preference.ReteVisualizationPreferenceConstants;
 import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent;
+import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -62,7 +62,7 @@ import com.google.common.collect.Iterables;
 public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
 
     public ReteVisualizationViewSupport(IViewPart _owner, ViewersComponentConfiguration _config,
-            ModifiableZestContentViewer _graphViewer) {
+            ViatraGraphViewer _graphViewer) {
         super(_owner, _config, IModelConnectorTypeEnum.RESOURCESET, _graphViewer);
     }
 
@@ -231,9 +231,9 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
             state = ViatraViewerDataModel.newViewerState(engine, this.configuration.getPatterns(),
                     this.configuration.getFilter(),
                     ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
-            ModifiableZestContentViewer viewer = (ModifiableZestContentViewer) jfaceViewer;
+            ViatraGraphViewer viewer = (ViatraGraphViewer) jfaceViewer;
             viewer.setContentProvider(new ZestContentProvider());
-            viewer.setLabelProvider(new ReteVisualizationLabelProvider(nodeTrace));
+            viewer.setLabelProvider(new ReteVisualizationLabelProvider(viewer.getControl().getDisplay(), nodeTrace));
             viewer.setInput(state);
         }
     }

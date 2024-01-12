@@ -11,13 +11,6 @@ package org.eclipse.viatra.addon.viewers.tooling.ui.zest.views.tabs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef.layout.ILayoutAlgorithm;
-import org.eclipse.gef.layout.algorithms.CompositeLayoutAlgorithm;
-import org.eclipse.gef.layout.algorithms.HorizontalShiftAlgorithm;
-import org.eclipse.gef.layout.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.gef.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef.layout.algorithms.SugiyamaLayoutAlgorithm;
-import org.eclipse.gef.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
@@ -26,12 +19,21 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.addon.viewers.runtime.zest.ViatraGraphViewers;
+import org.eclipse.viatra.addon.viewers.runtime.zest.ViewersZestPlugin;
 import org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs.AbstractViewerSandboxTab;
-import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
+import org.eclipse.viatra.integration.zest.viewer.ViatraGraphViewer;
+import org.eclipse.zest.core.viewers.AbstractZoomableViewer;
+import org.eclipse.zest.core.viewers.IZoomableWorkbenchPart;
+import org.eclipse.zest.core.viewers.ZoomContributionViewItem;
+import org.eclipse.zest.core.widgets.ZestStyles;
+import org.eclipse.zest.layouts.LayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 
-public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab {//implements IZoomableWorkbenchPart {
+public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implements IZoomableWorkbenchPart {
 
-    ModifiableZestContentViewer viewer;
+    ViatraGraphViewer viewer;
 
     @Override
     public String getTabTitle() {
@@ -56,13 +58,12 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab {//imple
 
     @Override
     protected Viewer createViewer(Composite parent) {
-        viewer = new ModifiableZestContentViewer();
-        viewer.createControl(parent, SWT.NONE);
-        ILayoutAlgorithm layout = new SpringLayoutAlgorithm();
-        viewer.setLayoutAlgorithm(layout);
+        viewer = new ViatraGraphViewer(parent, SWT.NONE);
+        viewer.setNodeStyle(ZestStyles.NODES_NO_LAYOUT_RESIZE);
+        viewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
         
-//        refreshGraph.setImageDescriptor(ViewersZestPlugin.imageDescriptorFromPlugin(ViewersZestPlugin.PLUGIN_ID,"icons/refresh.gif"));
-//        clearGraph.setImageDescriptor(ViewersZestPlugin.imageDescriptorFromPlugin(ViewersZestPlugin.PLUGIN_ID,"icons/clear.gif"));
+        refreshGraph.setImageDescriptor(ViewersZestPlugin.imageDescriptorFromPlugin(ViewersZestPlugin.PLUGIN_ID,"icons/refresh.gif"));
+        clearGraph.setImageDescriptor(ViewersZestPlugin.imageDescriptorFromPlugin(ViewersZestPlugin.PLUGIN_ID,"icons/clear.gif"));
 
         
         return viewer;
@@ -73,14 +74,10 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab {//imple
         mgr.add(createLayoutAction("Tree", new TreeLayoutAlgorithm()));
         mgr.add(createLayoutAction("Spring", new SpringLayoutAlgorithm()));
         mgr.add(createLayoutAction("Radial", new RadialLayoutAlgorithm()));
-        //mgr.add(createLayoutAction("SpaceTree", new CustomSpaceTreeLayoutAlgorithm()));
-        SugiyamaLayoutAlgorithm sugiyamaAlgorithm = new SugiyamaLayoutAlgorithm();
-        HorizontalShiftAlgorithm shiftAlgorithm = new HorizontalShiftAlgorithm();
-        mgr.add(createLayoutAction("Sugiyama (unstable)",new CompositeLayoutAlgorithm(new ILayoutAlgorithm[] {sugiyamaAlgorithm, shiftAlgorithm })));
         return mgr;
     }
     
-    private Action createLayoutAction(final String name, final ILayoutAlgorithm lay) {
+    private Action createLayoutAction(final String name, final LayoutAlgorithm lay) {
         return new Action(name) {
           @Override
           public void run() {
@@ -103,13 +100,13 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab {//imple
             viewer.refresh();
         }
     };
-//    
-//    private Action clearGraph = new Action("Clear Graph") {
-//        @Override
-//        public void run() {
-//            viewer.setInput(null);
-//        }
-//    };
+    
+    private Action clearGraph = new Action("Clear Graph") {
+        @Override
+        public void run() {
+            viewer.setInput(null);
+        }
+    };
     
     
     @Override
@@ -118,14 +115,19 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab {//imple
         MenuManager mgr = new MenuManager();
         mgr.removeAll();
         mgr.add(refreshGraph);
-//        mgr.add(clearGraph);
+        mgr.add(clearGraph);
 
-//        ZoomContributionViewItem toolbarZoomContributionViewItem = new ZoomContributionViewItem(this);
-//        mgr.add(toolbarZoomContributionViewItem);
+        ZoomContributionViewItem toolbarZoomContributionViewItem = new ZoomContributionViewItem(this);
+        mgr.add(toolbarZoomContributionViewItem);
         
         mgr.update(true);
         r.add(mgr);
         return r;
+    }
+
+    @Override
+    public AbstractZoomableViewer getZoomableViewer() {
+        return viewer;
     }
 
 }

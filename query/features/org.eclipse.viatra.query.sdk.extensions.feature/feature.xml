@@ -37,9 +37,7 @@
       <import feature="org.eclipse.jdt"/>
       <import feature="org.eclipse.pde"/>
       <import feature="org.eclipse.viatra.addon.viewers.runtime.zest.feature" version="2.6.0" match="compatible"/>
-      <import feature="org.eclipse.gef.graph" version="5.1.0" match="compatible"/>
-      <import feature="org.eclipse.gef.layout" version="5.0.0" match="compatible"/>
-      <import feature="org.eclipse.gef.zest.fx.jface" version="5.1.1" match="compatible"/>
+      <import feature="org.eclipse.zest" version="1.7.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

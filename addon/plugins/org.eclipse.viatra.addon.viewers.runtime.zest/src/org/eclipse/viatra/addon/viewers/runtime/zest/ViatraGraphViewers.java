@@ -11,7 +11,7 @@ package org.eclipse.viatra.addon.viewers.runtime.zest;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.addon.viewers.runtime.zest.sources.ZestContentProvider;
 import org.eclipse.viatra.addon.viewers.runtime.zest.sources.ZestLabelProvider;
-import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
+import org.eclipse.viatra.integration.zest.viewer.ViatraGraphViewer;
 
 /**
  * API to bind the result of model queries to Zest {@link GraphViewer} widgets.
@@ -25,34 +25,40 @@ public class ViatraGraphViewers {
     }
 
     /**
-     * The basic bindings does not support isolated nodes but is more
-     * performant. If the graph contains isolated nodes, use
-     * {@link #bindWithIsolatedNodes(GraphViewer, ViewerState)} instead.
+     * Binds the given ViewerState to the Graph Viewer.
+     * </p>
+     * Equivalent to calling {@link #bind(ViatraGraphViewer, ViewerState, boolean)} with a false parameter (ignoring the
+     * containment references).
      */
-    public static void bind(ModifiableZestContentViewer viewer, ViewerState state) {
+    public static void bind(ViatraGraphViewer viewer, ViewerState state) {
         if (!(viewer.getContentProvider() instanceof ZestContentProvider)) {
             viewer.setContentProvider(new ZestContentProvider());
         }
         
         if (!(viewer.getLabelProvider() instanceof ZestLabelProvider)) {
-            viewer.setLabelProvider(new ZestLabelProvider());
+            viewer.setLabelProvider(new ZestLabelProvider(viewer.getControl().getDisplay()));
         }
         viewer.setInput(state);
     }
 
     /**
-     * The basic bindings does not support isolated nodes but is more
-     * performant. If the graph contains isolated nodes, use
-     * {@link #bindWithIsolatedNodes(GraphViewer, ViewerState, boolean)} instead.
+     * Binds the given ViewerState to the Graph Viewer.
+     * 
+     * @param viewer
+     *      The graph viewer to display the contents
+     * @param state
+     *      The Viewer state that will provide the data for the graph visualization
+     * @param displayContainment
+     *      If true, containments are depicted as edges in the graph, otherwise they are ignored 
      */
-    public static void bind(ModifiableZestContentViewer viewer, ViewerState state,
+    public static void bind(ViatraGraphViewer viewer, ViewerState state,
             boolean displayContainment) {
         if (!(viewer.getContentProvider() instanceof ZestContentProvider)) {
             viewer.setContentProvider(new ZestContentProvider(displayContainment));
         }
         
         if (!(viewer.getLabelProvider() instanceof ZestLabelProvider)) {
-            viewer.setLabelProvider(new ZestLabelProvider());
+            viewer.setLabelProvider(new ZestLabelProvider(viewer.getControl().getDisplay()));
         }
         viewer.setInput(state);
     }

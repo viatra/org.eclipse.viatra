@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="VIATRA-201906" sequenceNumber="1492772502">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?>
+<target name="VIATRA-201906" sequenceNumber="1492772502">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
@@ -8,7 +10,7 @@
 <unit id="org.eclipse.xtext.sdk.feature.group" version="2.20.0.v20191202-1256"/>
 <repository location="https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.20.0"/>
 </location>
-<location includeMode="planner" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
 <unit id="com.google.inject" version="3.0.0.v201605172100"/>
 <unit id="com.google.inject.source" version="3.0.0.v201605172100"/>
 <unit id="com.google.inject.multibindings" version="3.0.0.v201605172100"/>
@@ -29,10 +31,6 @@
 <repository location="https://download.eclipse.org/cbi/updates/license/2.0.2.v20181016-2210"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="3.5.0.201902220600"/>
-<repository location="https://download.eclipse.org/efxclipse/updates-released/3.5.0/site"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.equinox.sdk.feature.group" version="3.18.0.v20190528-1257"/>
 <unit id="org.eclipse.jdt.feature.group" version="3.18.0.v20190605-1800"/>
 <unit id="org.eclipse.pde.feature.group" version="3.14.0.v20190605-1800"/>
@@ -47,13 +45,8 @@
 <unit id="org.eclipse.gmf.runtime.sdk.feature.group" version="1.12.1.201905141505"/>
 <unit id="org.eclipse.graphiti.sdk.feature.feature.group" version="0.16.0.201906041401"/>
 <unit id="org.eclipse.uml2.sdk.feature.group" version="5.5.0.v20181203-1331"/>
+<unit id="org.eclipse.zest.sdk.feature.group" version="1.7.0.201606061308"/>
 <repository location="https://download.eclipse.org/releases/2019-06/201906191000/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.gef.graph.sdk.feature.group" version="5.1.0.201912130302"/>
-<unit id="org.eclipse.gef.layout.sdk.feature.group" version="5.0.0.201912130302"/>
-<unit id="org.eclipse.gef.zest.sdk.feature.group" version="5.1.1.201912130302"/>
-<repository location="https://download.eclipse.org/tools/gef/updates/releases/5.3.0_gef-master_5721/" />
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
   <unit id="org.eclipse.collections.feature.feature.group" version="10.1.0.v20200211-1558"/>

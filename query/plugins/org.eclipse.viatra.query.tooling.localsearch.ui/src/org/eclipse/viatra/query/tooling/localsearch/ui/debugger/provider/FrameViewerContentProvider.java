@@ -14,10 +14,8 @@ import java.util.Collection;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.viatra.integration.zest.viewer.IGraphEntityRelationshipContentProvider;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
-
-import com.google.common.collect.Lists;
+import org.eclipse.zest.core.viewers.IGraphEntityRelationshipContentProvider;
 
 /**
  * An initial implementation for the content provider to show the selected matching frame in a Zest viewer
@@ -41,12 +39,12 @@ public class FrameViewerContentProvider implements IGraphEntityRelationshipConte
 
 
     @Override
-    public Object[] getNodes() {
+    public Object[] getElements(Object inputElement) {
         if (frame == null) {
             return new Object[0];
         }
 
-        ArrayList<Object> elements = Lists.newArrayList();
+        ArrayList<Object> elements = new ArrayList<>();
         for (int i = 0; i < frame.getSize(); i++) {
             Object element = frame.get(i);
             if (element instanceof EObject){
@@ -58,12 +56,12 @@ public class FrameViewerContentProvider implements IGraphEntityRelationshipConte
 
 
     @Override
-    public Object[] getEdges(Object source, Object target) {
+    public Object[] getRelationships(Object source, Object target) {
         if (source instanceof EObject && target instanceof EObject) {
             EObject eSource = (EObject) source;
             EObject eDest = (EObject) target;
 
-            Collection<EReference> refs = Lists.newArrayList();
+            Collection<EReference> refs = new ArrayList<>();
             
             for (EReference ref : eSource.eClass().getEAllReferences()) {
                 final Object trg = eSource.eGet(ref);
@@ -78,18 +76,6 @@ public class FrameViewerContentProvider implements IGraphEntityRelationshipConte
             return null;
         }
     }
-
-    @Override
-    public Object[] getNestedGraphNodes(Object node) {
-        return null;
-    }
-
-
-    @Override
-    public boolean hasNestedGraph(Object node) {
-        return false;
-    }
-
 
     @Override
     public void dispose() {

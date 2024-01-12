@@ -8,23 +8,21 @@
  *******************************************************************************/
 package org.eclipse.viatra.integration.zest.viewer;
 
-import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.zest.core.viewers.IGraphContentProvider;
 
 /**
  * @author Zoltan Ujhelyi
  *
  */
-public interface IGraphEdgeContentProvider extends IContentProvider, INestedGraphContentProvider {
+public interface IGraphEdgeContentProvider extends IGraphContentProvider {
 
     /**
-     * Returns all content elements which represent nodes on the first level of
-     * the graph. If no nodes exist, either an empty array or <code>null</code>
-     * is returned.
-     *
-     * @return All content elements which represent nodes on the first level of
-     *         the graph.
+     * Returns all the nodes in the graph for the given input.
+     * 
+     * @input the input model object.
+     * @return all the relationships in the graph for the given input.
      */
-    public Object[] getNodes();
+    public Object[] getElements(Object input);
     
     /**
      * Returns all content elements which represent edges.
@@ -32,9 +30,6 @@ public interface IGraphEdgeContentProvider extends IContentProvider, INestedGrap
      * @param node
      *            A model object representing a graph edge.
      */
-    public Object[] getEdges();
+    public Object[] getRelationships(Object input);
     
-    public Object getSource(Object edge);
-    
-    public Object getTarget(Object edge);
 }

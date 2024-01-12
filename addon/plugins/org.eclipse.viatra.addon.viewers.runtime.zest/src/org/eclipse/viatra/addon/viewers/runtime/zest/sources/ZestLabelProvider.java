@@ -11,22 +11,25 @@ package org.eclipse.viatra.addon.viewers.runtime.zest.sources;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.eclipse.gef.zest.fx.ZestProperties;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.resource.LocalResourceManager;
-import org.eclipse.jface.resource.ResourceManager;
-import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.graph.Node;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.viatra.addon.viewers.runtime.notation.Containment;
+import org.eclipse.viatra.addon.viewers.runtime.notation.Edge;
 import org.eclipse.viatra.addon.viewers.runtime.notation.FormattableElement;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 import org.eclipse.viatra.addon.viewers.runtime.sources.QueryLabelProvider;
 import org.eclipse.viatra.addon.viewers.runtime.util.FormatParser;
-import org.eclipse.viatra.integration.zest.viewer.IGraphAttributesProvider2;
-
-import javafx.scene.shape.Polygon;
-
+import org.eclipse.zest.core.viewers.IConnectionStyleProvider;
+import org.eclipse.zest.core.viewers.IEntityStyleProvider;
+import org.eclipse.zest.core.widgets.ZestStyles;
 
 /**
  * Label provider for Zest graphs.
@@ -34,28 +37,78 @@ import javafx.scene.shape.Polygon;
  * @author Zoltan Ujhelyi
  * 
  */
-public class ZestLabelProvider extends QueryLabelProvider implements IColorProvider, IGraphAttributesProvider2 {
+public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyleProvider, IConnectionStyleProvider {
 
-    static class DiamondHead extends Polygon {
-        public DiamondHead() {
-            super(-15.0, 0.0, -7.5, -3.75, -7.5, 3.75, -15.0, 0.0);
-        }
+    private Display display;
+    private Map<RGB, Color> colorMap = new HashMap<>();
+
+    public ZestLabelProvider(Display display) {
+        super();
+        this.display = display;
+
     }
-    
-    private ResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources());
 
     private Color getColorProperty(FormattableElement element, String property) {
         if (FormatParser.isFormatted(element)) {
             RGB color = FormatParser.getColorFormatProperty(element,property);
             if (color != null) {
-                return resourceManager.createColor(color);
+                return getColor(color);
             }
         }
         return null;
     }
 
+    private int getIntProperty(FormattableElement element, String property) {
+        if (FormatParser.isFormatted(element)) {
+            return FormatParser.getNumberProperty(element,property);
+        }
+        return -1;
+    }
+    
+    private String getStringProperty(FormattableElement element, String property) {
+        if (FormatParser.isFormatted(element)) {
+            return FormatParser.getStringProperty(element, property);
+        }
+        return "";
+    }
+
+    private Color getColor(RGB rgb) {
+        if (!colorMap.containsKey(rgb)) {
+            Color newColor = new Color(display, rgb);
+            colorMap.put(rgb, newColor);
+            return newColor;
+        }
+        return colorMap.get(rgb);
+    }
+
     @Override
-    public Color getBackground(Object entity) {
+    public Color getNodeHighlightColor(Object entity) {
+        return null;
+    }
+
+    @Override
+    public Color getBorderColor(Object entity) {
+        if (entity instanceof Item) {
+            return getColorProperty((FormattableElement) entity, FormatParser.LINE_COLOR);
+        }
+        return null;
+    }
+
+    @Override
+    public Color getBorderHighlightColor(Object entity) {
+        return null;
+    }
+
+    @Override
+    public int getBorderWidth(Object entity) {
+        if (entity instanceof Node) {
+            return getIntProperty((FormattableElement) entity, FormatParser.LINE_WIDTH);
+        }
+        return -1;
+    }
+
+    @Override
+    public Color getBackgroundColour(Object entity) {
         if (entity instanceof Item) {
             return getColorProperty((FormattableElement) entity, FormatParser.COLOR);
         }
@@ -63,47 +116,95 @@ public class ZestLabelProvider extends QueryLabelProvider implements IColorProvi
     }
 
     @Override
-    public Color getForeground(Object entity) {
+    public Color getForegroundColour(Object entity) {
         if (entity instanceof Item) {
             return getColorProperty((FormattableElement) entity, FormatParser.TEXT_COLOR);
         }
         return null;
     }
-    
+
+    @Override
+    public IFigure getTooltip(Object entity) {
+        if (!(entity instanceof Item)) {
+            return null;
+        }
+        final Object entityObject = ((Item) entity).getParamObject();
+        if (!(entityObject instanceof EObject)) {
+            return null;
+        }
+        EObject eobj = (EObject) entityObject;
+        String text = "";
+        for (EStructuralFeature feature : eobj.eClass().getEAllAttributes()) {
+            text = text.concat(feature.getName() + ": ");
+            Object obj = eobj.eGet(feature);
+            if (obj == null) {
+                text = text.concat("\n");
+            } else {
+                text = text.concat(eobj.eGet(feature).toString() + "\n");
+            }
+        }
+        Label label = new Label(text);
+        return label;
+    }
+
+    @Override
+    public boolean fisheyeNode(Object entity) {
+        return false;
+    }
+
     @Override
     public void dispose() {
-        resourceManager.dispose();
+        for (Entry<RGB, Color> colorEntry : colorMap.entrySet()) {
+            Color color = colorEntry.getValue();
+            if (color != null && !color.isDisposed()) {
+                color.dispose();
+            }
+        }
         super.dispose();
     }
 
     @Override
-    public Map<String, Object> getEdgeAttributes(Object sourceNode, Object targetNode) {
-        Map<String, Object> attributes = new HashMap<>();
-        attributes.put(ZestProperties.TARGET_DECORATION__E, new DiamondHead());
-        return attributes;
+    public int getConnectionStyle(Object rel) {
+        // handle containments specially
+        if (rel instanceof Containment) {
+            return ZestStyles.CONNECTIONS_DOT | ZestStyles.CONNECTIONS_DIRECTED;
+        }
+        // handle lineStyle property
+        if (rel instanceof FormattableElement) {
+            String lS = getStringProperty((FormattableElement) rel, FormatParser.LINE_STYLE);
+            if ("dashed".equalsIgnoreCase(lS)) {
+                return ZestStyles.CONNECTIONS_DASH | ZestStyles.CONNECTIONS_DIRECTED;
+            }
+            else if ("dotted".equalsIgnoreCase(lS)) {
+                return ZestStyles.CONNECTIONS_DOT | ZestStyles.CONNECTIONS_DIRECTED;
+            }
+            else if ("dashdot".equalsIgnoreCase(lS)) {
+                return ZestStyles.CONNECTIONS_DASH_DOT | ZestStyles.CONNECTIONS_DIRECTED;
+            }
+        }
+        // default
+        return ZestStyles.CONNECTIONS_SOLID | ZestStyles.CONNECTIONS_DIRECTED;
     }
-    
+
     @Override
-    public Map<String, Object> getEdgeAttributes(Object edge) {
-        Map<String, Object> attributes = new HashMap<>();
-        attributes.put(ZestProperties.TARGET_DECORATION__E, new DiamondHead());
-        return attributes;
+    public Color getColor(Object rel) {
+        if (rel instanceof Edge) {
+            return getColorProperty((FormattableElement) rel, FormatParser.LINE_COLOR);
+        }
+        return null;
     }
 
     @Override
-    public Map<String, Object> getGraphAttributes() {
-        return new HashMap<>();
+    public Color getHighlightColor(Object rel) {
+        return null;
     }
 
     @Override
-    public Map<String, Object> getNestedGraphAttributes(Object nestingNode) {
-        return new HashMap<>();
+    public int getLineWidth(Object rel) {
+        if (rel instanceof Edge) {
+            return getIntProperty((FormattableElement) rel, FormatParser.LINE_WIDTH);
+        }
+        return -1;
     }
-
-    @Override
-    public Map<String, Object> getNodeAttributes(Object node) {
-        return new HashMap<>();
-    }
-
 
 }

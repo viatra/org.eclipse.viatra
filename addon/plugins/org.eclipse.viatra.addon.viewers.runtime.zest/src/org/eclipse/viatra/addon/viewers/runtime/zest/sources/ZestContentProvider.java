@@ -9,6 +9,7 @@
 package org.eclipse.viatra.addon.viewers.runtime.zest.sources;
 
 import java.util.Collection;
+import java.util.stream.Stream;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
@@ -18,8 +19,8 @@ import org.eclipse.viatra.addon.viewers.runtime.notation.Containment;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Edge;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 import org.eclipse.viatra.integration.zest.viewer.IGraphEdgeContentProvider;
-import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
 import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
+import org.eclipse.zest.core.viewers.GraphViewer;
 
 /**
  * Content provider for Zest graphs. The implementation is more performant than
@@ -31,7 +32,7 @@ import org.eclipse.viatra.query.runtime.matchers.util.Preconditions;
  */
 public class ZestContentProvider extends AbstractViewerStateListener implements IGraphEdgeContentProvider, IViewerLabelListener {
 
-    protected ModifiableZestContentViewer viewer;
+    protected GraphViewer viewer;
     protected ViewerState state;
     protected boolean displayContainment;
     
@@ -44,29 +45,21 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
     }
 
     @Override
-    public Object[] getNodes() {
+    public Object[] getElements(Object input) {
         if (state!=null) {
             Collection<Item> items = state.getItems();
             return items.toArray(new Item[items.size()]);
         }
         else return new Object[]{};
     }
-    
-    @Override
-    public Object[] getNestedGraphNodes(Object node) {
-        return new Object[0];
-    }
 
     @Override
-    public boolean hasNestedGraph(Object node) {
-        return false;
-    }
-
-    @Override
-    public Object[] getEdges() {
+    public Object[] getRelationships(Object input) {
         if (state!=null) {
-            Collection<Edge> items = state.getEdges();
-            return items.toArray(new Edge[items.size()]);
+            Stream<Edge> stream = (displayContainment) 
+                    ? Stream.concat(state.getEdges().stream(), state.getContainments().stream())
+                    : state.getEdges().stream();                
+            return stream.toArray(Edge[]::new);
         }
         else return new Object[]{};
     }
@@ -80,7 +73,7 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
     }
 
     @Override
-    public Object getTarget(Object edge) {
+    public Object getDestination(Object edge) {
         if (edge instanceof Edge) {
             return ((Edge) edge).getTarget();
         }
@@ -88,8 +81,8 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
     }
 
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        Preconditions.checkArgument(viewer instanceof ModifiableZestContentViewer);
-        this.viewer = (ModifiableZestContentViewer) viewer;
+        Preconditions.checkArgument(viewer instanceof GraphViewer);
+        this.viewer = (GraphViewer) viewer;
         if (oldInput instanceof ViewerState) {
             ((ViewerState) oldInput).removeStateListener(this);
             ((ViewerState) oldInput).removeLabelListener(this);
@@ -122,12 +115,12 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
 
     @Override
     public void edgeAppeared(final Edge edge) {
-        viewer.addEdge(edge);
+        viewer.addRelationship(edge);
     }
 
     @Override
     public void edgeDisappeared(final Edge edge) {
-        viewer.removeEdge(edge);
+        viewer.removeRelationship(edge);
     }
     
     @Override

@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 import org.eclipse.viatra.addon.viewers.runtime.zest.sources.ZestLabelProvider;
 import org.eclipse.viatra.query.runtime.matchers.memories.MaskedTupleMemory;
@@ -29,8 +30,8 @@ public class ReteVisualizationLabelProvider extends ZestLabelProvider {
 
     private final Map<ReteNodeRecipe, Node> nodeTrace;
 
-    public ReteVisualizationLabelProvider(Map<ReteNodeRecipe, Node> nodeTrace) {
-        super();
+    public ReteVisualizationLabelProvider(Display display, Map<ReteNodeRecipe, Node> nodeTrace) {
+        super(display);
         this.nodeTrace = nodeTrace;
     }
 

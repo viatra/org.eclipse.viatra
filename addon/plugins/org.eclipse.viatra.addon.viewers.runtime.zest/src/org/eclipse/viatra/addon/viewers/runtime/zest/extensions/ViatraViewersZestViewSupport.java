@@ -11,14 +11,6 @@ package org.eclipse.viatra.addon.viewers.runtime.zest.extensions;
 import java.util.Arrays;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.gef.layout.ILayoutAlgorithm;
-import org.eclipse.gef.layout.algorithms.CompositeLayoutAlgorithm;
-import org.eclipse.gef.layout.algorithms.HorizontalShiftAlgorithm;
-import org.eclipse.gef.layout.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.gef.layout.algorithms.SpaceTreeLayoutAlgorithm;
-import org.eclipse.gef.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef.layout.algorithms.SugiyamaLayoutAlgorithm;
-import org.eclipse.gef.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -30,10 +22,15 @@ import org.eclipse.viatra.addon.viewers.runtime.extensions.jface.ViatraViewersJF
 import org.eclipse.viatra.addon.viewers.runtime.model.ViatraViewerDataModel;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.viatra.addon.viewers.runtime.zest.ViewersZestPlugin;
-import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
+import org.eclipse.viatra.integration.zest.viewer.ViatraGraphViewer;
 import org.eclipse.viatra.addon.viewers.runtime.zest.ViatraGraphViewers;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.zest.core.viewers.GraphViewer;
+import org.eclipse.zest.layouts.LayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 
 /**
  * Support class for {@link ViewPart}s based on a single Zest {@link GraphViewer}.
@@ -43,9 +40,9 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 public class ViatraViewersZestViewSupport extends
         ViatraViewersJFaceViewSupport {
 
-    private final ModifiableZestContentViewer graphViewer;
+    private final ViatraGraphViewer graphViewer;
     
-    public ModifiableZestContentViewer getGraphViewer() {
+    public GraphViewer getGraphViewer() {
         return graphViewer;
     }
     
@@ -53,7 +50,7 @@ public class ViatraViewersZestViewSupport extends
             IViewPart _owner,
             ViewersComponentConfiguration _config,
             IModelConnectorTypeEnum _scope,
-            ModifiableZestContentViewer _graphViewer) {
+            ViatraGraphViewer _graphViewer) {
         super(_owner, _config, _scope, _graphViewer);
         this.graphViewer = _graphViewer;
     }
@@ -107,17 +104,13 @@ public class ViatraViewersZestViewSupport extends
         mgr.add(createLayoutAction("Tree", new TreeLayoutAlgorithm()));
         mgr.add(createLayoutAction("Spring", new SpringLayoutAlgorithm()));
         mgr.add(createLayoutAction("Radial", new RadialLayoutAlgorithm()));
-        mgr.add(createLayoutAction("SpaceTree", new SpaceTreeLayoutAlgorithm()));
-        SugiyamaLayoutAlgorithm sugiyamaAlgorithm = new SugiyamaLayoutAlgorithm();
-        HorizontalShiftAlgorithm shiftAlgorithm = new HorizontalShiftAlgorithm();
-        mgr.add(createLayoutAction("Sugiyama (unstable)", new CompositeLayoutAlgorithm(new ILayoutAlgorithm[] {
-                sugiyamaAlgorithm, shiftAlgorithm })));
         return mgr;
     }
 
     protected Action refreshGraph = new Action("Refresh Graph") {
         @Override
         public void run() {
+            getGraphViewer().applyLayout();
             getGraphViewer().refresh();
         }
     };
@@ -125,19 +118,19 @@ public class ViatraViewersZestViewSupport extends
     protected Action clearGraph = new Action("Clear Graph") {
         @Override
         public void run() {
-            final ModifiableZestContentViewer viewer = getGraphViewer();
+            final GraphViewer viewer = getGraphViewer();
             if (viewer.getContentProvider() != null && viewer.getInput() != null) {
                 viewer.setInput(null);
             }
         }
     };
 
-    protected Action createLayoutAction(final String name, final ILayoutAlgorithm lay) {
+    protected Action createLayoutAction(final String name, final LayoutAlgorithm lay) {
         return new Action(name) {
             @Override
             public void run() {
                 getGraphViewer().setLayoutAlgorithm(lay);
-                getGraphViewer().refresh();
+                getGraphViewer().applyLayout();
             }
         };
     }

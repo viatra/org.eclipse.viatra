@@ -13,9 +13,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.viatra.addon.viewers.runtime.zest;bundle-version="[2.9.0,2.10.0)",
  org.eclipse.viatra.addon.viewers.tooling.ui;bundle-version="[2.9.0,2.10.0)",
  org.eclipse.viatra.integration.zest;bundle-version="[2.9.0,2.10.0)",
- org.eclipse.gef.layout;bundle-version="[5.0.0,6.0.0)",
- org.eclipse.gef.zest.fx;bundle-version="[5.0.0,6.0.0)",
- org.eclipse.gef.zest.fx.jface;bundle-version="[5.0.0,6.0.0)",
+ org.eclipse.zest.core;bundle-version="1.5.0",
+ org.eclipse.zest.layouts;bundle-version="1.1.0",
  com.google.inject;bundle-version="3.0.0"
 Bundle-Activator: org.eclipse.viatra.addon.viewers.tooling.ui.zest.ViewersZestToolingPlugin
 Automatic-Module-Name: org.eclipse.viatra.addon.viewers.tooling.ui.zest

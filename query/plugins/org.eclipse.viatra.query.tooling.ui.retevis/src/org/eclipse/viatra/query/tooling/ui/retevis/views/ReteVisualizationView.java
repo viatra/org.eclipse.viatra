@@ -13,16 +13,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra.addon.viewers.runtime.extensions.ViewersComponentConfiguration;
-import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
+import org.eclipse.viatra.integration.zest.viewer.ViatraGraphViewer;
 import org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization;
+import org.eclipse.zest.core.widgets.ZestStyles;
 
 
 public class ReteVisualizationView extends ViewPart {
 
     @Override
     public void createPartControl(Composite parent) {
-        ModifiableZestContentViewer graphViewer =  new ModifiableZestContentViewer();
-        graphViewer.createControl(parent, SWT.BORDER);
+        ViatraGraphViewer graphViewer =  new ViatraGraphViewer(parent, SWT.BORDER);
+        graphViewer.setNodeStyle(ZestStyles.NODES_NO_LAYOUT_RESIZE);
         getSite().setSelectionProvider(graphViewer);
         
         viewSupport = new ReteVisualizationViewSupport(

@@ -23,8 +23,6 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.gef.layout.ILayoutAlgorithm;
-import org.eclipse.gef.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -45,8 +43,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.services.IEvaluationService;
-import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
-import org.eclipse.viatra.integration.zest.viewer.ZestContentViewer;
+import org.eclipse.viatra.integration.zest.viewer.ViatraGraphViewer;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -65,8 +62,10 @@ import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.Operati
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.OperationListLabelProvider;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.IPlanNode;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.internal.LocalSearchDebuggerPropertyTester;
-
-import com.google.common.collect.Maps;
+import org.eclipse.zest.core.viewers.GraphViewer;
+import org.eclipse.zest.core.widgets.ZestStyles;
+import org.eclipse.zest.layouts.LayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 
 /**
  * 
@@ -83,7 +82,7 @@ public class LocalSearchDebugView extends ViewPart {
     private OperationListContentProvider operationListContentProvider;
     private TreeViewer operationListViewer;
 
-    private ZestContentViewer graphViewer;
+    private GraphViewer graphViewer;
     
     private CTabFolder matchesTabFolder;
     private Map<PQuery, CTabItem> matchesTabIndex = new HashMap<>();
@@ -212,9 +211,8 @@ public class LocalSearchDebugView extends ViewPart {
     }
     
     private void createZestViewer(SashForm sashForm) {
-        this.graphViewer = new ModifiableZestContentViewer();
-        graphViewer.createControl(sashForm, SWT.BORDER);
-        
+        this.graphViewer = new ViatraGraphViewer(sashForm, SWT.BORDER);
+        graphViewer.setNodeStyle(ZestStyles.NODES_NO_LAYOUT_RESIZE);
         FrameViewerContentProvider zestContentProvider = new FrameViewerContentProvider();
         this.graphViewer.setContentProvider(zestContentProvider);
   
@@ -223,8 +221,7 @@ public class LocalSearchDebugView extends ViewPart {
         AdapterFactoryLabelProvider labelProvider = new AdapterFactoryLabelProvider(adapterFactory);
         this.graphViewer.setLabelProvider(labelProvider);
 
-        ILayoutAlgorithm layout = getLayout();
-        this.graphViewer.setLayoutAlgorithm(layout);
+        this.graphViewer.setLayoutAlgorithm(getLayout());
     }
 
     private void createTreeViewer(SashForm sashForm) {
@@ -239,7 +236,7 @@ public class LocalSearchDebugView extends ViewPart {
 
             try {
                 final IWorkbenchPartSite site = getSite();
-                Map<String, Object> eventContextParameters = Maps.newHashMap();
+                Map<String, Object> eventContextParameters = new HashMap<>();
                 eventContextParameters.put(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, site.getWorkbenchWindow());
                 eventContextParameters.put(ISources.ACTIVE_PART_NAME, this);
                 eventContextParameters.put(ISources.ACTIVE_PART_ID_NAME, LocalSearchDebugView.ID);
@@ -256,14 +253,12 @@ public class LocalSearchDebugView extends ViewPart {
 
     }
 
-    private ILayoutAlgorithm getLayout() {
-        ILayoutAlgorithm layout;
-        layout = new TreeLayoutAlgorithm();
+    private LayoutAlgorithm getLayout() {
+        return new TreeLayoutAlgorithm();
         // layout = new GridLayoutAlgorithm();
         // layout = new SpringLayoutAlgorithm();
         // layout = new HorizontalTreeLayoutAlgorithm();
         // layout = new RadialLayoutAlgorithm();
-        return layout;
     }
 
     @Override
@@ -298,7 +293,7 @@ public class LocalSearchDebugView extends ViewPart {
         return operationListViewer;
     }
 
-    public ZestContentViewer getGraphViewer() {
+    public GraphViewer getGraphViewer() {
         return graphViewer;
     }
 
