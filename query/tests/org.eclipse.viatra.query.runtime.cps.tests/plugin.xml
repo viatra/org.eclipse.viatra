@@ -194,6 +194,17 @@
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.helper2"/>
     </group>
   </extension>
+  <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.Types" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.Types" id="org.eclipse.viatra.query.runtime.cps.tests.queries.Types">
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.identifiableAny"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.identifierAny"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.identifierEString"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.identifierJString"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.nonceAny"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.nonceEString"/>
+      <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.nonceJString"/>
+    </group>
+  </extension>
   <extension id="org.eclipse.viatra.query.runtime.cps.tests.queries.UnnamedVariables" point="org.eclipse.viatra.query.runtime.queryspecification">
     <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.runtime.cps.tests.queries.UnnamedVariables" id="org.eclipse.viatra.query.runtime.cps.tests.queries.UnnamedVariables">
       <query-specification fqn="org.eclipse.viatra.query.runtime.cps.tests.queries.hostInstancesTypeWithDefaultRam"/>

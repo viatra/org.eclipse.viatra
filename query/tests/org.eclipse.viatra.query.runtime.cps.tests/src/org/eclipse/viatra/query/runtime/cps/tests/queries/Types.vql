@@ -1,0 +1,36 @@
+/*******************************************************************************
+ * Copyright (c) 2016 Gabor Bergmann, IncQuery Labs Ltd.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-v20.html.
+ * 
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+package org.eclipse.viatra.query.runtime.cps.tests.queries
+
+import "http://www.eclipse.org/emf/2002/Ecore"
+import "http://org.eclipse.viatra/model/cps"
+ 
+pattern identifiableAny(obj) {
+    Identifiable(obj);
+}
+ 
+pattern identifierAny(obj, id) {
+    Identifiable.identifier(obj, id);
+}
+ 
+pattern identifierEString(obj : Identifiable, id : EString) {
+    Identifiable.identifier(obj, id);
+}
+pattern identifierJString(obj : Identifiable, id : java String) {
+    Identifiable.identifier(obj, id);
+}
+pattern nonceAny(str) = {
+    str == "tKmJp4VZFU";
+}
+pattern nonceEString(str : EString) = {
+    find nonceAny(str);
+}
+pattern nonceJString(str : java String) = {
+    find nonceAny(str);
+}
